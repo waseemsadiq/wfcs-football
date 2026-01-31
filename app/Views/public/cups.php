@@ -23,20 +23,39 @@
             </div>
         </div>
     <?php else: ?>
-        <!-- Cup Selector -->
-        <div class="mb-8 max-w-md mx-auto">
+        <!-- Cup Selector and View Toggle -->
+        <div class="mb-8 max-w-4xl mx-auto">
             <div class="card p-6">
-                <label for="cup-select" class="block text-sm font-bold text-text-muted uppercase tracking-wider mb-3">
-                    Select Cup
-                </label>
-                <select id="cup-select"
-                    class="w-full bg-surface border border-border text-text-main rounded-sm px-4 py-3 font-semibold focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
-                    <?php foreach ($cups as $cup): ?>
-                        <option value="<?= htmlspecialchars($cup['slug']) ?>">
-                            <?= htmlspecialchars($cup['name']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+                <div class="flex flex-col md:flex-row gap-4 md:gap-6 items-start md:items-end">
+                    <!-- Cup Selector -->
+                    <div class="flex-1 w-full">
+                        <label for="cup-select" class="block text-sm font-bold text-text-muted uppercase tracking-wider mb-3">
+                            Select Cup
+                        </label>
+                        <select id="cup-select"
+                            class="w-full bg-surface border border-border text-text-main rounded-sm px-4 py-3 font-semibold focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                            <?php foreach ($cups as $cup): ?>
+                                <option value="<?= htmlspecialchars($cup['slug']) ?>">
+                                    <?= htmlspecialchars($cup['name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <!-- View Toggle -->
+                    <div class="flex gap-2">
+                        <button id="bracket-btn"
+                            class="px-4 py-2 rounded-sm font-semibold text-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary"
+                            onclick="setViewMode('bracket')">
+                            Bracket
+                        </button>
+                        <button id="fixtures-btn"
+                            class="px-4 py-2 rounded-sm font-semibold text-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary"
+                            onclick="setViewMode('fixtures')">
+                            Fixtures
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -50,8 +69,13 @@
             </div>
         </div>
 
-        <!-- Content Container -->
-        <div id="cup-content">
+        <!-- Bracket View -->
+        <div id="bracket-view" class="hidden">
+            <div id="bracket-container"></div>
+        </div>
+
+        <!-- Fixtures View -->
+        <div id="fixtures-view" class="hidden">
             <div id="rounds-container"></div>
         </div>
 
@@ -70,17 +94,165 @@
     (function () {
         const cupSelect = document.getElementById('cup-select');
         const loadingState = document.getElementById('loading-state');
-        const cupContent = document.getElementById('cup-content');
         const errorState = document.getElementById('error-state');
         const roundsContainer = document.getElementById('rounds-container');
         const errorMessage = document.getElementById('error-message');
 
         if (!cupSelect) return;
 
+        // View mode management
+        function setViewMode(mode) {
+            const bracketView = document.getElementById('bracket-view');
+            const fixturesView = document.getElementById('fixtures-view');
+            const bracketBtn = document.getElementById('bracket-btn');
+            const fixturesBtn = document.getElementById('fixtures-btn');
+
+            if (mode === 'bracket') {
+                // Show bracket, hide fixtures
+                bracketView.classList.remove('hidden');
+                fixturesView.classList.add('hidden');
+
+                // Update button states
+                bracketBtn.classList.add('bg-primary', 'text-white');
+                bracketBtn.classList.remove('bg-surface-hover', 'text-text-muted');
+                fixturesBtn.classList.remove('bg-primary', 'text-white');
+                fixturesBtn.classList.add('bg-surface-hover', 'text-text-muted');
+            } else if (mode === 'fixtures') {
+                // Show fixtures, hide bracket
+                fixturesView.classList.remove('hidden');
+                bracketView.classList.add('hidden');
+
+                // Update button states
+                fixturesBtn.classList.add('bg-primary', 'text-white');
+                fixturesBtn.classList.remove('bg-surface-hover', 'text-text-muted');
+                bracketBtn.classList.remove('bg-primary', 'text-white');
+                bracketBtn.classList.add('bg-surface-hover', 'text-text-muted');
+            }
+
+            // Save preference to localStorage
+            try {
+                localStorage.setItem('cupViewMode', mode);
+            } catch (e) {
+                // localStorage disabled or quota exceeded - gracefully ignore
+                console.warn('Could not save view preference:', e);
+            }
+        }
+
+        // Render bracket view (all content sanitized via escapeHtml before innerHTML)
+        function renderBracket(rounds) {
+            const bracketContainer = document.getElementById('bracket-container');
+
+            if (!rounds || rounds.length === 0) {
+                bracketContainer.innerHTML = '<div class="card"><div class="text-center py-16 text-text-muted"><p>No bracket generated yet.</p></div></div>';
+                return;
+            }
+
+            let html = '<div class="card overflow-hidden"><div class="overflow-x-auto pb-4"><div class="flex gap-12 min-w-max px-4">';
+
+            rounds.forEach(round => {
+                html += `
+                    <div class="flex flex-col min-w-[260px]">
+                        <h3 class="text-center mb-6 text-sm font-bold text-text-muted uppercase tracking-wider">
+                            ${escapeHtml(round.name)}
+                        </h3>
+                        <div class="flex flex-col justify-around flex-grow w-full gap-4">
+                `;
+
+                if (round.fixtures && round.fixtures.length > 0) {
+                    round.fixtures.forEach(fixture => {
+                        html += renderBracketFixture(fixture);
+                    });
+                } else {
+                    html += '<div class="text-center py-8 text-text-muted text-sm">No fixtures</div>';
+                }
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div></div></div>';
+            bracketContainer.innerHTML = html;
+        }
+
+        // Render single fixture for bracket view (all dynamic content sanitized via escapeHtml)
+        function renderBracketFixture(fixture) {
+            const homeTeam = fixture.homeTeam || {};
+            const awayTeam = fixture.awayTeam || {};
+            const result = fixture.result;
+
+            const homeColour = homeTeam.colour || '#333333';
+            const awayColour = awayTeam.colour || '#333333';
+            const homeName = escapeHtml(homeTeam.name || 'TBD');
+            const awayName = escapeHtml(awayTeam.name || 'TBD');
+            const homeId = homeTeam.id || '';
+            const awayId = awayTeam.id || '';
+            const homeSlug = escapeHtml(homeTeam.slug || homeId);
+            const awaySlug = escapeHtml(awayTeam.slug || awayId);
+
+            // Determine winner
+            let homeWon = false;
+            let awayWon = false;
+            if (result) {
+                const homeScore = parseInt(result.homeScore || 0);
+                const awayScore = parseInt(result.awayScore || 0);
+
+                if (result.penalties) {
+                    const pHome = parseInt(result.penalties.homeScore || 0);
+                    const pAway = parseInt(result.penalties.awayScore || 0);
+                    homeWon = pHome > pAway;
+                    awayWon = pAway > pHome;
+                } else {
+                    homeWon = homeScore > awayScore;
+                    awayWon = awayScore > homeScore;
+                }
+            }
+
+            const homeLink = homeId ? `<a href="<?= $basePath ?>/team/${homeSlug}" class="hover:text-primary transition-colors">${homeName}</a>` : homeName;
+            const awayLink = awayId ? `<a href="<?= $basePath ?>/team/${awaySlug}" class="hover:text-primary transition-colors">${awayName}</a>` : awayName;
+
+            let dateTooltip = '';
+            if (fixture.date) {
+                const dateObj = new Date(fixture.date + 'T00:00:00');
+                const dateStr = dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+                dateTooltip = `
+                    <div class="absolute top-0 right-0 p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div class="bg-surface-hover border border-border text-xs px-1.5 rounded shadow-sm">
+                            ${dateStr}
+                        </div>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="border border-border rounded-lg bg-surface shadow-sm overflow-hidden relative group hover:border-primary/30 transition-colors">
+                    <!-- Home Team -->
+                    <div class="flex items-center px-3 py-2 border-b border-border/50 ${homeWon ? 'bg-primary/10 font-bold' : ''}">
+                        <span class="inline-block w-3 h-3 rounded-sm flex-shrink-0 mr-2"
+                            style="background-color: ${homeColour};"></span>
+                        <span class="flex-grow truncate text-sm">${homeLink}</span>
+                        ${result ? `<span class="font-bold text-sm ml-2">${result.homeScore}${result.penalties ? ' [' + result.penalties.homeScore + ']' : ''}</span>` : ''}
+                    </div>
+
+                    <!-- Away Team -->
+                    <div class="flex items-center px-3 py-2 ${awayWon ? 'bg-primary/10 font-bold' : ''}">
+                        <span class="inline-block w-3 h-3 rounded-sm flex-shrink-0 mr-2"
+                            style="background-color: ${awayColour};"></span>
+                        <span class="flex-grow truncate text-sm">${awayLink}</span>
+                        ${result ? `<span class="font-bold text-sm ml-2">${result.awayScore}${result.penalties ? ' [' + result.penalties.awayScore + ']' : ''}</span>` : ''}
+                    </div>
+
+                    ${dateTooltip}
+                </div>
+            `;
+        }
+
         // Load cup data
         async function loadCup(slug) {
             // Show loading state
-            cupContent.classList.add('hidden');
+            document.getElementById('bracket-view').classList.add('hidden');
+            document.getElementById('fixtures-view').classList.add('hidden');
             errorState.classList.add('hidden');
             loadingState.classList.remove('hidden');
 
@@ -93,12 +265,26 @@
 
                 const data = await response.json();
 
-                // Render rounds
+                // Render both views
+                renderBracket(data.rounds);
                 renderRounds(data.rounds);
 
-                // Hide loading, show content
+                // Determine which view to show
+                let viewMode = 'bracket'; // default
+                try {
+                    const saved = localStorage.getItem('cupViewMode');
+                    if (saved === 'fixtures' || saved === 'bracket') {
+                        viewMode = saved;
+                    }
+                } catch (e) {
+                    // localStorage disabled - use default
+                }
+
+                // Apply view mode
+                setViewMode(viewMode);
+
+                // Hide loading
                 loadingState.classList.add('hidden');
-                cupContent.classList.remove('hidden');
 
                 // Save to localStorage
                 localStorage.setItem('selectedCupSlug', slug);
@@ -106,6 +292,8 @@
             } catch (error) {
                 console.error('Error loading cup:', error);
                 loadingState.classList.add('hidden');
+                document.getElementById('bracket-view').classList.add('hidden');
+                document.getElementById('fixtures-view').classList.add('hidden');
                 errorState.classList.remove('hidden');
                 errorMessage.textContent = error.message || 'Unable to load cup data. Please try again.';
             }
