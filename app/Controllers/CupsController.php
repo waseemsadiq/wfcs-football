@@ -316,14 +316,17 @@ class CupsController extends Controller
         }
 
         $cup = $this->cup->findWhere('slug', $slug);
-        if (!$cup) {
+
+        if ($cup) {
+            $seasonId = $cup['seasonId'];
+            $this->cup->delete($cup['id']);
+            $this->season->removeCup($seasonId, $cup['id']);
+
+            $this->flash('success', 'Cup deleted.');
+        } else {
             $this->flash('error', 'Cup not found.');
-            $this->redirect('/admin/cups');
-            return;
         }
 
-        $this->cup->delete($cup['id']);
-        $this->flash('success', 'Cup deleted.');
         $this->redirect('/admin/cups');
     }
 
@@ -417,8 +420,10 @@ class CupsController extends Controller
 
             // Validate ET scores if provided
             if (($homeScoreET !== null && $homeScoreET !== '') || ($awayScoreET !== null && $awayScoreET !== '')) {
-                if (($homeScoreET !== null && $homeScoreET !== '' && (!is_numeric($homeScoreET) || (int) $homeScoreET < 0)) ||
-                    ($awayScoreET !== null && $awayScoreET !== '' && (!is_numeric($awayScoreET) || (int) $awayScoreET < 0))) {
+                if (
+                    ($homeScoreET !== null && $homeScoreET !== '' && (!is_numeric($homeScoreET) || (int) $homeScoreET < 0)) ||
+                    ($awayScoreET !== null && $awayScoreET !== '' && (!is_numeric($awayScoreET) || (int) $awayScoreET < 0))
+                ) {
                     if ($this->isAjaxRequest()) {
                         $this->json(['success' => false, 'error' => 'Extra time scores must be non-negative numbers.']);
                         return;
@@ -451,8 +456,10 @@ class CupsController extends Controller
 
             // Validate penalty scores if provided
             if (($homePens !== null && $homePens !== '') || ($awayPens !== null && $awayPens !== '')) {
-                if (($homePens !== null && $homePens !== '' && (!is_numeric($homePens) || (int) $homePens < 0)) ||
-                    ($awayPens !== null && $awayPens !== '' && (!is_numeric($awayPens) || (int) $awayPens < 0))) {
+                if (
+                    ($homePens !== null && $homePens !== '' && (!is_numeric($homePens) || (int) $homePens < 0)) ||
+                    ($awayPens !== null && $awayPens !== '' && (!is_numeric($awayPens) || (int) $awayPens < 0))
+                ) {
                     if ($this->isAjaxRequest()) {
                         $this->json(['success' => false, 'error' => 'Penalty scores must be non-negative numbers.']);
                         return;
@@ -485,11 +492,11 @@ class CupsController extends Controller
 
             // Auto-detect extra time from scores
             $hasETScores = ($homeScoreET !== null && $homeScoreET !== '') ||
-                           ($awayScoreET !== null && $awayScoreET !== '');
+                ($awayScoreET !== null && $awayScoreET !== '');
 
             // Auto-detect penalties from scores
             $hasPenScores = ($homePens !== null && $homePens !== '') ||
-                            ($awayPens !== null && $awayPens !== '');
+                ($awayPens !== null && $awayPens !== '');
 
             $result = [
                 'homeScore' => (int) $homeScore,

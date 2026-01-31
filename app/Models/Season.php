@@ -147,6 +147,46 @@ class Season extends Model
     }
 
     /**
+     * Remove a league from a season.
+     */
+    public function removeLeague(string $seasonId, string $leagueId): bool
+    {
+        foreach ($this->data as $index => $season) {
+            if ($season['id'] === $seasonId) {
+                if (($key = array_search($leagueId, $this->data[$index]['leagueIds'])) !== false) {
+                    unset($this->data[$index]['leagueIds'][$key]);
+                    // Re-index array
+                    $this->data[$index]['leagueIds'] = array_values($this->data[$index]['leagueIds']);
+                    $this->data[$index]['updated_at'] = date('Y-m-d H:i:s');
+                    return $this->save();
+                }
+                return true; // Already removed
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Remove a cup from a season.
+     */
+    public function removeCup(string $seasonId, string $cupId): bool
+    {
+        foreach ($this->data as $index => $season) {
+            if ($season['id'] === $seasonId) {
+                if (($key = array_search($cupId, $this->data[$index]['cupIds'])) !== false) {
+                    unset($this->data[$index]['cupIds'][$key]);
+                    // Re-index array
+                    $this->data[$index]['cupIds'] = array_values($this->data[$index]['cupIds']);
+                    $this->data[$index]['updated_at'] = date('Y-m-d H:i:s');
+                    return $this->save();
+                }
+                return true; // Already removed
+            }
+        }
+        return false;
+    }
+
+    /**
      * Override update to update slug if name changes.
      */
     public function update(string $id, array $updates): bool

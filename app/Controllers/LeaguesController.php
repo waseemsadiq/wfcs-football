@@ -266,14 +266,17 @@ class LeaguesController extends Controller
         }
 
         $league = $this->league->findWhere('slug', $slug);
-        if (!$league) {
+
+        if ($league) {
+            $seasonId = $league['seasonId'];
+            $this->league->delete($league['id']);
+            $this->season->removeLeague($seasonId, $league['id']);
+
+            $this->flash('success', 'League deleted.');
+        } else {
             $this->flash('error', 'League not found.');
-            $this->redirect('/admin/leagues');
-            return;
         }
 
-        $this->league->delete($league['id']);
-        $this->flash('success', 'League deleted.');
         $this->redirect('/admin/leagues');
     }
 
