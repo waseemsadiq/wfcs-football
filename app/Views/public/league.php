@@ -2,61 +2,6 @@
 /**
  * Render a fixture row for league page.
  */
-if (!function_exists('renderLeagueFixture')) {
-    function renderLeagueFixture(array $fixture): string
-    {
-        $homeTeam = $fixture['homeTeam'] ?? null;
-        $awayTeam = $fixture['awayTeam'] ?? null;
-        $result = $fixture['result'] ?? null;
-
-        $date = '';
-        if (!empty($fixture['date'])) {
-            $dateObj = new DateTime($fixture['date']);
-            $date = $dateObj->format('D j M');
-        }
-
-        $time = $fixture['time'] ?? '15:00';
-
-        $homeColour = htmlspecialchars($homeTeam['colour'] ?? '#333333');
-        $awayColour = htmlspecialchars($awayTeam['colour'] ?? '#333333');
-        $homeName = htmlspecialchars($homeTeam['name'] ?? 'TBD');
-        $awayName = htmlspecialchars($awayTeam['name'] ?? 'TBD');
-        $homeId = htmlspecialchars($homeTeam['id'] ?? '');
-        $awayId = htmlspecialchars($awayTeam['id'] ?? '');
-
-        $scoreHtml = '';
-        if ($result) {
-            $homeScore = (int) ($result['homeScore'] ?? 0);
-            $awayScore = (int) ($result['awayScore'] ?? 0);
-            $scoreHtml = '<div class="font-bold text-xl text-primary bg-surface-hover px-3 py-1 rounded-sm">' . $homeScore . ' - ' . $awayScore . '</div>';
-        } else {
-            $scoreHtml = '<div class="text-base text-text-muted bg-transparent font-medium">' . htmlspecialchars($time) . '</div>';
-        }
-
-        $homeSlug = htmlspecialchars($homeTeam['slug'] ?? $homeId);
-        $awaySlug = htmlspecialchars($awayTeam['slug'] ?? $awayId);
-
-        $homeLink = $homeId ? "<a href=\"/team/{$homeSlug}\" class=\"hover:text-primary transition-colors\">{$homeName}</a>" : $homeName;
-        $awayLink = $awayId ? "<a href=\"/team/{$awaySlug}\" class=\"hover:text-primary transition-colors\">{$awayName}</a>" : $awayName;
-
-        return <<<HTML
-        <li class="flex flex-col items-center py-4 border-b border-border last:border-b-0 gap-1 hover:bg-surface-hover/50 transition-colors px-4 -mx-4 rounded-sm">
-            <div class="text-xs text-text-muted font-bold uppercase tracking-wider mb-1">{$date}</div>
-            <div class="flex items-center justify-center gap-4 md:gap-8 w-full">
-                <div class="flex-1 flex items-center justify-end gap-3 font-semibold text-right">
-                    {$homeLink}
-                    <span class="inline-block w-4 h-4 rounded bg-current shadow-sm" style="color: {$homeColour}; background-color: {$homeColour}"></span>
-                </div>
-                {$scoreHtml}
-                <div class="flex-1 flex items-center justify-start gap-3 font-semibold text-left">
-                    <span class="inline-block w-4 h-4 rounded bg-current shadow-sm" style="color: {$awayColour}; background-color: {$awayColour}"></span>
-                    {$awayLink}
-                </div>
-            </div>
-        </li>
-HTML;
-    }
-}
 ?>
 
 <div class="container">
@@ -196,7 +141,11 @@ HTML;
             <?php else: ?>
                 <ul class="divide-y divide-border">
                     <?php foreach ($fixtures as $fixture): ?>
-                        <?= renderLeagueFixture($fixture) ?>
+                        <?php
+                        $showDate = true;
+                        $showCompetition = false;
+                        include __DIR__ . '/../partials/public_fixture.php';
+                        ?>
                     <?php endforeach; ?>
                 </ul>
             <?php endif; ?>

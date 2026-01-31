@@ -15,7 +15,7 @@
             <p>No fixtures scheduled</p>
         </div>
     <?php else: ?>
-        <div class="space-y-8 max-w-4xl mx-auto">
+        <div class="space-y-8">
             <?php foreach ($rounds as $round): ?>
                 <div class="bg-surface rounded-md shadow-glow border border-border overflow-hidden">
                     <div

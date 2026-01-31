@@ -2,63 +2,6 @@
 /**
  * Render a fixture row for leagues page.
  */
-if (!function_exists('renderLeaguesFixture')) {
-    function renderLeaguesFixture(array $fixture): string
-    {
-        $homeTeam = $fixture['homeTeam'] ?? null;
-        $awayTeam = $fixture['awayTeam'] ?? null;
-        $result = $fixture['result'] ?? null;
-
-        $date = '';
-        if (!empty($fixture['date'])) {
-            $dateObj = new DateTime($fixture['date']);
-            $date = $dateObj->format('D j M');
-        }
-
-        $time = $fixture['time'] ?? '15:00';
-
-        $homeColour = htmlspecialchars($homeTeam['colour'] ?? '#333333');
-        $awayColour = htmlspecialchars($awayTeam['colour'] ?? '#333333');
-        $homeName = htmlspecialchars($homeTeam['name'] ?? 'TBD');
-        $awayName = htmlspecialchars($awayTeam['name'] ?? 'TBD');
-        $homeId = htmlspecialchars($homeTeam['id'] ?? '');
-        $awayId = htmlspecialchars($awayTeam['id'] ?? '');
-
-        $scoreHtml = '';
-        if ($result) {
-            $homeScore = (int) ($result['homeScore'] ?? 0);
-            $awayScore = (int) ($result['awayScore'] ?? 0);
-            $scoreHtml = '<div class="font-bold text-xl text-primary bg-surface-hover px-3 py-1 rounded-sm">' . $homeScore . ' - ' . $awayScore . '</div>';
-        } else {
-            $scoreHtml = '<div class="text-base text-text-muted bg-transparent font-medium">' . htmlspecialchars($time) . '</div>';
-        }
-
-        $homeSlug = htmlspecialchars($homeTeam['slug'] ?? $homeId);
-        $awaySlug = htmlspecialchars($awayTeam['slug'] ?? $awayId);
-
-        $homeLink = $homeId ? "<a href=\"/team/{$homeSlug}\" class=\"hover:text-primary transition-colors\">{$homeName}</a>" : $homeName;
-        $awayLink = $awayId ? "<a href=\"/team/{$awaySlug}\" class=\"hover:text-primary transition-colors\">{$awayName}</a>" : $awayName;
-
-        return <<<HTML
-        <li class="flex flex-row items-center py-4 border-b border-border last:border-b-0 gap-4 hover:bg-surface-hover/50 transition-colors px-4 -mx-4 rounded-sm">
-            <div class="min-w-[80px] text-center text-text-muted text-sm font-bold">
-                <div>{$date}</div>
-            </div>
-            <div class="flex-1 flex items-center justify-center gap-4 md:gap-8 w-full">
-                <div class="flex-1 flex items-center justify-end gap-3 font-semibold text-right">
-                    {$homeLink}
-                    <span class="inline-block w-4 h-4 rounded bg-current shadow-sm" style="color: {$homeColour}; background-color: {$homeColour}"></span>
-                </div>
-                {$scoreHtml}
-                <div class="flex-1 flex items-center justify-start gap-3 font-semibold text-left">
-                    <span class="inline-block w-4 h-4 rounded bg-current shadow-sm" style="color: {$awayColour}; background-color: {$awayColour}"></span>
-                    {$awayLink}
-                </div>
-            </div>
-        </li>
-HTML;
-    }
-}
 ?>
 
 <div class="w-full">
@@ -190,16 +133,16 @@ HTML;
                 renderStandings(data.standings);
 
                 // Render recent results
-                if (data.recentResults && data.recentResults.length > 0) {
-                    renderFixtures(data.recentResults, recentResultsContent, true);
+                if (data.recentResultsHtml) {
+                    recentResultsContent.innerHTML = data.recentResultsHtml;
                     recentResultsSection.classList.remove('hidden');
                 } else {
                     recentResultsSection.classList.add('hidden');
                 }
 
                 // Render upcoming fixtures
-                if (data.upcomingFixtures && data.upcomingFixtures.length > 0) {
-                    renderFixtures(data.upcomingFixtures, upcomingFixturesContent, false);
+                if (data.upcomingFixturesHtml) {
+                    upcomingFixturesContent.innerHTML = data.upcomingFixturesHtml;
                     upcomingFixturesSection.classList.remove('hidden');
                 } else {
                     upcomingFixturesSection.classList.add('hidden');
@@ -296,100 +239,6 @@ HTML;
             html += '</tbody></table></div>';
 
             standingsContent.innerHTML = html;
-        }
-
-        // Render fixtures (NOTE: innerHTML used with properly escaped data)
-        function renderFixtures(fixtures, container, showResult) {
-            if (!fixtures || fixtures.length === 0) {
-                container.innerHTML = '<li class="text-center py-12 text-text-muted"><p>No fixtures</p></li>';
-                return;
-            }
-
-            let html = '<div class="flex flex-col">';
-
-            // Re-implement with explicit grouping
-            const groups = {};
-            const dates = []; // to preserve order
-
-            fixtures.forEach(f => {
-                const d = f.date || 'TBD';
-                if (!groups[d]) {
-                    groups[d] = [];
-                    dates.push(d);
-                }
-                groups[d].push(f);
-            });
-
-            dates.forEach(date => {
-                let dateDisplay = 'TBD';
-                if (date !== 'TBD') {
-                    const dateObj = new Date(date + 'T00:00:00');
-                    dateDisplay = dateObj.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
-                }
-
-                html += `
-                    <div class="bg-surface/50 border-b border-border py-2 text-center sticky top-0 z-10">
-                        <span class="text-xs font-bold text-text-muted uppercase tracking-wider">
-                            ${dateDisplay}
-                        </span>
-                    </div>
-                    <div class="divide-y divide-border border-b border-border last:border-0 px-4">
-                `;
-
-                groups[date].forEach(fixture => {
-                    html += renderFixture(fixture, showResult);
-                });
-
-                html += '</div>';
-            });
-
-            html += '</div>';
-            container.innerHTML = html;
-        }
-
-        // Render single fixture
-        function renderFixture(fixture, showResult) {
-            const homeTeam = fixture.homeTeam || {};
-            const awayTeam = fixture.awayTeam || {};
-            const result = fixture.result;
-
-            const time = fixture.time || '15:00';
-            const homeColour = homeTeam.colour || '#333333';
-            const awayColour = awayTeam.colour || '#333333';
-            const homeName = escapeHtml(homeTeam.name || 'TBD');
-            const awayName = escapeHtml(awayTeam.name || 'TBD');
-            const homeId = homeTeam.id || '';
-            const awayId = awayTeam.id || '';
-            const homeSlug = escapeHtml(homeTeam.slug || homeId);
-            const awaySlug = escapeHtml(awayTeam.slug || awayId);
-
-            let scoreHtml = '';
-            if (showResult && result) {
-                const homeScore = parseInt(result.homeScore || 0);
-                const awayScore = parseInt(result.awayScore || 0);
-                scoreHtml = `<div class="font-bold text-xl text-primary bg-surface-hover px-3 py-1 rounded-sm">${homeScore} - ${awayScore}</div>`;
-            } else {
-                scoreHtml = `<div class="text-base text-text-muted bg-transparent font-medium">${escapeHtml(time)}</div>`;
-            }
-
-            const homeLink = homeId ? `<a href="<?= $basePath ?>/team/${homeSlug}" class="hover:text-primary transition-colors">${homeName}</a>` : homeName;
-            const awayLink = awayId ? `<a href="<?= $basePath ?>/team/${awaySlug}" class="hover:text-primary transition-colors">${awayName}</a>` : awayLink;
-
-            return `
-                <div class="flex flex-row items-center py-4 gap-4 hover:bg-surface-hover/50 transition-colors rounded-sm">
-                    <div class="flex-1 flex items-center justify-center gap-4 md:gap-8 w-full">
-                        <div class="flex-1 flex items-center justify-end gap-3 font-semibold text-right">
-                            ${homeLink}
-                            <span class="inline-block w-4 h-4 rounded bg-current shadow-sm" style="color: ${homeColour}; background-color: ${homeColour}"></span>
-                        </div>
-                        ${scoreHtml}
-                        <div class="flex-1 flex items-center justify-start gap-3 font-semibold text-left">
-                            <span class="inline-block w-4 h-4 rounded bg-current shadow-sm" style="color: ${awayColour}; background-color: ${awayColour}"></span>
-                            ${awayLink}
-                        </div>
-                    </div>
-                </div>
-            `;
         }
 
         // Escape HTML to prevent XSS

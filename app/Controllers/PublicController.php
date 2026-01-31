@@ -367,9 +367,11 @@ class PublicController extends Controller
 
         // Recent results: last 3 fixture dates
         $recentResults = $this->getRecentResultsByDates($fixtures, 3);
+        $recentResultsHtml = $this->renderFixturesHtml($recentResults, true);
 
         // Upcoming fixtures: all future matches
         $upcomingFixtures = $this->getUpcomingFixtures($fixtures, 1000);
+        $upcomingFixturesHtml = $this->renderFixturesHtml($upcomingFixtures, false);
 
         echo json_encode([
             'league' => [
@@ -377,9 +379,36 @@ class PublicController extends Controller
                 'slug' => $league['slug'],
             ],
             'standings' => $standings,
-            'recentResults' => $recentResults,
-            'upcomingFixtures' => $upcomingFixtures,
+            'recentResultsHtml' => $recentResultsHtml,
+            'upcomingFixturesHtml' => $upcomingFixturesHtml,
         ]);
+    }
+
+    /**
+     * Render fixtures to HTML using the shared partial.
+     */
+    private function renderFixturesHtml(array $fixtures, bool $showResult): string
+    {
+        if (empty($fixtures)) {
+            return '<div class="text-center py-12 text-text-muted"><p>No fixtures</p></div>';
+        }
+
+        ob_start();
+        echo '<ul class="divide-y divide-border">';
+
+        foreach ($fixtures as $fixture) {
+            // Configure potential variables for the partial
+            $showDate = true;
+            $showCompetition = false;
+
+            // Include the partial
+            // adjust depending on where this file is running.
+            // BASE_PATH is defined in index.php
+            include BASE_PATH . '/app/Views/partials/public_fixture.php';
+        }
+
+        echo '</ul>';
+        return ob_get_clean();
     }
 
     /**
