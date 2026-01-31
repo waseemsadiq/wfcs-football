@@ -1,11 +1,11 @@
 <div class="max-w-2xl mx-auto">
     <div class="flex justify-between items-center mb-8">
         <h1 class="text-3xl font-bold m-0">Edit <?= htmlspecialchars($season['name']) ?></h1>
-        <a href="/admin/seasons" class="btn btn-secondary">Cancel</a>
+        <a href="<?=$basePath?>/admin/seasons" class="btn btn-secondary">Cancel</a>
     </div>
 
     <div class="card">
-        <form method="POST" action="/admin/seasons/<?= htmlspecialchars($season['slug'] ?? $season['id']) ?>/update">
+        <form method="POST" action="<?=$basePath?>/admin/seasons/<?= htmlspecialchars($season['slug'] ?? $season['id']) ?>/update">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
 
             <div class="mb-6">
@@ -63,7 +63,7 @@
 
             <div class="flex items-center gap-4 pt-6 border-t border-border">
                 <button type="submit" class="btn btn-primary">Save Changes</button>
-                <a href="/admin/seasons" class="btn btn-secondary">Cancel</a>
+                <a href="<?=$basePath?>/admin/seasons" class="btn btn-secondary">Cancel</a>
             </div>
         </form>
     </div>

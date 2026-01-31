@@ -1,3 +1,4 @@
+<?php $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\'); ?>
 <div class="text-center mb-12">
     <h1
         class="text-4xl font-extrabold tracking-tight mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">
@@ -7,127 +8,131 @@
 <?php if ($activeSeason): ?>
     <!-- Upcoming Fixtures -->
     <div class="card mb-8">
-            <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-                <h2 class="text-xl font-bold m-0">Upcoming Fixtures</h2>
-                <select id="competition-select"
-                    class="bg-surface border border-border rounded px-3 py-2 text-text-main focus:outline-none focus:border-primary min-w-[200px]">
-                    <option value="" disabled selected>Select Competition</option>
-                    <?php if (!empty($leagues)): ?>
-                        <optgroup label="Leagues">
-                            <?php foreach ($leagues as $league): ?>
-                                <option value="<?= $league['id'] ?>" data-type="league"
-                                    data-slug="<?= $league['slug'] ?? $league['id'] ?>">
-                                    <?= htmlspecialchars($league['name']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </optgroup>
-                    <?php endif; ?>
-                    <?php if (!empty($cups)): ?>
-                        <optgroup label="Cups">
-                            <?php foreach ($cups as $cup): ?>
-                                <option value="<?= $cup['id'] ?>" data-type="cup" data-slug="<?= $cup['slug'] ?? $cup['id'] ?>">
-                                    <?= htmlspecialchars($cup['name']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </optgroup>
-                    <?php endif; ?>
-                </select>
-            </div>
+        <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+            <h2 class="text-xl font-bold m-0">Upcoming Fixtures</h2>
+            <select id="competition-select"
+                class="bg-surface border border-border rounded px-3 py-2 text-text-main focus:outline-none focus:border-primary min-w-[200px]">
+                <option value="" disabled selected>Select Competition</option>
+                <?php if (!empty($leagues)): ?>
+                    <optgroup label="Leagues">
+                        <?php foreach ($leagues as $league): ?>
+                            <option value="<?= $league['id'] ?>" data-type="league"
+                                data-slug="<?= $league['slug'] ?? $league['id'] ?>">
+                                <?= htmlspecialchars($league['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </optgroup>
+                <?php endif; ?>
+                <?php if (!empty($cups)): ?>
+                    <optgroup label="Cups">
+                        <?php foreach ($cups as $cup): ?>
+                            <option value="<?= $cup['id'] ?>" data-type="cup" data-slug="<?= $cup['slug'] ?? $cup['id'] ?>">
+                                <?= htmlspecialchars($cup['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </optgroup>
+                <?php endif; ?>
+            </select>
+        </div>
 
-            <div id="fixtures-loader" class="hidden flex justify-center py-8">
-                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-            </div>
+        <div id="fixtures-loader" class="hidden flex justify-center py-8">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
 
-            <div id="fixtures-container" class="space-y-4 opacity-100 transition-opacity duration-300">
-                <div
-                    class="text-center text-text-muted py-8 bg-surface-hover/20 rounded border border-border border-dashed">
-                    Select a competition to view upcoming matches.
-                </div>
+        <div id="fixtures-container" class="space-y-4 opacity-100 transition-opacity duration-300">
+            <div class="text-center text-text-muted py-8 bg-surface-hover/20 rounded border border-border border-dashed">
+                Select a competition to view upcoming matches.
             </div>
+        </div>
     </div>
 
     <!-- Active Season Summary -->
     <div class="card mb-8">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 border-b border-border pb-4 gap-4">
-                <div>
-                    <h2 class="text-2xl font-bold mb-0"><?= htmlspecialchars($activeSeason['name']) ?></h2>
-                    <span class="text-text-muted">Active Season</span>
-                </div>
-                <div class="flex flex-wrap gap-2">
-                    <a href="/admin/teams/create" class="btn btn-secondary btn-sm">+ Add Team</a>
-                    <a href="/admin/leagues/create" class="btn btn-secondary btn-sm">+ Create League</a>
-                    <a href="/admin/cups/create" class="btn btn-secondary btn-sm">+ Create Cup</a>
-                    <a href="/admin/seasons" class="btn btn-secondary btn-sm">Manage Seasons</a>
-                </div>
+        <div
+            class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 border-b border-border pb-4 gap-4">
+            <div>
+                <h2 class="text-2xl font-bold mb-0"><?= htmlspecialchars($activeSeason['name']) ?></h2>
+                <span class="text-text-muted">Active Season</span>
             </div>
-
-            <div class="grid grid-cols-3 gap-6 mb-8">
-                <div class="text-center">
-                    <h3 class="text-sm text-text-muted mb-2 uppercase tracking-wide font-semibold">Teams</h3>
-                    <p class="text-4xl font-extrabold text-primary m-0"><?= $teamCount ?></p>
-                    <a href="/admin/teams" class="text-xs text-text-muted hover:text-primary transition-colors">View all</a>
-                </div>
-
-                <div class="text-center">
-                    <h3 class="text-sm text-text-muted mb-2 uppercase tracking-wide font-semibold">Leagues</h3>
-                    <p class="text-4xl font-extrabold text-primary m-0"><?= count($leagues) ?></p>
-                    <a href="/admin/leagues" class="text-xs text-text-muted hover:text-primary transition-colors">View
-                        all</a>
-                </div>
-
-                <div class="text-center">
-                    <h3 class="text-sm text-text-muted mb-2 uppercase tracking-wide font-semibold">Cups</h3>
-                    <p class="text-4xl font-extrabold text-primary m-0"><?= count($cups) ?></p>
-                    <a href="/admin/cups" class="text-xs text-text-muted hover:text-primary transition-colors">View all</a>
-                </div>
+            <div class="flex flex-wrap gap-2">
+                <a href="<?= $basePath ?>/admin/teams/create" class="btn btn-secondary btn-sm">+ Add Team</a>
+                <a href="<?= $basePath ?>/admin/leagues/create" class="btn btn-secondary btn-sm">+ Create League</a>
+                <a href="<?= $basePath ?>/admin/cups/create" class="btn btn-secondary btn-sm">+ Create Cup</a>
+                <a href="<?= $basePath ?>/admin/seasons" class="btn btn-secondary btn-sm">Manage Seasons</a>
             </div>
-
-            <?php if (!empty($leagues)): ?>
-                <div class="mb-8">
-                    <h3 class="mb-4 text-lg font-bold">League Competitions</h3>
-                    <ul class="border border-border rounded-sm overflow-hidden bg-background">
-                        <?php foreach ($leagues as $league): ?>
-                            <li
-                                class="flex items-center gap-4 px-5 py-4 bg-background border-b border-border last:border-b-0 hover:bg-surface-hover transition-colors">
-                                <a href="/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>"
-                                    class="flex-1 font-semibold text-text-main hover:text-primary transition-colors">
-                                    <?= htmlspecialchars($league['name']) ?>
-                                </a>
-                                <span class="text-text-muted text-sm"><?= count($league['teamIds'] ?? []) ?> teams</span>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-            <?php endif; ?>
-
-            <?php if (!empty($cups)): ?>
-                <div class="mt-8 mb-4">
-                    <h3 class="mb-4 text-lg font-bold">Cup Competitions</h3>
-                    <ul class="border border-border rounded-sm overflow-hidden bg-background">
-                        <?php foreach ($cups as $cup): ?>
-                            <li
-                                class="flex items-center gap-4 px-5 py-4 bg-background border-b border-border last:border-b-0 hover:bg-surface-hover transition-colors">
-                                <a href="/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>"
-                                    class="flex-1 font-semibold text-text-main hover:text-primary transition-colors">
-                                    <?= htmlspecialchars($cup['name']) ?>
-                                </a>
-                                <span class="text-text-muted text-sm"><?= count($cup['teamIds'] ?? []) ?> teams</span>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-            <?php endif; ?>
         </div>
+
+        <div class="grid grid-cols-3 gap-6 mb-8">
+            <div class="text-center">
+                <h3 class="text-sm text-text-muted mb-2 uppercase tracking-wide font-semibold">Teams</h3>
+                <p class="text-4xl font-extrabold text-primary m-0"><?= $teamCount ?></p>
+                <a href="<?= $basePath ?>/admin/teams"
+                    class="text-xs text-text-muted hover:text-primary transition-colors">View all</a>
+            </div>
+
+            <div class="text-center">
+                <h3 class="text-sm text-text-muted mb-2 uppercase tracking-wide font-semibold">Leagues</h3>
+                <p class="text-4xl font-extrabold text-primary m-0"><?= count($leagues) ?></p>
+                <a href="<?= $basePath ?>/admin/leagues"
+                    class="text-xs text-text-muted hover:text-primary transition-colors">View
+                    all</a>
+            </div>
+
+            <div class="text-center">
+                <h3 class="text-sm text-text-muted mb-2 uppercase tracking-wide font-semibold">Cups</h3>
+                <p class="text-4xl font-extrabold text-primary m-0"><?= count($cups) ?></p>
+                <a href="<?= $basePath ?>/admin/cups"
+                    class="text-xs text-text-muted hover:text-primary transition-colors">View all</a>
+            </div>
+        </div>
+
+        <?php if (!empty($leagues)): ?>
+            <div class="mb-8">
+                <h3 class="mb-4 text-lg font-bold">League Competitions</h3>
+                <ul class="border border-border rounded-sm overflow-hidden bg-background">
+                    <?php foreach ($leagues as $league): ?>
+                        <li
+                            class="flex items-center gap-4 px-5 py-4 bg-background border-b border-border last:border-b-0 hover:bg-surface-hover transition-colors">
+                            <a href="<?= $basePath ?>/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>"
+                                class="flex-1 font-semibold text-text-main hover:text-primary transition-colors">
+                                <?= htmlspecialchars($league['name']) ?>
+                            </a>
+                            <span class="text-text-muted text-sm"><?= count($league['teamIds'] ?? []) ?> teams</span>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
+
+        <?php if (!empty($cups)): ?>
+            <div class="mt-8 mb-4">
+                <h3 class="mb-4 text-lg font-bold">Cup Competitions</h3>
+                <ul class="border border-border rounded-sm overflow-hidden bg-background">
+                    <?php foreach ($cups as $cup): ?>
+                        <li
+                            class="flex items-center gap-4 px-5 py-4 bg-background border-b border-border last:border-b-0 hover:bg-surface-hover transition-colors">
+                            <a href="<?= $basePath ?>/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>"
+                                class="flex-1 font-semibold text-text-main hover:text-primary transition-colors">
+                                <?= htmlspecialchars($cup['name']) ?>
+                            </a>
+                            <span class="text-text-muted text-sm"><?= count($cup['teamIds'] ?? []) ?> teams</span>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
+    </div>
 <?php else: ?>
     <div class="card text-center p-12">
         <h2 class="text-error mb-4">No Active Season</h2>
         <p class="text-text-muted mb-8">Create a season and set it as active to see your competitions here.</p>
-        <a href="/admin/seasons/create" class="btn btn-primary">Create Season</a>
+        <a href="<?= $basePath ?>/admin/seasons/create" class="btn btn-primary">Create Season</a>
     </div>
 <?php endif; ?>
 
 <script>
     const CSRF_TOKEN = '<?= htmlspecialchars($csrfToken ?? '') ?>';
+    const BASE_PATH = '<?= $basePath ?>';
 
     document.addEventListener('DOMContentLoaded', function () {
         const select = document.getElementById('competition-select');
@@ -155,7 +160,7 @@
             container.style.opacity = '0.5';
             loader.classList.remove('hidden');
 
-            fetch(`/admin/dashboard/upcoming-fixtures?type=${type}&id=${id}`)
+            fetch(`${BASE_PATH}/admin/dashboard/upcoming-fixtures?type=${type}&id=${id}`)
                 .then(response => response.json())
                 .then(data => {
                     renderFixtures(data.fixtures || [], type, slug);
@@ -263,13 +268,7 @@
         formData.append('csrf_token', CSRF_TOKEN);
         formData.append('ajax', '1');
 
-        // Use the existing logic for csrf if available, but for now we might skip if not strictly enforced in this simple app context or add it if present
-        // Looking at other views, csrf_token is usually hidden input. 
-        // I should ideally grab it from a meta tag or existing input?
-        // Let's inspect if csrf exists in the page.
-        // I'll skip csrf for now to keep it simple as per instructions "this is a simple app".
-
-        fetch(`/admin/${type}s/${slug}/fixtures`, {
+        fetch(`${BASE_PATH}/admin/${type}s/${slug}/fixtures`, {
             method: 'POST',
             body: formData
         })

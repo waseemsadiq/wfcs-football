@@ -155,7 +155,7 @@ HTML;
                     <ul class="space-y-2">
                         <?php foreach ($leagues as $league): ?>
                             <li>
-                                <a href="/league/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>"
+                                <a href="<?=$basePath?>/league/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>"
                                     class="flex items-center gap-3 p-3 rounded-sm hover:bg-surface-hover transition-colors group">
                                     <span class="text-xl group-hover:scale-110 transition-transform">🏆</span>
                                     <span
@@ -182,7 +182,7 @@ HTML;
                     <ul class="space-y-2">
                         <?php foreach ($cups as $cup): ?>
                             <li>
-                                <a href="/cup/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>"
+                                <a href="<?=$basePath?>/cup/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>"
                                     class="flex items-center gap-3 p-3 rounded-sm hover:bg-surface-hover transition-colors group">
                                     <span class="text-xl group-hover:scale-110 transition-transform">🏅</span>
                                     <span

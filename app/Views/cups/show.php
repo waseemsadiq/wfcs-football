@@ -5,7 +5,7 @@
             <?= htmlspecialchars($cup['name']) ?>
         </h1>
         <div class="flex gap-4">
-            <a href="/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>/edit"
+            <a href="<?= $basePath ?>/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>/edit"
                 class="btn btn-secondary">Edit Cup</a>
         </div>
     </div>
@@ -15,8 +15,10 @@
         <div class="flex items-center justify-between mb-6 pb-4 border-b border-border">
             <h2 class="text-xl font-bold">Tournament Bracket</h2>
             <div class="flex gap-2 items-center text-sm text-text-muted">
-                <span class="flex-1"><span class="font-bold">Key:</span> Scores in () = extra time, [] = penalties</span>
-                <a href="/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>/fixtures" class="btn btn-primary mr-3">Manage Fixtures</a>
+                <span class="flex-1"><span class="font-bold">Key:</span> Scores in () = extra time, [] =
+                    penalties</span>
+                <a href="<?= $basePath ?>/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>/fixtures"
+                    class="btn btn-primary mr-3">Manage Fixtures</a>
             </div>
         </div>
 
@@ -37,7 +39,7 @@
                                 <?php
                                 $today = date('Y-m-d');
                                 foreach ($round['fixtures'] as $fixture):
-                                ?>
+                                    ?>
                                     <div
                                         class="border border-border rounded-lg bg-surface shadow-sm overflow-hidden relative group hover:border-primary/30 transition-colors">
                                         <?php
@@ -57,13 +59,15 @@
                                         ?>
                                         <?php if ($canEnterScore): ?>
                                             <!-- Score Entry Form for Cup Match -->
-                                            <form onsubmit="saveCupScore(event, '<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>', '<?= htmlspecialchars($fixture['id']) ?>', '<?= htmlspecialchars($round['name']) ?>')"
+                                            <form
+                                                onsubmit="saveCupScore(event, '<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>', '<?= htmlspecialchars($fixture['id']) ?>', '<?= htmlspecialchars($round['name']) ?>')"
                                                 class="p-3" id="cup-form-<?= htmlspecialchars($fixture['id']) ?>">
                                                 <!-- Home Team -->
                                                 <div class="flex items-center mb-2 pb-2 border-b border-border/50">
                                                     <span class="inline-block w-3 h-3 rounded-sm flex-shrink-0 mr-2"
                                                         style="background-color: <?= htmlspecialchars($fixture['homeTeamColour']) ?>;"></span>
-                                                    <span class="flex-grow truncate text-sm"><?= htmlspecialchars($fixture['homeTeamName']) ?></span>
+                                                    <span
+                                                        class="flex-grow truncate text-sm"><?= htmlspecialchars($fixture['homeTeamName']) ?></span>
                                                     <input type="number" name="homeScore" min="0" max="99"
                                                         class="w-12 text-center p-1 rounded bg-surface border border-border focus:border-primary focus:outline-none text-sm font-bold ml-2"
                                                         placeholder="0" required>
@@ -73,7 +77,8 @@
                                                 <div class="flex items-center mb-3">
                                                     <span class="inline-block w-3 h-3 rounded-sm flex-shrink-0 mr-2"
                                                         style="background-color: <?= htmlspecialchars($fixture['awayTeamColour']) ?>;"></span>
-                                                    <span class="flex-grow truncate text-sm"><?= htmlspecialchars($fixture['awayTeamName']) ?></span>
+                                                    <span
+                                                        class="flex-grow truncate text-sm"><?= htmlspecialchars($fixture['awayTeamName']) ?></span>
                                                     <input type="number" name="awayScore" min="0" max="99"
                                                         class="w-12 text-center p-1 rounded bg-surface border border-border focus:border-primary focus:outline-none text-sm font-bold ml-2"
                                                         placeholder="0" required>
@@ -82,8 +87,10 @@
                                                 <!-- Save Button -->
                                                 <button type="submit"
                                                     class="w-full py-2 rounded bg-primary text-white hover:bg-primary-hover shadow-sm transition-colors text-sm font-medium flex items-center justify-center gap-2">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                                        viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M5 13l4 4L19 7" />
                                                     </svg>
                                                     Save Result
                                                 </button>
@@ -176,7 +183,7 @@
         formData.append('csrf_token', CSRF_TOKEN);
         formData.append('ajax', '1');
 
-        fetch(`/admin/cups/${cupSlug}/fixtures`, {
+        fetch(`<?= $basePath ?>/admin/cups/${cupSlug}/fixtures`, {
             method: 'POST',
             body: formData
         })

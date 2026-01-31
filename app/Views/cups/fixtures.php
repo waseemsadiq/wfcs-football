@@ -5,7 +5,7 @@
             <p class="text-text-muted mt-1 text-lg">Manage Fixtures</p>
         </div>
         <div class="flex gap-4">
-            <a href="/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>" class="btn btn-secondary">Back to
+            <a href="<?=$basePath?>/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>" class="btn btn-secondary">Back to
                 Bracket</a>
         </div>
     </div>
@@ -32,7 +32,7 @@
                         <?php if ($fixture['homeTeamId'] && $fixture['awayTeamId']): ?>
                             <div
                                 class="bg-surface border border-border rounded-lg mb-4 p-4 hover:border-primary/30 transition-colors shadow-sm">
-                                <form method="POST" action="/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>/fixtures">
+                                <form method="POST" action="<?=$basePath?>/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>/fixtures">
                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
                                     <input type="hidden" name="fixtureId" value="<?= htmlspecialchars($fixture['id']) ?>">
 
@@ -210,7 +210,7 @@
             bracket will be re-drawn.</p>
 
         <form id="regenerateForm" method="POST"
-            action="/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>/regenerate-fixtures">
+            action="<?=$basePath?>/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>/regenerate-fixtures">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
             <input type="hidden" name="ajax" value="1">
 

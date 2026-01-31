@@ -8,7 +8,7 @@
     <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
         <h2 class="text-2xl font-bold m-0">All Teams</h2>
         <div class="flex gap-4 items-center">
-            <a href="/admin/teams/create" class="btn btn-primary">+ Add Team</a>
+            <a href="<?=$basePath?>/admin/teams/create" class="btn btn-primary">+ Add Team</a>
             <button type="button" id="deleteSelectedBtn"
                 class="btn bg-danger text-white hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 disabled>
@@ -21,7 +21,7 @@
         <div class="text-center py-16 px-8">
             <p class="text-text-muted mb-6 text-lg">No teams added yet.</p>
             <p class="text-text-muted mb-8">Get started by adding your first team.</p>
-            <a href="/admin/teams/create" class="btn btn-primary">Add Your First Team</a>
+            <a href="<?=$basePath?>/admin/teams/create" class="btn btn-primary">Add Your First Team</a>
         </div>
     <?php else: ?>
         <div class="overflow-x-auto">
@@ -45,7 +45,7 @@
                                 <div class="flex items-center">
                                     <span class="inline-block w-3 h-3 rounded-sm mr-3"
                                         style="background-color: <?= htmlspecialchars($team['colour'] ?? '#1a5f2a') ?>;"></span>
-                                    <a href="/admin/teams/<?= htmlspecialchars($team['slug'] ?? $team['id']) ?>"
+                                    <a href="<?=$basePath?>/admin/teams/<?= htmlspecialchars($team['slug'] ?? $team['id']) ?>"
                                         class="font-bold text-text-main no-underline hover:text-primary transition-colors">
                                         <?= htmlspecialchars($team['name']) ?>
                                     </a>
@@ -60,10 +60,10 @@
                             </td>
                             <td class="table-td"><?= count($team['players'] ?? []) ?></td>
                             <td class="table-td text-right">
-                                <a href="/admin/teams/<?= htmlspecialchars($team['slug'] ?? $team['id']) ?>/edit"
+                                <a href="<?=$basePath?>/admin/teams/<?= htmlspecialchars($team['slug'] ?? $team['id']) ?>/edit"
                                     class="btn btn-secondary btn-sm mr-2">Edit</a>
                                 <form method="POST"
-                                    action="/admin/teams/<?= htmlspecialchars($team['slug'] ?? $team['id']) ?>/delete"
+                                    action="<?=$basePath?>/admin/teams/<?= htmlspecialchars($team['slug'] ?? $team['id']) ?>/delete"
                                     class="inline-block"
                                     onsubmit="return confirm('Are you sure you want to delete <?= htmlspecialchars(addslashes($team['name'])) ?>? This cannot be undone.');">
                                     <input type="hidden" name="csrf_token"
@@ -83,7 +83,7 @@
         </div>
     <?php endif; ?>
 
-    <form id="bulkDeleteForm" method="POST" action="/admin/teams/delete-multiple" class="hidden">
+    <form id="bulkDeleteForm" method="POST" action="<?=$basePath?>/admin/teams/delete-multiple" class="hidden">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(\Core\Auth::csrfToken()) ?>">
     </form>
 

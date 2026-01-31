@@ -1,7 +1,7 @@
 <div class="max-w-4xl mx-auto">
     <div class="flex justify-between items-center mb-8">
         <h1 class="text-3xl font-bold m-0">Create Cup</h1>
-        <a href="/admin/cups" class="btn btn-secondary">Cancel</a>
+        <a href="<?=$basePath?>/admin/cups" class="btn btn-secondary">Cancel</a>
     </div>
 
     <?php if (empty($seasons)): ?>
@@ -16,7 +16,7 @@
                 <div class="font-semibold text-lg">Season Required</div>
             </div>
             <p>You need to create a season before you can create a cup.</p>
-            <a href="/admin/seasons/create" class="btn btn-primary">Create Season</a>
+            <a href="<?=$basePath?>/admin/seasons/create" class="btn btn-primary">Create Season</a>
         </div>
     <?php elseif (empty($teams) || count($teams) < 2): ?>
         <div
@@ -30,11 +30,11 @@
                 <div class="font-semibold text-lg">More Teams Required</div>
             </div>
             <p>You need at least 2 teams before you can create a cup.</p>
-            <a href="/admin/teams/create" class="btn btn-primary">Add Teams</a>
+            <a href="<?=$basePath?>/admin/teams/create" class="btn btn-primary">Add Teams</a>
         </div>
     <?php else: ?>
         <div class="card">
-            <form method="POST" action="/admin/cups/store">
+            <form method="POST" action="<?=$basePath?>/admin/cups/store">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -114,7 +114,7 @@
 
                 <div class="flex items-center gap-4 pt-6 border-t border-border">
                     <button type="submit" class="btn btn-primary">Create Cup</button>
-                    <a href="/admin/cups" class="btn btn-secondary">Cancel</a>
+                    <a href="<?=$basePath?>/admin/cups" class="btn btn-secondary">Cancel</a>
                 </div>
             </form>
         </div>

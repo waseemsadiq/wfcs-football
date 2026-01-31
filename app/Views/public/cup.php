@@ -81,7 +81,7 @@ HTML;
             class="text-4xl font-extrabold m-0 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 mb-2">
             <?= htmlspecialchars($cup['name']) ?>
         </h1>
-        <p class="mb-8"><a href="/" class="text-primary hover:text-primary-hover transition-colors font-medium">Back to
+        <p class="mb-8"><a href="<?=$basePath?>/" class="text-primary hover:text-primary-hover transition-colors font-medium">Back to
                 home</a></p>
     </div>
 

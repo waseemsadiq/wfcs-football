@@ -65,7 +65,8 @@ HTML;
             class="text-4xl font-extrabold m-0 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 mb-2">
             <?= htmlspecialchars($league['name']) ?>
         </h1>
-        <p class="mb-8"><a href="/" class="text-primary hover:text-primary-hover transition-colors font-medium">Back to
+        <p class="mb-8"><a href="<?= $basePath ?>/"
+                class="text-primary hover:text-primary-hover transition-colors font-medium">Back to
                 home</a></p>
     </div>
 
@@ -109,6 +110,9 @@ HTML;
                                     <th
                                         class="uppercase text-xs font-bold text-text-muted tracking-wider p-4 border-b border-border text-center w-16">
                                         Pts</th>
+                                    <th
+                                        class="uppercase text-xs font-bold text-text-muted tracking-wider p-4 border-b border-border text-left w-32 hidden md:table-cell">
+                                        Form</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -122,7 +126,7 @@ HTML;
                                                 <span class="inline-block w-3 h-3 rounded-sm shadow-sm flex-shrink-0"
                                                     style="background-color: <?= htmlspecialchars($row['teamColour']) ?>"></span>
                                                 <span class="font-semibold text-text-main">
-                                                    <a href="/team/<?= htmlspecialchars($row['teamSlug'] ?? $row['teamId']) ?>"
+                                                    <a href="<?= $basePath ?>/team/<?= htmlspecialchars($row['teamSlug'] ?? $row['teamId']) ?>"
                                                         class="hover:text-primary transition-colors">
                                                         <?= htmlspecialchars($row['teamName']) ?>
                                                     </a>
@@ -145,6 +149,29 @@ HTML;
                                             <?= $row['goalDifference'] > 0 ? '+' . $row['goalDifference'] : $row['goalDifference'] ?>
                                         </td>
                                         <td class="p-4 text-center font-bold text-lg text-white"><?= $row['points'] ?></td>
+                                        <td class="p-4 hidden md:table-cell">
+                                            <div class="flex items-center justify-start gap-1">
+                                                <?php if (!empty($row['form'])): ?>
+                                                    <?php foreach ($row['form'] as $result): ?>
+                                                        <?php
+                                                        $colorClass = match ($result) {
+                                                            'W' => 'bg-green-500 text-white',
+                                                            'D' => 'bg-gray-500 text-white',
+                                                            'L' => 'bg-danger text-white',
+                                                            default => 'bg-gray-700 text-gray-300'
+                                                        };
+                                                        ?>
+                                                        <span
+                                                            class="w-5 h-5 flex items-center justify-center rounded text-[10px] font-bold <?= $colorClass ?>"
+                                                            title="<?= $result ?>">
+                                                            <?= $result ?>
+                                                        </span>
+                                                    <?php endforeach; ?>
+                                                <?php else: ?>
+                                                    <span class="text-text-muted text-xs">-</span>
+                                                <?php endif; ?>
+                                            </div>
+                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>

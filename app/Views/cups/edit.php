@@ -5,14 +5,14 @@
             <p class="text-text-muted mt-1 text-lg"><?= htmlspecialchars($cup['name']) ?></p>
         </div>
         <div class="flex gap-4">
-            <a href="/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>/fixtures"
+            <a href="<?=$basePath?>/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>/fixtures"
                 class="btn btn-primary">Manage Fixtures</a>
-            <a href="/admin/cups" class="btn btn-secondary">Back to Cups</a>
+            <a href="<?=$basePath?>/admin/cups" class="btn btn-secondary">Back to Cups</a>
         </div>
     </div>
 
     <div class="card mb-8">
-        <form method="POST" action="/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>/update">
+        <form method="POST" action="<?=$basePath?>/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>/update">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
 
             <div class="mb-6">
@@ -58,7 +58,7 @@
 
             <div class="flex items-center gap-4 pt-6 border-t border-border">
                 <button type="submit" class="btn btn-primary">Save Changes</button>
-                <a href="/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>"
+                <a href="<?=$basePath?>/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>"
                     class="btn btn-secondary">Cancel</a>
             </div>
         </form>
@@ -68,7 +68,7 @@
         <h2 class="text-xl font-bold text-danger mb-4">Danger Zone</h2>
         <p class="text-text-muted mb-6">Permanently delete this cup and all its fixture data.</p>
 
-        <form method="POST" action="/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>/delete"
+        <form method="POST" action="<?=$basePath?>/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>/delete"
             onsubmit="return confirm('Are you sure you want to delete this cup? This cannot be undone.');">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
             <button type="submit"

@@ -1,3 +1,6 @@
+<?php
+$basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
+?>
 <!DOCTYPE html>
 <html lang="en-GB">
 
@@ -5,7 +8,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= isset($title) ? htmlspecialchars($title) . ' - ' : '' ?>WFCS Football</title>
-    <link rel="stylesheet" href="/css/output.css">
+    <link rel="stylesheet" href="<?= $basePath ?>/css/output.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -14,22 +17,27 @@
 <body class="bg-background text-text-main font-sans antialiased min-h-screen flex flex-col">
     <header class="bg-surface/80 backdrop-blur-md border-b border-border py-5 mb-12 sticky top-0 z-50">
         <div class="max-w-[1200px] mx-auto px-6 w-full flex justify-between items-center">
-            <a href="/" class="flex items-center no-underline">
-                <img src="/images/logo-white.svg" alt="WFCS Football" class="h-20 w-20">
+            <a href="<?= $basePath ?>/" class="flex items-center no-underline">
+                <img src="<?= $basePath ?>/images/logo-white.svg" alt="WFCS Football" class="h-20 w-20">
             </a>
 
             <!-- Desktop Navigation (hidden on mobile) -->
             <nav class="hidden md:flex items-center space-x-8">
-                <a href="/"
+                <a href="<?= $basePath ?>/"
                     class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Home</a>
-                <a href="/leagues"
+                <a href="<?= $basePath ?>/leagues"
                     class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Leagues</a>
+                <a href="<?= $basePath ?>/cups"
+                    class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Cups</a>
+                <a href="<?= $basePath ?>/teams"
+                    class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Teams</a>
                 <?php if (isset($_SESSION['admin_id'])): ?>
-                    <a href="/admin"
+                    <a href="<?= $basePath ?>/admin"
                         class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Admin
                         Stuff</a>
                 <?php endif; ?>
-                <a href="/login" aria-label="Admin Login" class="text-text-muted hover:text-primary transition-colors">
+                <a href="<?= $basePath ?>/login" aria-label="Admin Login"
+                    class="text-text-muted hover:text-primary transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
@@ -72,16 +80,20 @@
 
             <!-- Sidebar Navigation -->
             <nav class="flex-1 flex flex-col p-6 space-y-4">
-                <a href="/"
+                <a href="<?= $basePath ?>/"
                     class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Home</a>
-                <a href="/leagues"
+                <a href="<?= $basePath ?>/leagues"
                     class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Leagues</a>
+                <a href="<?= $basePath ?>/cups"
+                    class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Cups</a>
+                <a href="<?= $basePath ?>/teams"
+                    class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Teams</a>
                 <?php if (isset($_SESSION['admin_id'])): ?>
-                    <a href="/admin"
+                    <a href="<?= $basePath ?>/admin"
                         class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Admin
                         Stuff</a>
                 <?php endif; ?>
-                <a href="/login"
+                <a href="<?= $basePath ?>/login"
                     class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

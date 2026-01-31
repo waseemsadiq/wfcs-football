@@ -18,7 +18,7 @@ usort($fixtures, function ($a, $b) {
 
 <div class="card">
     <div class="flex justify-end gap-4 mb-8">
-        <a href="/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>" class="btn btn-secondary">
+        <a href="<?=$basePath?>/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>" class="btn btn-secondary">
             Back to League
         </a>
     </div>
@@ -32,7 +32,7 @@ usort($fixtures, function ($a, $b) {
                 with a new schedule.</p>
 
             <form id="regenerateForm" method="POST"
-                action="/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>/regenerate-fixtures">
+                action="<?=$basePath?>/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>/regenerate-fixtures">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
                 <input type="hidden" name="ajax" value="1">
 
@@ -104,7 +104,7 @@ usort($fixtures, function ($a, $b) {
                     <?php foreach ($dateFixtures as $fixture): ?>
                         <div class="bg-background border border-border rounded-sm p-6">
                             <form method="POST"
-                                action="/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>/fixtures">
+                                action="<?=$basePath?>/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>/fixtures">
                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
                                 <input type="hidden" name="fixtureId" value="<?= htmlspecialchars($fixture['id']) ?>">
 

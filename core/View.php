@@ -20,10 +20,24 @@ class View
     }
 
     /**
+     * Get shared data available to all views.
+     */
+    private function getSharedData(): array
+    {
+        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+        $basePath = rtrim(dirname($scriptName), '/\\');
+        return [
+            'basePath' => $basePath === '/' || $basePath === '\\' ? '' : $basePath
+        ];
+    }
+
+    /**
      * Render a view with a layout.
      */
     public function render(string $template, array $data = [], string $layout = 'main'): void
     {
+        $data = array_merge($this->getSharedData(), $data);
+
         $content = $this->renderTemplate($template, $data);
         $data['content'] = $content;
 
@@ -42,6 +56,7 @@ class View
      */
     public function renderPartial(string $template, array $data = []): void
     {
+        $data = array_merge($this->getSharedData(), $data);
         echo $this->renderTemplate($template, $data);
     }
 

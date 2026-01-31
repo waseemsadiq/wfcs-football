@@ -1,6 +1,6 @@
 <div class="flex justify-between items-center mb-6">
     <h1 class="text-3xl font-bold m-0">Cups</h1>
-    <a href="/admin/cups/create" class="btn btn-primary">Create Cup</a>
+    <a href="<?=$basePath?>/admin/cups/create" class="btn btn-primary">Create Cup</a>
 </div>
 
 <div class="card">
@@ -9,7 +9,7 @@
             <h2 class="text-xl font-bold mb-4">No Cups Found</h2>
             <p class="text-text-muted mb-8 max-w-md mx-auto">Cup competitions allow you to create knockout tournaments.
                 Create your first cup to generate a bracket and fixtures.</p>
-            <a href="/admin/cups/create" class="btn btn-primary">Create Your First Cup</a>
+            <a href="<?=$basePath?>/admin/cups/create" class="btn btn-primary">Create Your First Cup</a>
         </div>
     <?php else: ?>
         <div class="overflow-x-auto">
@@ -27,7 +27,7 @@
                     <?php foreach ($cups as $cup): ?>
                         <tr class="hover:bg-surface-hover/50 transition-colors">
                             <td class="p-4 pl-6">
-                                <a href="/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>"
+                                <a href="<?=$basePath?>/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>"
                                     class="font-bold text-text-main hover:text-primary transition-colors text-lg">
                                     <?= htmlspecialchars($cup['name']) ?>
                                 </a>
@@ -48,9 +48,9 @@
                                 </span>
                             </td>
                             <td class="p-4 pr-6 text-right space-x-2">
-                                <a href="/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>"
+                                <a href="<?=$basePath?>/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>"
                                     class="btn btn-sm btn-secondary">Bracket</a>
-                                <a href="/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>/fixtures"
+                                <a href="<?=$basePath?>/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>/fixtures"
                                     class="btn btn-sm btn-primary">Fixtures</a>
                             </td>
                         </tr>

@@ -178,7 +178,7 @@ HTML;
             loadingState.classList.remove('hidden');
 
             try {
-                const response = await fetch(`/leagues/${slug}/data`);
+                const response = await fetch(`<?= $basePath ?>/leagues/${slug}/data`);
 
                 if (!response.ok) {
                     throw new Error('Failed to load league data');
@@ -271,7 +271,7 @@ HTML;
                             <div class="flex items-center gap-3">
                                 <span class="inline-block w-3 h-3 rounded-full shadow-sm flex-shrink-0" style="background-color: ${escapeHtml(row.teamColour)}"></span>
                                 <span class="font-semibold text-text-main">
-                                    <a href="/team/${escapeHtml(row.teamSlug || row.teamId)}" class="hover:text-primary transition-colors">
+                                    <a href="<?= $basePath ?>/team/${escapeHtml(row.teamSlug || row.teamId)}" class="hover:text-primary transition-colors">
                                         ${escapeHtml(row.teamName)}
                                     </a>
                                 </span>
@@ -372,8 +372,8 @@ HTML;
                 scoreHtml = `<div class="text-base text-text-muted bg-transparent font-medium">${escapeHtml(time)}</div>`;
             }
 
-            const homeLink = homeId ? `<a href="/team/${homeSlug}" class="hover:text-primary transition-colors">${homeName}</a>` : homeName;
-            const awayLink = awayId ? `<a href="/team/${awaySlug}" class="hover:text-primary transition-colors">${awayName}</a>` : awayLink;
+            const homeLink = homeId ? `<a href="<?= $basePath ?>/team/${homeSlug}" class="hover:text-primary transition-colors">${homeName}</a>` : homeName;
+            const awayLink = awayId ? `<a href="<?= $basePath ?>/team/${awaySlug}" class="hover:text-primary transition-colors">${awayName}</a>` : awayLink;
 
             return `
                 <div class="flex flex-row items-center py-4 gap-4 hover:bg-surface-hover/50 transition-colors rounded-sm">

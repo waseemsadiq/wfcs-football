@@ -295,6 +295,228 @@ class PublicController extends Controller
     }
 
     /**
+     * Cups overview page - shows all cups with interactive selector.
+     */
+    public function cups(): void
+    {
+        $activeSeason = $this->seasonModel->getActive();
+        $cups = [];
+
+        if ($activeSeason) {
+            $cups = $this->cupModel->getBySeasonId($activeSeason['id']);
+
+            // Sort cups alphabetically by name
+            usort($cups, fn($a, $b) => strcmp($a['name'] ?? '', $b['name'] ?? ''));
+        }
+
+        $this->render('public/cups', [
+            'title' => 'Cups',
+            'seasonName' => $activeSeason['name'] ?? null,
+            'cups' => $cups,
+        ], 'public');
+    }
+
+    /**
+     * AJAX endpoint - returns cup data as JSON.
+     */
+    public function cupData(string $slug): void
+    {
+        header('Content-Type: application/json');
+
+        $cup = $this->cupModel->findWhere('slug', $slug);
+
+        if (!$cup) {
+            http_response_code(404);
+            echo json_encode(['error' => 'Cup not found']);
+            return;
+        }
+
+        $teams = $this->teamModel->all();
+        $teamsById = $this->indexById($teams);
+
+        // Enrich rounds with team data
+        $rounds = [];
+        foreach ($cup['rounds'] ?? [] as $round) {
+            $enrichedFixtures = $this->enrichFixtures(
+                $round['fixtures'] ?? [],
+                $teamsById,
+                $cup['name'],
+                'cup',
+                $round['name']
+            );
+            $rounds[] = [
+                'name' => $round['name'],
+                'fixtures' => $enrichedFixtures,
+            ];
+        }
+
+        echo json_encode([
+            'cup' => [
+                'name' => $cup['name'],
+                'slug' => $cup['slug'],
+            ],
+            'rounds' => $rounds,
+        ]);
+    }
+
+    /**
+     * Teams overview page - shows all teams with interactive selector.
+     */
+    public function teams(): void
+    {
+        $activeSeason = $this->seasonModel->getActive();
+        $teams = $this->teamModel->all();
+
+        // Sort teams alphabetically
+        usort($teams, fn($a, $b) => strcmp($a['name'] ?? '', $b['name'] ?? ''));
+
+        $this->render('public/teams', [
+            'title' => 'Teams',
+            'seasonName' => $activeSeason['name'] ?? null,
+            'teams' => $teams,
+        ], 'public');
+    }
+
+    /**
+     * AJAX endpoint - returns team data as JSON.
+     */
+    public function teamData(string $slug): void
+    {
+        header('Content-Type: application/json');
+
+        $team = $this->teamModel->findWhere('slug', $slug);
+
+        if (!$team) {
+            http_response_code(404);
+            echo json_encode(['error' => 'Team not found']);
+            return;
+        }
+
+        $id = $team['id'];
+        $activeSeason = $this->seasonModel->getActive();
+        $teamsById = $this->indexById($this->teamModel->all());
+
+        $fixtures = [];
+        $competitions = [];
+
+        if ($activeSeason) {
+            $leagues = $this->leagueModel->getBySeasonId($activeSeason['id']);
+            $cups = $this->cupModel->getBySeasonId($activeSeason['id']);
+
+            // Gather fixtures where this team plays
+            $allFixtures = $this->gatherAllFixtures($leagues, $cups, $teamsById);
+            $teamFixtures = array_filter($allFixtures, function ($f) use ($id) {
+                return ($f['homeTeamId'] ?? '') === $id || ($f['awayTeamId'] ?? '') === $id;
+            });
+
+            // Sort by date
+            usort($teamFixtures, fn($a, $b) => strcmp($a['date'] ?? '', $b['date'] ?? ''));
+
+            $fixtures = array_values($teamFixtures);
+
+            // Identify participating competitions
+            $allTeams = array_values($teamsById);
+
+            foreach ($leagues as $league) {
+                if (in_array($id, $league['teamIds'] ?? [])) {
+                    // Calculate position
+                    $standings = $this->leagueModel->calculateStandings($league, $allTeams);
+                    $position = '-';
+                    foreach ($standings as $idx => $row) {
+                        if ($row['teamId'] === $id) {
+                            $pos = $idx + 1;
+                            $suffix = 'th';
+                            if (!in_array(($pos % 100), [11, 12, 13])) {
+                                switch ($pos % 10) {
+                                    case 1:
+                                        $suffix = 'st';
+                                        break;
+                                    case 2:
+                                        $suffix = 'nd';
+                                        break;
+                                    case 3:
+                                        $suffix = 'rd';
+                                        break;
+                                }
+                            }
+                            $position = $pos . $suffix;
+                            break;
+                        }
+                    }
+
+                    $competitions[] = [
+                        'name' => $league['name'],
+                        'slug' => $league['slug'],
+                        'type' => 'league',
+                        'detail' => $position,
+                        'url' => '/league/' . $league['slug']
+                    ];
+                }
+            }
+
+            foreach ($cups as $cup) {
+                if (in_array($id, $cup['teamIds'] ?? [])) {
+                    $status = 'Participant';
+                    foreach ($cup['rounds'] ?? [] as $round) {
+                        foreach ($round['fixtures'] ?? [] as $f) {
+                            if (($f['homeTeamId'] ?? '') === $id || ($f['awayTeamId'] ?? '') === $id) {
+                                if (!isset($f['result'])) {
+                                    $status = $round['name'];
+                                } else {
+                                    $home = (int) ($f['result']['homeScore'] ?? 0);
+                                    $away = (int) ($f['result']['awayScore'] ?? 0);
+                                    $isHome = ($f['homeTeamId'] ?? '') === $id;
+
+                                    $won = false;
+                                    if ($home > $away)
+                                        $won = $isHome;
+                                    elseif ($away > $home)
+                                        $won = !$isHome;
+                                    else {
+                                        if (isset($f['result']['penalties'])) {
+                                            $pHome = (int) ($f['result']['penalties']['homeScore'] ?? 0);
+                                            $pAway = (int) ($f['result']['penalties']['awayScore'] ?? 0);
+                                            $won = $isHome ? ($pHome > $pAway) : ($pAway > $pHome);
+                                        }
+                                    }
+
+                                    if (!$won) {
+                                        $status = 'Knocked out in ' . $round['name'];
+                                    } else {
+                                        $status = 'Won ' . $round['name'];
+                                        if (stripos($round['name'], 'Final') !== false) {
+                                            $status = 'Winner';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    $competitions[] = [
+                        'name' => $cup['name'],
+                        'slug' => $cup['slug'],
+                        'type' => 'cup',
+                        'detail' => $status,
+                        'url' => '/cup/' . $cup['slug']
+                    ];
+                }
+            }
+        }
+
+        // Split fixtures into recent and upcoming
+        $recentResults = $this->getRecentResults($fixtures, 5);
+        $upcomingFixtures = $this->getUpcomingFixtures($fixtures, 100);
+
+        echo json_encode([
+            'team' => $team,
+            'competitions' => $competitions,
+            'recentResults' => $recentResults,
+            'upcomingFixtures' => $upcomingFixtures,
+        ]);
+    }
+
+    /**
      * AJAX endpoint - returns league data as JSON.
      */
     public function leagueData(string $slug): void

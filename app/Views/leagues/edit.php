@@ -6,7 +6,7 @@
 </div>
 
 <div class="card mb-8">
-    <form method="POST" action="/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>/update">
+    <form method="POST" action="<?=$basePath?>/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>/update">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
         <div class="mb-8">
             <label for="name" class="block mb-2 font-semibold text-text-muted text-sm uppercase tracking-wide">League
@@ -49,7 +49,7 @@
 
         <div class="flex gap-4 mt-8 border-t border-border pt-8">
             <button type="submit" class="btn btn-primary">Save Changes</button>
-            <a href="/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>"
+            <a href="<?=$basePath?>/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>"
                 class="btn btn-secondary">Cancel</a>
         </div>
     </form>
@@ -59,7 +59,7 @@
     <h2 class="text-danger text-2xl font-bold mb-4">Danger Zone</h2>
     <p class="text-text-muted mb-6">Permanently delete this league and all its fixture data.</p>
 
-    <form method="POST" action="/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>/delete"
+    <form method="POST" action="<?=$basePath?>/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>/delete"
         onsubmit="return confirm('Are you sure you want to delete this league? This cannot be undone.');">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
         <button type="submit" class="btn bg-transparent border border-danger text-danger hover:bg-danger/10">Delete

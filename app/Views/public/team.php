@@ -67,7 +67,7 @@ HTML;
 
 <div class="container">
     <div class="mb-8">
-        <a href="/" class="text-primary hover:text-primary-hover transition-colors font-medium flex items-center gap-2">
+        <a href="<?=$basePath?>/" class="text-primary hover:text-primary-hover transition-colors font-medium flex items-center gap-2">
             <span aria-hidden="true">&larr;</span> Back to home
         </a>
     </div>

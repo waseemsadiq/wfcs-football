@@ -4,5 +4,5 @@
     </h1>
     <p class="text-text-muted text-lg mb-8 max-w-md mx-auto">
         <?= htmlspecialchars($message ?? 'The page you are looking for does not exist.') ?></p>
-    <a href="/" class="btn btn-primary">Back to home</a>
+    <a href="<?=$basePath?>/" class="btn btn-primary">Back to home</a>
 </div>

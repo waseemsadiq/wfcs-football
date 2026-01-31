@@ -1,12 +1,12 @@
 <div class="max-w-2xl mx-auto">
     <div class="flex justify-between items-center mb-8">
         <h1 class="text-3xl font-bold m-0">Edit <?= htmlspecialchars($team['name']) ?></h1>
-        <a href="/admin/teams/<?= htmlspecialchars($team['slug'] ?? $team['id']) ?>"
+        <a href="<?=$basePath?>/admin/teams/<?= htmlspecialchars($team['slug'] ?? $team['id']) ?>"
             class="btn btn-secondary">Cancel</a>
     </div>
 
     <div class="card">
-        <form method="POST" action="/admin/teams/<?= htmlspecialchars($team['slug'] ?? $team['id']) ?>/update">
+        <form method="POST" action="<?=$basePath?>/admin/teams/<?= htmlspecialchars($team['slug'] ?? $team['id']) ?>/update">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
 
             <div class="mb-6">
@@ -50,7 +50,7 @@
 
             <div class="flex items-center gap-4 pt-6 border-t border-border">
                 <button type="submit" class="btn btn-primary">Save Changes</button>
-                <a href="/admin/teams/<?= htmlspecialchars($team['slug'] ?? $team['id']) ?>"
+                <a href="<?=$basePath?>/admin/teams/<?= htmlspecialchars($team['slug'] ?? $team['id']) ?>"
                     class="btn btn-secondary">Cancel</a>
             </div>
         </form>

@@ -6,7 +6,7 @@
         <div class="flex gap-4">
             <?php if (empty($season['isActive'])): ?>
                 <form method="POST"
-                    action="/admin/seasons/<?= htmlspecialchars($season['slug'] ?? $season['id']) ?>/set-active"
+                    action="<?=$basePath?>/admin/seasons/<?= htmlspecialchars($season['slug'] ?? $season['id']) ?>/set-active"
                     class="inline-block">
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
                     <button type="submit"
@@ -14,9 +14,9 @@
                         Active</button>
                 </form>
             <?php endif; ?>
-            <a href="/admin/seasons/<?= htmlspecialchars($season['slug'] ?? $season['id']) ?>/edit"
+            <a href="<?=$basePath?>/admin/seasons/<?= htmlspecialchars($season['slug'] ?? $season['id']) ?>/edit"
                 class="btn btn-secondary">Edit</a>
-            <a href="/admin/seasons" class="btn btn-secondary">Back to Seasons</a>
+            <a href="<?=$basePath?>/admin/seasons" class="btn btn-secondary">Back to Seasons</a>
         </div>
     </div>
 

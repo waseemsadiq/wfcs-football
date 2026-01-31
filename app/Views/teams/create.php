@@ -1,11 +1,11 @@
 <div class="max-w-2xl mx-auto">
     <div class="flex justify-between items-center mb-8">
         <h1 class="text-3xl font-bold m-0">Add Team</h1>
-        <a href="/admin/teams" class="btn btn-secondary">Cancel</a>
+        <a href="<?=$basePath?>/admin/teams" class="btn btn-secondary">Cancel</a>
     </div>
 
     <div class="card">
-        <form method="POST" action="/admin/teams/store">
+        <form method="POST" action="<?=$basePath?>/admin/teams/store">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
 
             <div class="mb-6">
@@ -45,7 +45,7 @@
 
             <div class="flex items-center gap-4 pt-6 border-t border-border">
                 <button type="submit" class="btn btn-primary">Create Team</button>
-                <a href="/admin/teams" class="btn btn-secondary">Cancel</a>
+                <a href="<?=$basePath?>/admin/teams" class="btn btn-secondary">Cancel</a>
             </div>
         </form>
     </div>

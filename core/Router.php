@@ -96,14 +96,24 @@ class Router
         return isset($this->protectedRoutes[$pattern]);
     }
 
-    /**
-     * Normalise the URI by removing query strings and trailing slashes.
-     */
     private function normaliseUri(string $uri): string
     {
         $uri = parse_url($uri, PHP_URL_PATH) ?: '/';
-        $uri = rtrim($uri, '/') ?: '/';
-        return $uri;
+
+        // Handle subdirectory installations
+        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+        $scriptDir = dirname($scriptName);
+
+        // Normalize backslashes for Windows compatibility
+        $scriptDir = str_replace('\\', '/', $scriptDir);
+
+        // Strip the script directory from the URI if it matches the start
+        // Ensure we don't strip if the script definition is effectively root
+        if ($scriptDir !== '/' && strpos($uri, $scriptDir) === 0) {
+            $uri = substr($uri, strlen($scriptDir));
+        }
+
+        return rtrim($uri, '/') ?: '/';
     }
 
     /**
@@ -133,7 +143,18 @@ class Router
      */
     private function redirectToLogin(): void
     {
-        header('Location: /login');
+        $url = '/login';
+
+        // Handle subdirectory installations
+        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+        $basePath = rtrim(dirname($scriptName), '/\\');
+        $basePath = str_replace('\\', '/', $basePath); // Windows compat
+
+        if ($basePath !== '' && $basePath !== '/') {
+            $url = $basePath . $url;
+        }
+
+        header("Location: {$url}");
         exit;
     }
 
@@ -146,5 +167,14 @@ class Router
         echo '<h1>Page not found</h1>';
         echo '<p>Sorry, the page you are looking for does not exist.</p>';
         echo '<p><a href="/">Back to home</a> | <a href="/admin">Admin dashboard</a></p>';
+
+        // Debug info - view source to see this
+        echo "<!-- \n";
+        echo "Debug Info:\n";
+        echo "Request URI: " . ($_SERVER['REQUEST_URI'] ?? 'unset') . "\n";
+        echo "Normalized URI: " . $this->normaliseUri($_SERVER['REQUEST_URI'] ?? '/') . "\n";
+        echo "Script Name: " . ($_SERVER['SCRIPT_NAME'] ?? 'unset') . "\n";
+        echo "Disk Path: " . __FILE__ . "\n";
+        echo "-->";
     }
 }

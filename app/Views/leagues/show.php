@@ -1,11 +1,12 @@
 <div class="max-w-5xl mx-auto">
+    <?php $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\'); ?>
     <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
         <h1
             class="text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">
             <?= htmlspecialchars($league['name']) ?>
         </h1>
         <div class="flex gap-4">
-            <a href="/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>/edit"
+            <a href="<?= $basePath ?>/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>/edit"
                 class="btn btn-secondary">Edit League</a>
         </div>
     </div>
@@ -34,6 +35,7 @@
                                 GA</th>
                             <th class="table-th w-12 text-center font-semibold" title="Goal Difference">GD</th>
                             <th class="table-th w-16 text-center font-bold text-text-main">Pts</th>
+                            <th class="table-th w-32 text-left hidden md:table-cell">Form</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -45,7 +47,7 @@
                                     <div class="flex items-center gap-3">
                                         <span class="inline-block w-3 h-3 rounded-sm shadow-sm flex-shrink-0"
                                             style="background-color: <?= htmlspecialchars($row['teamColour']) ?>"></span>
-                                        <a href="/admin/teams/<?= htmlspecialchars($row['teamSlug'] ?? $row['teamId']) ?>"
+                                        <a href="<?= $basePath ?>/admin/teams/<?= htmlspecialchars($row['teamSlug'] ?? $row['teamId']) ?>"
                                             class="font-semibold text-text-main hover:text-primary transition-colors">
                                             <?= htmlspecialchars($row['teamName']) ?>
                                         </a>
@@ -63,6 +65,29 @@
                                     <?= $row['goalDifference'] > 0 ? '+' . $row['goalDifference'] : $row['goalDifference'] ?>
                                 </td>
                                 <td class="p-3 text-center font-bold text-lg text-text-main"><?= $row['points'] ?></td>
+                                <td class="p-3 hidden md:table-cell">
+                                    <div class="flex items-center justify-start gap-1">
+                                        <?php if (!empty($row['form'])): ?>
+                                            <?php foreach ($row['form'] as $result): ?>
+                                                <?php
+                                                $colorClass = match ($result) {
+                                                    'W' => 'bg-green-500 text-white',
+                                                    'D' => 'bg-gray-500 text-white',
+                                                    'L' => 'bg-danger text-white',
+                                                    default => 'bg-gray-700 text-gray-300'
+                                                };
+                                                ?>
+                                                <span
+                                                    class="w-5 h-5 flex items-center justify-center rounded text-[10px] font-bold <?= $colorClass ?>"
+                                                    title="<?= $result ?>">
+                                                    <?= $result ?>
+                                                </span>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <span class="text-text-muted text-xs">-</span>
+                                        <?php endif; ?>
+                                    </div>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -164,7 +189,7 @@
     <div class="card p-0">
         <div class="flex items-center justify-between p-6 border-b border-border bg-surface/50">
             <h2 class="text-xl font-bold m-0">Upcoming Fixtures</h2>
-            <a href="/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>/fixtures"
+            <a href="<?= $basePath ?>/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>/fixtures"
                 class="btn btn-primary btn-sm">Manage Fixtures</a>
         </div>
         <?php
@@ -243,6 +268,7 @@
 
 <script>
     const CSRF_TOKEN = '<?= htmlspecialchars(\Core\Auth::csrfToken()) ?>';
+    const BASE_PATH = '<?= $basePath ?>';
 
     function editResult(fixtureId, currentHomeScore, currentAwayScore) {
         const resultRow = document.getElementById(`result-${fixtureId}`);
@@ -280,7 +306,7 @@
         formData.append('csrf_token', CSRF_TOKEN);
         formData.append('ajax', '1');
 
-        fetch(`/admin/leagues/${leagueSlug}/fixtures`, {
+        fetch(`${BASE_PATH}/admin/leagues/${leagueSlug}/fixtures`, {
             method: 'POST',
             body: formData
         })
@@ -356,7 +382,7 @@
         formData.append('csrf_token', CSRF_TOKEN);
         formData.append('ajax', '1');
 
-        fetch(`/admin/leagues/${leagueSlug}/fixtures`, {
+        fetch(`${BASE_PATH}/admin/leagues/${leagueSlug}/fixtures`, {
             method: 'POST',
             body: formData
         })

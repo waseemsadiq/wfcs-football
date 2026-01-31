@@ -8,15 +8,15 @@
         <?php if (empty($seasons)): ?>
             <div class="bg-warning/10 text-orange-300 p-4 rounded-sm border border-warning/20 mb-6">
                 <p class="mb-4">You need to create a season before you can create a league.</p>
-                <a href="/admin/seasons/create" class="btn btn-primary">Create Season</a>
+                <a href="<?=$basePath?>/admin/seasons/create" class="btn btn-primary">Create Season</a>
             </div>
         <?php elseif (empty($teams) || count($teams) < 2): ?>
             <div class="bg-warning/10 text-orange-300 p-4 rounded-sm border border-warning/20 mb-6">
                 <p class="mb-4">You need at least 2 teams before you can create a league.</p>
-                <a href="/admin/teams/create" class="btn btn-primary">Add Teams</a>
+                <a href="<?=$basePath?>/admin/teams/create" class="btn btn-primary">Add Teams</a>
             </div>
         <?php else: ?>
-            <form method="POST" action="/admin/leagues/store">
+            <form method="POST" action="<?=$basePath?>/admin/leagues/store">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
 
                 <div class="mb-6">
@@ -87,7 +87,7 @@
 
                 <div class="flex gap-4 pt-6 border-t border-border">
                     <button type="submit" class="btn btn-primary">Create League</button>
-                    <a href="/admin/leagues" class="btn btn-secondary">Cancel</a>
+                    <a href="<?=$basePath?>/admin/leagues" class="btn btn-secondary">Cancel</a>
                 </div>
             </form>
         <?php endif; ?>

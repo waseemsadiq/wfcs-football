@@ -50,6 +50,20 @@ class Controller
             ob_end_clean();
         }
 
+        // Handle subdirectory installations
+        if (str_starts_with($url, '/') && !str_starts_with($url, '//')) {
+            $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+            $basePath = rtrim(dirname($scriptName), '/\\');
+            $basePath = str_replace('\\', '/', $basePath); // Windows compat
+
+            if ($basePath !== '' && $basePath !== '/') {
+                // Check if URL already starts with base path to avoid double prepending
+                if (!str_starts_with($url, $basePath . '/')) {
+                    $url = $basePath . $url;
+                }
+            }
+        }
+
         header("Location: {$url}");
         exit;
     }
