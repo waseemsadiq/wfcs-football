@@ -230,7 +230,7 @@
                         <span class="inline-block w-3 h-3 rounded-sm flex-shrink-0 mr-2"
                             style="background-color: ${homeColour};"></span>
                         <span class="flex-grow truncate text-sm">${homeLink}</span>
-                        ${result ? `<span class="font-bold text-sm ml-2">${result.homeScore}${result.penalties ? ' [' + result.homePens + ']' : ''}</span>` : ''}
+                        ${result ? `<span class="font-bold text-sm ml-2">${result.homeScore}${result.extraTime ? ' (' + result.homeScoreET + ')' : ''}${result.penalties ? ' [' + result.homePens + ']' : ''}</span>` : ''}
                     </div>
 
                     <!-- Away Team -->
@@ -238,7 +238,7 @@
                         <span class="inline-block w-3 h-3 rounded-sm flex-shrink-0 mr-2"
                             style="background-color: ${awayColour};"></span>
                         <span class="flex-grow truncate text-sm">${awayLink}</span>
-                        ${result ? `<span class="font-bold text-sm ml-2">${result.awayScore}${result.penalties ? ' [' + result.awayPens + ']' : ''}</span>` : ''}
+                        ${result ? `<span class="font-bold text-sm ml-2">${result.awayScore}${result.extraTime ? ' (' + result.awayScoreET + ')' : ''}${result.penalties ? ' [' + result.awayPens + ']' : ''}</span>` : ''}
                     </div>
 
                     ${dateTooltip}
