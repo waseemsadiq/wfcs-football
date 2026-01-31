@@ -94,6 +94,11 @@
                                             </summary>
                                             <div
                                                 class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3 bg-surface-hover/30 p-4 rounded text-sm">
+                                                <?php
+                                                // Determine initial toggle state based on existing data
+                                                $hasETData = !empty($fixture['result']['homeScoreET']) || !empty($fixture['result']['awayScoreET']);
+                                                $hasPenData = !empty($fixture['result']['homePens']) || !empty($fixture['result']['awayPens']);
+                                                ?>
                                                 <!-- Extra Time -->
                                                 <div>
                                                     <label class="flex items-center gap-2 mb-2 font-medium cursor-pointer">
