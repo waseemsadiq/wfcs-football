@@ -115,15 +115,19 @@
                                                         </div>
                                                         <span id="extraTimeLabel-<?= $fixture['id'] ?>">Went to Extra Time</span>
                                                     </label>
-                                                    <div class="flex items-center gap-2 ml-6">
-                                                        <span class="text-text-muted text-xs">Score after ET:</span>
-                                                        <input type="number" name="homeScoreET" min="0" max="99"
-                                                            class="form-input w-12 text-center py-1 px-1 text-xs"
-                                                            value="<?= $fixture['result']['homeScoreET'] ?? '' ?>" placeholder="-">
-                                                        <span class="text-text-muted">-</span>
-                                                        <input type="number" name="awayScoreET" min="0" max="99"
-                                                            class="form-input w-12 text-center py-1 px-1 text-xs"
-                                                            value="<?= $fixture['result']['awayScoreET'] ?? '' ?>" placeholder="-">
+                                                    <div class="et-inputs transition-all duration-200"
+                                                         id="etInputs-<?= $fixture['id'] ?>"
+                                                         style="<?= $hasETData ? '' : 'display: none;' ?>">
+                                                        <div class="flex items-center gap-2 ml-6">
+                                                            <span class="text-text-muted text-xs">Score after ET:</span>
+                                                            <input type="number" name="homeScoreET" min="0" max="99"
+                                                                class="form-input w-12 text-center py-1 px-1 text-xs"
+                                                                value="<?= $fixture['result']['homeScoreET'] ?? '' ?>" placeholder="-">
+                                                            <span class="text-text-muted">-</span>
+                                                            <input type="number" name="awayScoreET" min="0" max="99"
+                                                                class="form-input w-12 text-center py-1 px-1 text-xs"
+                                                                value="<?= $fixture['result']['awayScoreET'] ?? '' ?>" placeholder="-">
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <!-- Penalties -->
