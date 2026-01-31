@@ -43,7 +43,7 @@
                                     <div
                                         class="border border-border rounded-lg bg-surface shadow-sm overflow-hidden relative group hover:border-primary/30 transition-colors">
                                         <?php
-                                        $hasResult = $fixture['result'] !== null;
+                                        $hasResult = !empty($fixture['result']);
                                         $bothTeamsDetermined = !empty($fixture['homeTeamId']) && !empty($fixture['awayTeamId'])
                                             && ($fixture['homeTeamName'] ?? 'TBD') !== 'TBD'
                                             && ($fixture['awayTeamName'] ?? 'TBD') !== 'TBD';

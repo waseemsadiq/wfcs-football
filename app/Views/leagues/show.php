@@ -100,7 +100,7 @@
     <div class="card mb-8">
         <h2 class="text-xl font-bold mb-6 pb-4 border-b border-border">Recent Results</h2>
         <?php
-        $playedFixtures = array_filter($fixtures, fn($f) => $f['result'] !== null);
+        $playedFixtures = array_filter($fixtures, fn($f) => !empty($f['result']));
         $playedFixtures = array_slice(array_reverse($playedFixtures), 0, 10);
         ?>
         <?php if (empty($playedFixtures)): ?>
@@ -193,7 +193,7 @@
                 class="btn btn-primary btn-sm">Manage Fixtures</a>
         </div>
         <?php
-        $upcomingFixtures = array_filter($fixtures, fn($f) => $f['result'] === null);
+        $upcomingFixtures = array_filter($fixtures, fn($f) => empty($f['result']));
         $upcomingFixtures = array_slice($upcomingFixtures, 0, 10);
         $today = date('Y-m-d');
         ?>
