@@ -198,6 +198,14 @@
         $today = date('Y-m-d');
         ?>
         <?php if (empty($upcomingFixtures)): ?>
+            <div class="bg-red-900/50 p-4 mb-4 rounded text-xs font-mono overflow-auto max-h-40">
+                <p>DEBUG INFO:</p>
+                <p>Total Fixtures: <?= count($fixtures) ?></p>
+                <p>Upcoming Count: <?= count($upcomingFixtures) ?></p>
+                <p>Sample Fixture Result:
+                    <?= isset($fixtures[0]) ? var_export($fixtures[0]['result'], true) : 'No fixtures' ?></p>
+                <p>Sample Fixture ID: <?= isset($fixtures[0]) ? $fixtures[0]['id'] : 'N/A' ?></p>
+            </div>
             <div class="text-center py-8 text-text-muted">
                 <p>No upcoming fixtures.</p>
             </div>
