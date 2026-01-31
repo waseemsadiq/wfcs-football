@@ -26,31 +26,29 @@
         <!-- Cup Selector and View Toggle -->
         <div class="mb-8 max-w-4xl mx-auto">
             <div class="card p-6">
-                <div class="flex flex-col md:flex-row gap-4 md:gap-6 items-start md:items-end">
+                <label for="cup-select" class="block text-sm font-bold text-text-muted uppercase tracking-wider mb-3">
+                    Select Cup
+                </label>
+                <div class="flex gap-4 items-center">
                     <!-- Cup Selector -->
-                    <div class="flex-1 w-full">
-                        <label for="cup-select" class="block text-sm font-bold text-text-muted uppercase tracking-wider mb-3">
-                            Select Cup
-                        </label>
-                        <select id="cup-select"
-                            class="w-full bg-surface border border-border text-text-main rounded-sm px-4 py-3 font-semibold focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
-                            <?php foreach ($cups as $cup): ?>
-                                <option value="<?= htmlspecialchars($cup['slug']) ?>">
-                                    <?= htmlspecialchars($cup['name']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
+                    <select id="cup-select"
+                        class="flex-1 bg-surface border border-border text-text-main rounded-sm px-4 py-3 font-semibold focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                        <?php foreach ($cups as $cup): ?>
+                            <option value="<?= htmlspecialchars($cup['slug']) ?>">
+                                <?= htmlspecialchars($cup['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
 
                     <!-- View Toggle -->
                     <div class="flex gap-2">
                         <button id="bracket-btn"
-                            class="px-4 py-2 rounded-sm font-semibold text-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary"
+                            class="px-4 py-3 rounded-sm font-semibold text-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary whitespace-nowrap"
                             onclick="setViewMode('bracket')">
                             Bracket
                         </button>
                         <button id="fixtures-btn"
-                            class="px-4 py-2 rounded-sm font-semibold text-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary"
+                            class="px-4 py-3 rounded-sm font-semibold text-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary whitespace-nowrap"
                             onclick="setViewMode('fixtures')">
                             Fixtures
                         </button>
