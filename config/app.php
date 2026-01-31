@@ -10,8 +10,8 @@ return [
     'name' => 'WFCS Football',
 
     // Admin password hash for authentication
-    // Generate a new hash with: php -r "echo password_hash('yourpassword', PASSWORD_DEFAULT);"
-    'admin_password_hash' => '$2y$12$bWGKJkLVyEl44Q0ITFlDKO.YJaCap6DtkusfSK05qMbmDXXKPKDw2',
+    // Loaded from .env file or environment variable
+    'admin_password_hash' => getenv('ADMIN_PASSWORD_HASH') ?: '',
 
     // Base path for data files
     'data_path' => dirname(__DIR__) . '/data',

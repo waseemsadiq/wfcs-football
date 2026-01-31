@@ -39,6 +39,28 @@ spl_autoload_register(function (string $class): void {
     }
 });
 
+// Manual .env loader for environment variables
+if (file_exists(BASE_PATH . '/.env')) {
+    $lines = file(BASE_PATH . '/.env', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (str_starts_with(trim($line), '#')) {
+            continue;
+        }
+
+        if (str_contains($line, '=')) {
+            [$name, $value] = explode('=', $line, 2);
+            $name = trim($name);
+            $value = trim($value);
+
+            if (!empty($name) && !getenv($name)) {
+                putenv("{$name}={$value}");
+                $_ENV[$name] = $value;
+                $_SERVER[$name] = $value;
+            }
+        }
+    }
+}
+
 // Load configuration
 $config = require BASE_PATH . '/config/app.php';
 
