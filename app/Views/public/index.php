@@ -1,61 +1,3 @@
-<?php
-/**
- * Render a fixture row.
- */
-function renderPublicFixture($fixture, $showResult = true)
-{
-    $homeTeam = $fixture['homeTeam'] ?? null;
-    $awayTeam = $fixture['awayTeam'] ?? null;
-    $result = $fixture['result'] ?? null;
-
-    $time = $fixture['time'] ?? '15:00';
-
-    $homeColour = htmlspecialchars($homeTeam['colour'] ?? '#333333');
-    $awayColour = htmlspecialchars($awayTeam['colour'] ?? '#333333');
-    $homeName = htmlspecialchars($homeTeam['name'] ?? 'TBD');
-    $awayName = htmlspecialchars($awayTeam['name'] ?? 'TBD');
-    $homeId = htmlspecialchars($homeTeam['id'] ?? '');
-    $awayId = htmlspecialchars($awayTeam['id'] ?? '');
-
-    $competition = htmlspecialchars($fixture['competitionName'] ?? '');
-    if (!empty($fixture['roundName'])) {
-        $competition .= ' - ' . htmlspecialchars($fixture['roundName']);
-    }
-
-    $scoreHtml = '';
-    if ($showResult && $result !== null) {
-        $homeScore = (int) ($result['homeScore'] ?? 0);
-        $awayScore = (int) ($result['awayScore'] ?? 0);
-        $scoreHtml = '<div class="font-bold text-xl text-primary bg-surface-hover px-3 py-1 rounded-sm">' . $homeScore . ' - ' . $awayScore . '</div>';
-    } else {
-        $scoreHtml = '<div class="text-base text-text-muted bg-transparent font-medium">' . htmlspecialchars($time) . '</div>';
-    }
-
-    $homeSlug = htmlspecialchars($homeTeam['slug'] ?? $homeId);
-    $awaySlug = htmlspecialchars($awayTeam['slug'] ?? $awayId);
-
-    $homeLink = $homeId ? "<a href=\"/team/{$homeSlug}\" class=\"hover:text-primary transition-colors\">{$homeName}</a>" : $homeName;
-    $awayLink = $awayId ? "<a href=\"/team/{$awaySlug}\" class=\"hover:text-primary transition-colors\">{$awayName}</a>" : $awayName;
-
-    return <<<HTML
-    <li class="flex flex-col items-center py-4 border-b border-border last:border-b-0 gap-1 hover:bg-surface-hover/50 transition-colors px-4 -mx-4 rounded-sm">
-        <div class="flex items-center justify-center gap-4 md:gap-8 w-full">
-            <div class="flex-1 flex items-center justify-end gap-3 font-semibold text-right">
-                {$homeLink}
-                <span class="inline-block w-4 h-4 rounded bg-current shadow-sm" style="color: {$homeColour}; background-color: {$homeColour}"></span>
-            </div>
-            {$scoreHtml}
-            <div class="flex-1 flex items-center justify-start gap-3 font-semibold text-left">
-                <span class="inline-block w-4 h-4 rounded bg-current shadow-sm" style="color: {$awayColour}; background-color: {$awayColour}"></span>
-                {$awayLink}
-            </div>
-        </div>
-        <div class="text-xs text-text-muted font-medium">{$competition}</div>
-    </li>
-HTML;
-}
-?>
-
 <div>
     <div class="text-center mb-12">
         <h1
@@ -94,7 +36,7 @@ HTML;
                         </div>
                         <ul class="divide-y divide-border border-b border-border last:border-0 px-6">
                             <?php foreach ($fixtures as $fixture): ?>
-                                <?= renderPublicFixture($fixture, true) ?>
+                                <?php include __DIR__ . '/../partials/public_fixture.php'; ?>
                             <?php endforeach; ?>
                         </ul>
                     <?php endforeach; ?>
@@ -131,7 +73,10 @@ HTML;
                         </div>
                         <ul class="divide-y divide-border border-b border-border last:border-0 px-6">
                             <?php foreach ($fixtures as $fixture): ?>
-                                <?= renderPublicFixture($fixture, false) ?>
+                                <?php
+                                $showResult = false;
+                                include __DIR__ . '/../partials/public_fixture.php';
+                                ?>
                             <?php endforeach; ?>
                         </ul>
                     <?php endforeach; ?>
@@ -155,7 +100,7 @@ HTML;
                     <ul class="space-y-2">
                         <?php foreach ($leagues as $league): ?>
                             <li>
-                                <a href="<?=$basePath?>/league/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>"
+                                <a href="<?= $basePath ?>/league/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>"
                                     class="flex items-center gap-3 p-3 rounded-sm hover:bg-surface-hover transition-colors group">
                                     <span class="text-xl group-hover:scale-110 transition-transform">🏆</span>
                                     <span
@@ -182,7 +127,7 @@ HTML;
                     <ul class="space-y-2">
                         <?php foreach ($cups as $cup): ?>
                             <li>
-                                <a href="<?=$basePath?>/cup/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>"
+                                <a href="<?= $basePath ?>/cup/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>"
                                     class="flex items-center gap-3 p-3 rounded-sm hover:bg-surface-hover transition-colors group">
                                     <span class="text-xl group-hover:scale-110 transition-transform">🏅</span>
                                     <span
