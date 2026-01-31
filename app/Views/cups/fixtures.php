@@ -286,6 +286,37 @@
 </div>
 
 <script>
+    // Toggle switch show/hide logic
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle all ET toggles
+        document.querySelectorAll('[id^="extraTimeToggle-"]').forEach(toggle => {
+            const fixtureId = toggle.id.replace('extraTimeToggle-', '');
+            const inputs = document.getElementById('etInputs-' + fixtureId);
+
+            toggle.addEventListener('change', function() {
+                if (this.checked) {
+                    inputs.style.display = '';
+                } else {
+                    inputs.style.display = 'none';
+                }
+            });
+        });
+
+        // Handle all penalty toggles
+        document.querySelectorAll('[id^="penaltiesToggle-"]').forEach(toggle => {
+            const fixtureId = toggle.id.replace('penaltiesToggle-', '');
+            const inputs = document.getElementById('penInputs-' + fixtureId);
+
+            toggle.addEventListener('change', function() {
+                if (this.checked) {
+                    inputs.style.display = '';
+                } else {
+                    inputs.style.display = 'none';
+                }
+            });
+        });
+    });
+
     let isRegenerated = false;
 
     function handleModalClose() {
