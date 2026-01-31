@@ -433,41 +433,23 @@ class CupsController extends Controller
         $homeScore = $this->post('homeScore');
         $awayScore = $this->post('awayScore');
 
-        if ($homeScore !== '' && $awayScore !== '') {
+        if ($homeScore !== null && $homeScore !== '' && $awayScore !== null && $awayScore !== '') {
             // Validate scores are non-negative integers
-            if (!is_numeric($homeScore) || !is_numeric($awayScore) || (int)$homeScore < 0 || (int)$awayScore < 0) {
+            if (!is_numeric($homeScore) || !is_numeric($awayScore) || (int) $homeScore < 0 || (int) $awayScore < 0) {
+                if ($this->isAjaxRequest()) {
+                    $this->json(['success' => false, 'error' => 'Scores must be non-negative numbers.']);
+                    return;
+                }
                 $this->flash('error', 'Scores must be non-negative numbers.');
                 $this->redirect('/admin/cups/' . $slug . '/fixtures');
                 return;
             }
 
-            // Validate extra time scores if provided
+            // Optional fields with proper null handling
             $homeScoreET = $this->post('homeScoreET');
             $awayScoreET = $this->post('awayScoreET');
-            if ($homeScoreET !== '' && (!is_numeric($homeScoreET) || (int)$homeScoreET < 0)) {
-                $this->flash('error', 'Extra time scores must be non-negative numbers.');
-                $this->redirect('/admin/cups/' . $slug . '/fixtures');
-                return;
-            }
-            if ($awayScoreET !== '' && (!is_numeric($awayScoreET) || (int)$awayScoreET < 0)) {
-                $this->flash('error', 'Extra time scores must be non-negative numbers.');
-                $this->redirect('/admin/cups/' . $slug . '/fixtures');
-                return;
-            }
-
-            // Validate penalty scores if provided
             $homePens = $this->post('homePens');
             $awayPens = $this->post('awayPens');
-            if ($homePens !== '' && (!is_numeric($homePens) || (int)$homePens < 0)) {
-                $this->flash('error', 'Penalty scores must be non-negative numbers.');
-                $this->redirect('/admin/cups/' . $slug . '/fixtures');
-                return;
-            }
-            if ($awayPens !== '' && (!is_numeric($awayPens) || (int)$awayPens < 0)) {
-                $this->flash('error', 'Penalty scores must be non-negative numbers.');
-                $this->redirect('/admin/cups/' . $slug . '/fixtures');
-                return;
-            }
 
             $result = [
                 'homeScore' => (int) $homeScore,
@@ -477,33 +459,42 @@ class CupsController extends Controller
                 'homeCards' => $this->sanitizeString($this->post('homeCards', ''), 500),
                 'awayCards' => $this->sanitizeString($this->post('awayCards', ''), 500),
                 'extraTime' => $this->post('extraTime') === '1',
-                'homeScoreET' => $homeScoreET !== '' ? (int) $homeScoreET : null,
-                'awayScoreET' => $awayScoreET !== '' ? (int) $awayScoreET : null,
+                'homeScoreET' => ($homeScoreET !== null && $homeScoreET !== '') ? (int) $homeScoreET : null,
+                'awayScoreET' => ($awayScoreET !== null && $awayScoreET !== '') ? (int) $awayScoreET : null,
                 'penalties' => $this->post('penalties') === '1',
-                'homePens' => $homePens !== '' ? (int) $homePens : null,
-                'awayPens' => $awayPens !== '' ? (int) $awayPens : null,
+                'homePens' => ($homePens !== null && $homePens !== '') ? (int) $homePens : null,
+                'awayPens' => ($awayPens !== null && $awayPens !== '') ? (int) $awayPens : null,
             ];
 
-            // Determine winner
+            // Determine winner for cup advancement
             $winnerId = null;
             if ($result['penalties'] && $result['homePens'] !== null && $result['awayPens'] !== null) {
-                $winnerId = $result['homePens'] > $result['awayPens'] ? 'home' : 'away';
+                if ($result['homePens'] > $result['awayPens'])
+                    $winnerId = 'home';
+                elseif ($result['awayPens'] > $result['homePens'])
+                    $winnerId = 'away';
             } elseif ($result['extraTime'] && $result['homeScoreET'] !== null && $result['awayScoreET'] !== null) {
-                if ($result['homeScoreET'] > $result['awayScoreET']) {
+                if ($result['homeScoreET'] > $result['awayScoreET'])
                     $winnerId = 'home';
-                } elseif ($result['awayScoreET'] > $result['homeScoreET']) {
+                elseif ($result['awayScoreET'] > $result['homeScoreET'])
                     $winnerId = 'away';
-                }
             } else {
-                if ($result['homeScore'] > $result['awayScore']) {
+                if ($result['homeScore'] > $result['awayScore'])
                     $winnerId = 'home';
-                } elseif ($result['awayScore'] > $result['homeScore']) {
+                elseif ($result['awayScore'] > $result['homeScore'])
                     $winnerId = 'away';
-                }
             }
 
             $result['winnerId'] = $winnerId;
             $this->cup->updateFixtureResult($id, $fixtureId, $result);
+        }
+
+        if ($this->isAjaxRequest()) {
+            if (session_status() === PHP_SESSION_ACTIVE) {
+                session_write_close();
+            }
+            $this->json(['success' => true, 'message' => 'Fixture updated.']);
+            return;
         }
 
         $this->flash('success', 'Fixture updated.');

@@ -354,9 +354,13 @@ class LeaguesController extends Controller
         }
 
         // Update result if scores provided
-        if ($homeScore !== '' && $awayScore !== '') {
+        if ($homeScore !== null && $homeScore !== '' && $awayScore !== null && $awayScore !== '') {
             // Validate scores are non-negative integers
             if (!is_numeric($homeScore) || !is_numeric($awayScore) || (int) $homeScore < 0 || (int) $awayScore < 0) {
+                if ($this->isAjaxRequest()) {
+                    $this->json(['success' => false, 'error' => 'Scores must be non-negative numbers.']);
+                    return;
+                }
                 $this->flash('error', 'Scores must be non-negative numbers.');
                 $this->redirect('/admin/leagues/' . $slug . '/fixtures');
                 return;
@@ -371,6 +375,14 @@ class LeaguesController extends Controller
                 'awayCards' => $this->sanitizeString($this->post('awayCards', ''), 500),
             ];
             $this->league->updateFixtureResult($league['id'], $fixtureId, $result);
+        }
+
+        if ($this->isAjaxRequest()) {
+            if (session_status() === PHP_SESSION_ACTIVE) {
+                session_write_close();
+            }
+            $this->json(['success' => true, 'message' => 'Fixture updated.']);
+            return;
         }
 
         $this->flash('success', 'Fixture updated.');

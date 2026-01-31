@@ -115,14 +115,14 @@
             }
             ?>
             <div class="flex flex-col">
-                <?php foreach ($groupedResults as $date => $fixtures): ?>
+                <?php foreach ($groupedResults as $date => $dateFixtures): ?>
                     <div class="bg-surface/50 border-b border-border py-2 text-center sticky top-0 z-10">
                         <span class="text-xs font-bold text-text-muted uppercase tracking-wider">
                             <?= date('D j M', strtotime($date)) ?>
                         </span>
                     </div>
                     <div class="divide-y divide-border border-b border-border last:border-0 px-4">
-                        <?php foreach ($fixtures as $fixture): ?>
+                        <?php foreach ($dateFixtures as $fixture): ?>
                             <div class="flex items-center py-3 gap-2" id="result-<?= htmlspecialchars($fixture['id']) ?>">
                                 <div class="flex-1 flex items-center justify-end gap-2 text-right">
                                     <span
@@ -186,26 +186,19 @@
     </div>
 
     <!-- Upcoming Fixtures -->
+    <?php
+    $upcomingFixtures = array_filter($fixtures, function ($f) {
+        return !isset($f['result']) || $f['result'] === null || empty($f['result']);
+    });
+    $today = date('Y-m-d');
+    ?>
     <div class="card p-0">
         <div class="flex items-center justify-between p-6 border-b border-border bg-surface/50">
             <h2 class="text-xl font-bold m-0">Upcoming Fixtures</h2>
             <a href="<?= $basePath ?>/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>/fixtures"
                 class="btn btn-primary btn-sm">Manage Fixtures</a>
         </div>
-        <?php
-        $upcomingFixtures = array_filter($fixtures, fn($f) => empty($f['result']));
-        $upcomingFixtures = array_slice($upcomingFixtures, 0, 10);
-        $today = date('Y-m-d');
-        ?>
         <?php if (empty($upcomingFixtures)): ?>
-            <div class="bg-red-900/50 p-4 mb-4 rounded text-xs font-mono overflow-auto max-h-40">
-                <p>DEBUG INFO:</p>
-                <p>Total Fixtures: <?= count($fixtures) ?></p>
-                <p>Upcoming Count: <?= count($upcomingFixtures) ?></p>
-                <p>Sample Fixture Result:
-                    <?= isset($fixtures[0]) ? var_export($fixtures[0]['result'], true) : 'No fixtures' ?></p>
-                <p>Sample Fixture ID: <?= isset($fixtures[0]) ? $fixtures[0]['id'] : 'N/A' ?></p>
-            </div>
             <div class="text-center py-8 text-text-muted">
                 <p>No upcoming fixtures.</p>
             </div>
