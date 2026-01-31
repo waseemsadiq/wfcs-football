@@ -100,8 +100,8 @@
 
         if (!cupSelect) return;
 
-        // View mode management
-        function setViewMode(mode) {
+        // View mode management (global for onclick handlers)
+        window.setViewMode = function(mode) {
             const bracketView = document.getElementById('bracket-view');
             const fixturesView = document.getElementById('fixtures-view');
             const bracketBtn = document.getElementById('bracket-btn');
