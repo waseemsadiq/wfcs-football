@@ -24,7 +24,7 @@
         </div>
     <?php else: ?>
         <!-- Cup Selector and View Toggle -->
-        <div class="mb-8 max-w-4xl mx-auto">
+        <div class="mb-8 max-w-md mx-auto">
             <div class="card p-6">
                 <label for="cup-select" class="block text-sm font-bold text-text-muted uppercase tracking-wider mb-3">
                     Select Cup

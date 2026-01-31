@@ -1,1 +1,10 @@
 .worktrees/
+
+galvani
+/.DS_Store
+/app/.DS_Store
+/app/Views/.DS_Store
+/data/.DS_Store
+/dist/.DS_Store
+/dist/app/.DS_Store
+/dist/app/Views/.DS_Store
