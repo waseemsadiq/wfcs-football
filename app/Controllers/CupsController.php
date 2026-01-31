@@ -415,6 +415,14 @@ class CupsController extends Controller
             $homePens = $this->post('homePens');
             $awayPens = $this->post('awayPens');
 
+            // Auto-detect extra time from scores
+            $hasETScores = ($homeScoreET !== null && $homeScoreET !== '') ||
+                           ($awayScoreET !== null && $awayScoreET !== '');
+
+            // Auto-detect penalties from scores
+            $hasPenScores = ($homePens !== null && $homePens !== '') ||
+                            ($awayPens !== null && $awayPens !== '');
+
             $result = [
                 'homeScore' => (int) $homeScore,
                 'awayScore' => (int) $awayScore,
@@ -422,10 +430,10 @@ class CupsController extends Controller
                 'awayScorers' => $this->sanitizeString($this->post('awayScorers', ''), 500),
                 'homeCards' => $this->sanitizeString($this->post('homeCards', ''), 500),
                 'awayCards' => $this->sanitizeString($this->post('awayCards', ''), 500),
-                'extraTime' => $this->post('extraTime') === '1',
+                'extraTime' => $hasETScores || $this->post('extraTime') === '1',
                 'homeScoreET' => ($homeScoreET !== null && $homeScoreET !== '') ? (int) $homeScoreET : null,
                 'awayScoreET' => ($awayScoreET !== null && $awayScoreET !== '') ? (int) $awayScoreET : null,
-                'penalties' => $this->post('penalties') === '1',
+                'penalties' => $hasPenScores || $this->post('penalties') === '1',
                 'homePens' => ($homePens !== null && $homePens !== '') ? (int) $homePens : null,
                 'awayPens' => ($awayPens !== null && $awayPens !== '') ? (int) $awayPens : null,
             ];
