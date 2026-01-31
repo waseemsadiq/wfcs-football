@@ -415,6 +415,34 @@ class CupsController extends Controller
             $homePens = $this->post('homePens');
             $awayPens = $this->post('awayPens');
 
+            // Validate ET scores if provided
+            if (($homeScoreET !== null && $homeScoreET !== '') || ($awayScoreET !== null && $awayScoreET !== '')) {
+                if (($homeScoreET !== null && $homeScoreET !== '' && (!is_numeric($homeScoreET) || (int) $homeScoreET < 0)) ||
+                    ($awayScoreET !== null && $awayScoreET !== '' && (!is_numeric($awayScoreET) || (int) $awayScoreET < 0))) {
+                    if ($this->isAjaxRequest()) {
+                        $this->json(['success' => false, 'error' => 'Extra time scores must be non-negative numbers.']);
+                        return;
+                    }
+                    $this->flash('error', 'Extra time scores must be non-negative numbers.');
+                    $this->redirect('/admin/cups/' . $slug . '/fixtures');
+                    return;
+                }
+            }
+
+            // Validate penalty scores if provided
+            if (($homePens !== null && $homePens !== '') || ($awayPens !== null && $awayPens !== '')) {
+                if (($homePens !== null && $homePens !== '' && (!is_numeric($homePens) || (int) $homePens < 0)) ||
+                    ($awayPens !== null && $awayPens !== '' && (!is_numeric($awayPens) || (int) $awayPens < 0))) {
+                    if ($this->isAjaxRequest()) {
+                        $this->json(['success' => false, 'error' => 'Penalty scores must be non-negative numbers.']);
+                        return;
+                    }
+                    $this->flash('error', 'Penalty scores must be non-negative numbers.');
+                    $this->redirect('/admin/cups/' . $slug . '/fixtures');
+                    return;
+                }
+            }
+
             // Auto-detect extra time from scores
             $hasETScores = ($homeScoreET !== null && $homeScoreET !== '') ||
                            ($awayScoreET !== null && $awayScoreET !== '');
