@@ -198,6 +198,13 @@
         $today = date('Y-m-d');
         ?>
         <?php if (empty($upcomingFixtures)): ?>
+            <!-- DEBUG START -->
+            <div style="display:none">
+                DEBUG: Fixtures Total: <?= count($fixtures) ?>
+                Upcoming Count: <?= count($upcomingFixtures) ?>
+                First Fixture Result: <?= var_export($fixtures[0]['result'] ?? 'MISSING', true) ?>
+            </div>
+            <!-- DEBUG END -->
             <div class="text-center py-8 text-text-muted">
                 <p>No upcoming fixtures.</p>
             </div>
