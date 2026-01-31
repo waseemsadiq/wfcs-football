@@ -429,6 +429,26 @@ class CupsController extends Controller
                 }
             }
 
+            // Require both ET scores if either is provided
+            if (($homeScoreET !== null && $homeScoreET !== '') && ($awayScoreET === null || $awayScoreET === '')) {
+                if ($this->isAjaxRequest()) {
+                    $this->json(['success' => false, 'error' => 'Both extra time scores must be provided.']);
+                    return;
+                }
+                $this->flash('error', 'Both extra time scores must be provided.');
+                $this->redirect('/admin/cups/' . $slug . '/fixtures');
+                return;
+            }
+            if (($awayScoreET !== null && $awayScoreET !== '') && ($homeScoreET === null || $homeScoreET === '')) {
+                if ($this->isAjaxRequest()) {
+                    $this->json(['success' => false, 'error' => 'Both extra time scores must be provided.']);
+                    return;
+                }
+                $this->flash('error', 'Both extra time scores must be provided.');
+                $this->redirect('/admin/cups/' . $slug . '/fixtures');
+                return;
+            }
+
             // Validate penalty scores if provided
             if (($homePens !== null && $homePens !== '') || ($awayPens !== null && $awayPens !== '')) {
                 if (($homePens !== null && $homePens !== '' && (!is_numeric($homePens) || (int) $homePens < 0)) ||
@@ -441,6 +461,26 @@ class CupsController extends Controller
                     $this->redirect('/admin/cups/' . $slug . '/fixtures');
                     return;
                 }
+            }
+
+            // Require both penalty scores if either is provided
+            if (($homePens !== null && $homePens !== '') && ($awayPens === null || $awayPens === '')) {
+                if ($this->isAjaxRequest()) {
+                    $this->json(['success' => false, 'error' => 'Both penalty scores must be provided.']);
+                    return;
+                }
+                $this->flash('error', 'Both penalty scores must be provided.');
+                $this->redirect('/admin/cups/' . $slug . '/fixtures');
+                return;
+            }
+            if (($awayPens !== null && $awayPens !== '') && ($homePens === null || $homePens === '')) {
+                if ($this->isAjaxRequest()) {
+                    $this->json(['success' => false, 'error' => 'Both penalty scores must be provided.']);
+                    return;
+                }
+                $this->flash('error', 'Both penalty scores must be provided.');
+                $this->redirect('/admin/cups/' . $slug . '/fixtures');
+                return;
             }
 
             // Auto-detect extra time from scores
