@@ -396,11 +396,23 @@
                 const homeScore = parseInt(result.homeScore || 0);
                 const awayScore = parseInt(result.awayScore || 0);
 
-                let penaltyHtml = '';
-                if (result.penalties) {
-                    const pHome = parseInt(result.homePens || 0);
-                    const pAway = parseInt(result.awayPens || 0);
-                    penaltyHtml = `<div class="text-[10px] text-text-muted font-normal mt-1 text-center">(${pHome} - ${pAway} pens)</div>`;
+                let extraInfoHtml = '';
+                if (result.extraTime || result.penalties) {
+                    const parts = [];
+
+                    if (result.extraTime) {
+                        const etHome = parseInt(result.homeScoreET || 0);
+                        const etAway = parseInt(result.awayScoreET || 0);
+                        parts.push(`${etHome} - ${etAway} AET`);
+                    }
+
+                    if (result.penalties) {
+                        const pHome = parseInt(result.homePens || 0);
+                        const pAway = parseInt(result.awayPens || 0);
+                        parts.push(`${pHome} - ${pAway} pens`);
+                    }
+
+                    extraInfoHtml = `<div class="text-[10px] text-text-muted font-normal mt-1 text-center">(${parts.join(', ')})</div>`;
                 }
 
                 scoreHtml = `
@@ -408,7 +420,7 @@
                         <div class="font-bold text-xl text-primary bg-surface-hover px-3 py-1 rounded-sm">
                             ${homeScore} - ${awayScore}
                         </div>
-                        ${penaltyHtml}
+                        ${extraInfoHtml}
                     </div>
                 `;
             } else {
