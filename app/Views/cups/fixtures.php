@@ -146,15 +146,19 @@
                                                         </div>
                                                         <span id="penaltiesLabel-<?= $fixture['id'] ?>">Penalties</span>
                                                     </label>
-                                                    <div class="flex items-center gap-2 ml-6">
-                                                        <span class="text-text-muted text-xs">Penalty Score:</span>
-                                                        <input type="number" name="homePens" min="0" max="99"
-                                                            class="form-input w-12 text-center py-1 px-1 text-xs"
-                                                            value="<?= $fixture['result']['homePens'] ?? '' ?>" placeholder="-">
-                                                        <span class="text-text-muted">-</span>
-                                                        <input type="number" name="awayPens" min="0" max="99"
-                                                            class="form-input w-12 text-center py-1 px-1 text-xs"
-                                                            value="<?= $fixture['result']['awayPens'] ?? '' ?>" placeholder="-">
+                                                    <div class="pen-inputs transition-all duration-200"
+                                                         id="penInputs-<?= $fixture['id'] ?>"
+                                                         style="<?= $hasPenData ? '' : 'display: none;' ?>">
+                                                        <div class="flex items-center gap-2 ml-6">
+                                                            <span class="text-text-muted text-xs">Penalty Score:</span>
+                                                            <input type="number" name="homePens" min="0" max="99"
+                                                                class="form-input w-12 text-center py-1 px-1 text-xs"
+                                                                value="<?= $fixture['result']['homePens'] ?? '' ?>" placeholder="-">
+                                                            <span class="text-text-muted">-</span>
+                                                            <input type="number" name="awayPens" min="0" max="99"
+                                                                class="form-input w-12 text-center py-1 px-1 text-xs"
+                                                                value="<?= $fixture['result']['awayPens'] ?? '' ?>" placeholder="-">
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
