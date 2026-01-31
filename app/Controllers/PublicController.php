@@ -653,7 +653,7 @@ class PublicController extends Controller
      */
     private function getRecentResults(array $fixtures, int $limit): array
     {
-        $completed = array_filter($fixtures, fn($f) => isset($f['result']) && $f['result'] !== null);
+        $completed = array_filter($fixtures, fn($f) => !empty($f['result']));
 
         usort($completed, function ($a, $b) {
             return strcmp($b['date'] ?? '', $a['date'] ?? '');
@@ -670,7 +670,7 @@ class PublicController extends Controller
         $today = date('Y-m-d');
 
         $upcoming = array_filter($fixtures, function ($f) use ($today) {
-            $hasNoResult = !isset($f['result']) || $f['result'] === null;
+            $hasNoResult = empty($f['result']);
             $hasDate = !empty($f['date']);
             $isFuture = ($f['date'] ?? '') >= $today;
             $hasTeams = !empty($f['homeTeamId']) && !empty($f['awayTeamId']);
