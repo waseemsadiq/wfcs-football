@@ -101,11 +101,16 @@
                                                 ?>
                                                 <!-- Extra Time -->
                                                 <div>
-                                                    <label class="flex items-center gap-2 mb-2 font-medium cursor-pointer">
-                                                        <input type="checkbox" name="extraTime" value="1"
-                                                            class="rounded border-gray-600 text-primary focus:ring-primary/50"
-                                                            <?= ($fixture['result']['extraTime'] ?? false) ? 'checked' : '' ?>>
-                                                        Went to Extra Time
+                                                    <label class="flex items-center gap-3 mb-2 font-medium cursor-pointer">
+                                                        <div class="relative inline-block w-11 h-6">
+                                                            <input type="checkbox" name="extraTime" value="1"
+                                                                class="sr-only peer"
+                                                                id="extraTimeToggle-<?= $fixture['id'] ?>"
+                                                                <?= $hasETData ? 'checked' : '' ?>>
+                                                            <div class="w-11 h-6 bg-gray-600 rounded-full peer-checked:bg-primary transition-colors"></div>
+                                                            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
+                                                        </div>
+                                                        <span>Went to Extra Time</span>
                                                     </label>
                                                     <div class="flex items-center gap-2 ml-6">
                                                         <span class="text-text-muted text-xs">Score after ET:</span>
