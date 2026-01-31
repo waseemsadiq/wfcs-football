@@ -148,25 +148,7 @@ class CupsController extends Controller
         }
 
         $teams = $this->team->all();
-
-        // Enrich rounds with team names
-        $rounds = [];
-        foreach ($cup['rounds'] ?? [] as $round) {
-            $enrichedFixtures = [];
-            foreach ($round['fixtures'] as $fixture) {
-                $homeTeam = $this->findById($teams, $fixture['homeTeamId'] ?? '');
-                $awayTeam = $this->findById($teams, $fixture['awayTeamId'] ?? '');
-                $fixture['homeTeamName'] = $homeTeam['name'] ?? 'TBD';
-                $fixture['awayTeamName'] = $awayTeam['name'] ?? 'TBD';
-                $fixture['homeTeamColour'] = $homeTeam['colour'] ?? '#ccc';
-                $fixture['awayTeamColour'] = $awayTeam['colour'] ?? '#ccc';
-                $enrichedFixtures[] = $fixture;
-            }
-            $rounds[] = [
-                'name' => $round['name'],
-                'fixtures' => $enrichedFixtures,
-            ];
-        }
+        $rounds = $this->enrichRoundsWithTeamData($cup['rounds'] ?? [], $teams);
 
         $this->render('cups/show', [
             'title' => $cup['name'],
@@ -359,25 +341,7 @@ class CupsController extends Controller
         }
 
         $teams = $this->team->all();
-
-        // Enrich rounds with team names
-        $rounds = [];
-        foreach ($cup['rounds'] ?? [] as $round) {
-            $enrichedFixtures = [];
-            foreach ($round['fixtures'] as $fixture) {
-                $homeTeam = $this->findById($teams, $fixture['homeTeamId'] ?? '');
-                $awayTeam = $this->findById($teams, $fixture['awayTeamId'] ?? '');
-                $fixture['homeTeamName'] = $homeTeam['name'] ?? 'TBD';
-                $fixture['awayTeamName'] = $awayTeam['name'] ?? 'TBD';
-                $fixture['homeTeamColour'] = $homeTeam['colour'] ?? '#ccc';
-                $fixture['awayTeamColour'] = $awayTeam['colour'] ?? '#ccc';
-                $enrichedFixtures[] = $fixture;
-            }
-            $rounds[] = [
-                'name' => $round['name'],
-                'fixtures' => $enrichedFixtures,
-            ];
-        }
+        $rounds = $this->enrichRoundsWithTeamData($cup['rounds'] ?? [], $teams);
 
         $this->render('cups/fixtures', [
             'title' => $cup['name'] . ' - Fixtures',
@@ -466,26 +430,7 @@ class CupsController extends Controller
                 'awayPens' => ($awayPens !== null && $awayPens !== '') ? (int) $awayPens : null,
             ];
 
-            // Determine winner for cup advancement
-            $winnerId = null;
-            if ($result['penalties'] && $result['homePens'] !== null && $result['awayPens'] !== null) {
-                if ($result['homePens'] > $result['awayPens'])
-                    $winnerId = 'home';
-                elseif ($result['awayPens'] > $result['homePens'])
-                    $winnerId = 'away';
-            } elseif ($result['extraTime'] && $result['homeScoreET'] !== null && $result['awayScoreET'] !== null) {
-                if ($result['homeScoreET'] > $result['awayScoreET'])
-                    $winnerId = 'home';
-                elseif ($result['awayScoreET'] > $result['homeScoreET'])
-                    $winnerId = 'away';
-            } else {
-                if ($result['homeScore'] > $result['awayScore'])
-                    $winnerId = 'home';
-                elseif ($result['awayScore'] > $result['homeScore'])
-                    $winnerId = 'away';
-            }
-
-            $result['winnerId'] = $winnerId;
+            $result['winnerId'] = $this->determineWinner($result);
             $this->cup->updateFixtureResult($id, $fixtureId, $result);
         }
 
@@ -501,4 +446,64 @@ class CupsController extends Controller
         $this->redirect('/admin/cups/' . $slug . '/fixtures');
     }
 
+    /**
+     * Enrich cup rounds with team names and colours.
+     */
+    private function enrichRoundsWithTeamData(array $rounds, array $teams): array
+    {
+        $enrichedRounds = [];
+
+        foreach ($rounds as $round) {
+            $enrichedFixtures = [];
+            foreach ($round['fixtures'] as $fixture) {
+                $homeTeam = $this->findById($teams, $fixture['homeTeamId'] ?? '');
+                $awayTeam = $this->findById($teams, $fixture['awayTeamId'] ?? '');
+                $fixture['homeTeamName'] = $homeTeam['name'] ?? 'TBD';
+                $fixture['awayTeamName'] = $awayTeam['name'] ?? 'TBD';
+                $fixture['homeTeamColour'] = $homeTeam['colour'] ?? '#ccc';
+                $fixture['awayTeamColour'] = $awayTeam['colour'] ?? '#ccc';
+                $enrichedFixtures[] = $fixture;
+            }
+            $enrichedRounds[] = [
+                'name' => $round['name'],
+                'fixtures' => $enrichedFixtures,
+            ];
+        }
+
+        return $enrichedRounds;
+    }
+
+    /**
+     * Determine the winner of a cup fixture based on result data.
+     * Returns 'home', 'away', or null for a draw.
+     */
+    private function determineWinner(array $result): ?string
+    {
+        // Check penalties first (highest priority)
+        if ($result['penalties'] && $result['homePens'] !== null && $result['awayPens'] !== null) {
+            return $this->compareScores($result['homePens'], $result['awayPens']);
+        }
+
+        // Check extra time next
+        if ($result['extraTime'] && $result['homeScoreET'] !== null && $result['awayScoreET'] !== null) {
+            return $this->compareScores($result['homeScoreET'], $result['awayScoreET']);
+        }
+
+        // Fall back to regular time score
+        return $this->compareScores($result['homeScore'], $result['awayScore']);
+    }
+
+    /**
+     * Compare two scores and return winner designation.
+     */
+    private function compareScores(int $homeScore, int $awayScore): ?string
+    {
+        if ($homeScore > $awayScore) {
+            return 'home';
+        }
+        if ($awayScore > $homeScore) {
+            return 'away';
+        }
+        return null;
+    }
 }

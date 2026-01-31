@@ -138,7 +138,7 @@
                                             class="away-score"><?= $fixture['result']['awayScore'] ?></span>
                                     </div>
                                     <button type="button"
-                                        onclick="editResult('<?= htmlspecialchars($fixture['id']) ?>', <?= $fixture['result']['homeScore'] ?>, <?= $fixture['result']['awayScore'] ?>)"
+                                        onclick="editResult('<?= htmlspecialchars($fixture['id']) ?>')"
                                         class="p-1.5 hover:bg-surface-hover rounded transition-colors" title="Edit Result">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-text-muted hover:text-primary"
                                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -270,23 +270,22 @@
 <script>
     const CSRF_TOKEN = '<?= htmlspecialchars(\Core\Auth::csrfToken()) ?>';
     const BASE_PATH = '<?= $basePath ?>';
+    const SPINNER_HTML = '<span class="animate-spin inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full"></span>';
+    const CHECK_SVG = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>';
 
-    function editResult(fixtureId, currentHomeScore, currentAwayScore) {
+    function editResult(fixtureId) {
         const resultRow = document.getElementById(`result-${fixtureId}`);
         const displayMode = resultRow.querySelector('.score-display');
         const editMode = resultRow.querySelector('.score-edit');
 
-        // Hide display, show edit
         displayMode.classList.add('hidden');
         displayMode.classList.remove('flex');
         editMode.classList.remove('hidden');
         editMode.classList.add('flex');
-
-        // Focus first input
         editMode.querySelector('input[name="homeScore"]').focus();
     }
 
-    function saveResult(event, leagueSlug, fixtureId) {
+    function saveScore(event, leagueSlug, fixtureId, updateDisplay) {
         event.preventDefault();
         const form = event.target;
         const btn = form.querySelector('button');
@@ -298,7 +297,7 @@
         if (homeScore === '' || awayScore === '') return;
 
         btn.disabled = true;
-        btn.innerHTML = '<span class="animate-spin inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full"></span>';
+        btn.innerHTML = SPINNER_HTML;
 
         const formData = new FormData();
         formData.append('fixtureId', fixtureId);
@@ -321,26 +320,23 @@
                     }
                 });
             })
-            .then(data => {
-                // Update the display with new scores
-                const resultRow = document.getElementById(`result-${fixtureId}`);
-                resultRow.querySelector('.home-score').textContent = homeScore;
-                resultRow.querySelector('.away-score').textContent = awayScore;
+            .then(() => {
+                if (updateDisplay) {
+                    const resultRow = document.getElementById(`result-${fixtureId}`);
+                    resultRow.querySelector('.home-score').textContent = homeScore;
+                    resultRow.querySelector('.away-score').textContent = awayScore;
 
-                // Update the onclick handler with new values
-                const displayMode = resultRow.querySelector('.score-display');
-                const editBtn = displayMode.querySelector('button');
-                editBtn.onclick = () => editResult(fixtureId, homeScore, awayScore);
+                    const displayMode = resultRow.querySelector('.score-display');
+                    const editBtn = displayMode.querySelector('button');
+                    editBtn.onclick = () => editResult(fixtureId);
 
-                // Switch back to display mode
-                displayMode.classList.remove('hidden');
-                displayMode.classList.add('flex');
-                const editMode = resultRow.querySelector('.score-edit');
-                editMode.classList.add('hidden');
-                editMode.classList.remove('flex');
+                    displayMode.classList.remove('hidden');
+                    displayMode.classList.add('flex');
+                    resultRow.querySelector('.score-edit').classList.add('hidden');
+                    resultRow.querySelector('.score-edit').classList.remove('flex');
+                }
 
-                // Show success briefly
-                btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>';
+                btn.innerHTML = CHECK_SVG;
                 btn.classList.add('bg-green-600');
 
                 setTimeout(() => {
@@ -349,10 +345,7 @@
                     btn.classList.remove('bg-green-600');
                 }, 1000);
 
-                // Reload page after delay to update standings table
-                setTimeout(() => {
-                    window.location.reload();
-                }, 2000);
+                setTimeout(() => window.location.reload(), updateDisplay ? 2000 : 1000);
             })
             .catch(err => {
                 console.error(err);
@@ -362,56 +355,11 @@
             });
     }
 
+    function saveResult(event, leagueSlug, fixtureId) {
+        saveScore(event, leagueSlug, fixtureId, true);
+    }
+
     function saveLeagueScore(event, leagueSlug, fixtureId) {
-        event.preventDefault();
-        const form = event.target;
-        const btn = form.querySelector('button');
-        const originalContent = btn.innerHTML;
-
-        const homeScore = form.homeScore.value;
-        const awayScore = form.awayScore.value;
-
-        if (homeScore === '' || awayScore === '') return;
-
-        btn.disabled = true;
-        btn.innerHTML = '<span class="animate-spin inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full"></span>';
-
-        const formData = new FormData();
-        formData.append('fixtureId', fixtureId);
-        formData.append('homeScore', homeScore);
-        formData.append('awayScore', awayScore);
-        formData.append('csrf_token', CSRF_TOKEN);
-        formData.append('ajax', '1');
-
-        fetch(`${BASE_PATH}/admin/leagues/${leagueSlug}/fixtures`, {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => {
-                if (response.redirected) return { success: true };
-                return response.text().then(text => {
-                    try {
-                        return JSON.parse(text);
-                    } catch {
-                        return { success: true };
-                    }
-                });
-            })
-            .then(data => {
-                // Show success state
-                btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>';
-                btn.classList.add('bg-green-600');
-
-                // Reload page after short delay to show updated standings
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
-            })
-            .catch(err => {
-                console.error(err);
-                btn.disabled = false;
-                btn.innerHTML = originalContent;
-                alert('Failed to save score. Please try again.');
-            });
+        saveScore(event, leagueSlug, fixtureId, false);
     }
 </script>

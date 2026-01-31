@@ -171,96 +171,7 @@ class PublicController extends Controller
             $competitions = [];
             $allTeams = array_values($teamsById);
 
-            foreach ($leagues as $league) {
-                if (in_array($id, $league['teamIds'] ?? [])) {
-                    // Calculate position
-                    $standings = $this->leagueModel->calculateStandings($league, $allTeams);
-                    $position = '-';
-                    foreach ($standings as $idx => $row) {
-                        if ($row['teamId'] === $id) {
-                            $pos = $idx + 1;
-                            $suffix = 'th';
-                            if (!in_array(($pos % 100), [11, 12, 13])) {
-                                switch ($pos % 10) {
-                                    case 1:
-                                        $suffix = 'st';
-                                        break;
-                                    case 2:
-                                        $suffix = 'nd';
-                                        break;
-                                    case 3:
-                                        $suffix = 'rd';
-                                        break;
-                                }
-                            }
-                            $position = $pos . $suffix;
-                            break;
-                        }
-                    }
-
-                    $competitions[] = [
-                        'name' => $league['name'],
-                        'slug' => $league['slug'],
-                        'type' => 'league',
-                        'detail' => $position,
-                        'url' => '/league/' . $league['slug']
-                    ];
-                }
-            }
-
-            foreach ($cups as $cup) {
-                if (in_array($id, $cup['teamIds'] ?? [])) {
-                    // Determine status
-                    $status = 'Participant';
-                    foreach ($cup['rounds'] ?? [] as $round) {
-                        foreach ($round['fixtures'] ?? [] as $f) {
-                            if (($f['homeTeamId'] ?? '') === $id || ($f['awayTeamId'] ?? '') === $id) {
-                                // Found fixture in this round
-                                if (!isset($f['result'])) {
-                                    $status = $round['name']; // Upcoming match in this round
-                                } else {
-                                    // Match played
-                                    $home = (int) ($f['result']['homeScore'] ?? 0);
-                                    $away = (int) ($f['result']['awayScore'] ?? 0);
-                                    $isHome = ($f['homeTeamId'] ?? '') === $id;
-
-                                    $won = false;
-                                    if ($home > $away)
-                                        $won = $isHome;
-                                    elseif ($away > $home)
-                                        $won = !$isHome;
-                                    else {
-                                        // Draw - check penalties if exist
-                                        if (isset($f['result']['penalties'])) {
-                                            $pHome = (int) ($f['result']['penalties']['homeScore'] ?? 0);
-                                            $pAway = (int) ($f['result']['penalties']['awayScore'] ?? 0);
-                                            $won = $isHome ? ($pHome > $pAway) : ($pAway > $pHome);
-                                        }
-                                    }
-
-                                    if (!$won) {
-                                        $status = 'Knocked out in ' . $round['name'];
-                                    } else {
-                                        // Won this round
-                                        $status = 'Won ' . $round['name'];
-                                        if (stripos($round['name'], 'Final') !== false) {
-                                            $status = 'Winner';
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    $competitions[] = [
-                        'name' => $cup['name'],
-                        'slug' => $cup['slug'],
-                        'type' => 'cup',
-                        'detail' => $status,
-                        'url' => '/cup/' . $cup['slug']
-                    ];
-                }
-            }
+            $competitions = $this->buildTeamCompetitions($id, $leagues, $cups, $allTeams);
         }
 
         $this->render('public/team', [
@@ -414,94 +325,8 @@ class PublicController extends Controller
 
             $fixtures = array_values($teamFixtures);
 
-            // Identify participating competitions
             $allTeams = array_values($teamsById);
-
-            foreach ($leagues as $league) {
-                if (in_array($id, $league['teamIds'] ?? [])) {
-                    // Calculate position
-                    $standings = $this->leagueModel->calculateStandings($league, $allTeams);
-                    $position = '-';
-                    foreach ($standings as $idx => $row) {
-                        if ($row['teamId'] === $id) {
-                            $pos = $idx + 1;
-                            $suffix = 'th';
-                            if (!in_array(($pos % 100), [11, 12, 13])) {
-                                switch ($pos % 10) {
-                                    case 1:
-                                        $suffix = 'st';
-                                        break;
-                                    case 2:
-                                        $suffix = 'nd';
-                                        break;
-                                    case 3:
-                                        $suffix = 'rd';
-                                        break;
-                                }
-                            }
-                            $position = $pos . $suffix;
-                            break;
-                        }
-                    }
-
-                    $competitions[] = [
-                        'name' => $league['name'],
-                        'slug' => $league['slug'],
-                        'type' => 'league',
-                        'detail' => $position,
-                        'url' => '/league/' . $league['slug']
-                    ];
-                }
-            }
-
-            foreach ($cups as $cup) {
-                if (in_array($id, $cup['teamIds'] ?? [])) {
-                    $status = 'Participant';
-                    foreach ($cup['rounds'] ?? [] as $round) {
-                        foreach ($round['fixtures'] ?? [] as $f) {
-                            if (($f['homeTeamId'] ?? '') === $id || ($f['awayTeamId'] ?? '') === $id) {
-                                if (!isset($f['result'])) {
-                                    $status = $round['name'];
-                                } else {
-                                    $home = (int) ($f['result']['homeScore'] ?? 0);
-                                    $away = (int) ($f['result']['awayScore'] ?? 0);
-                                    $isHome = ($f['homeTeamId'] ?? '') === $id;
-
-                                    $won = false;
-                                    if ($home > $away)
-                                        $won = $isHome;
-                                    elseif ($away > $home)
-                                        $won = !$isHome;
-                                    else {
-                                        if (isset($f['result']['penalties'])) {
-                                            $pHome = (int) ($f['result']['penalties']['homeScore'] ?? 0);
-                                            $pAway = (int) ($f['result']['penalties']['awayScore'] ?? 0);
-                                            $won = $isHome ? ($pHome > $pAway) : ($pAway > $pHome);
-                                        }
-                                    }
-
-                                    if (!$won) {
-                                        $status = 'Knocked out in ' . $round['name'];
-                                    } else {
-                                        $status = 'Won ' . $round['name'];
-                                        if (stripos($round['name'], 'Final') !== false) {
-                                            $status = 'Winner';
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    $competitions[] = [
-                        'name' => $cup['name'],
-                        'slug' => $cup['slug'],
-                        'type' => 'cup',
-                        'detail' => $status,
-                        'url' => '/cup/' . $cup['slug']
-                    ];
-                }
-            }
+            $competitions = $this->buildTeamCompetitions($id, $leagues, $cups, $allTeams);
         }
 
         // Split fixtures into recent and upcoming
@@ -711,5 +536,147 @@ class PublicController extends Controller
             'seasonName' => $activeSeason['name'] ?? null,
             'message' => $message,
         ], 'public');
+    }
+
+    /**
+     * Build competition data for a team across leagues and cups.
+     */
+    private function buildTeamCompetitions(string $teamId, array $leagues, array $cups, array $allTeams): array
+    {
+        $competitions = [];
+
+        foreach ($leagues as $league) {
+            if (!in_array($teamId, $league['teamIds'] ?? [])) {
+                continue;
+            }
+
+            $standings = $this->leagueModel->calculateStandings($league, $allTeams);
+            $position = $this->getTeamPosition($teamId, $standings);
+
+            $competitions[] = [
+                'name' => $league['name'],
+                'slug' => $league['slug'],
+                'type' => 'league',
+                'detail' => $position,
+                'url' => '/league/' . $league['slug']
+            ];
+        }
+
+        foreach ($cups as $cup) {
+            if (!in_array($teamId, $cup['teamIds'] ?? [])) {
+                continue;
+            }
+
+            $status = $this->getTeamCupStatus($teamId, $cup);
+
+            $competitions[] = [
+                'name' => $cup['name'],
+                'slug' => $cup['slug'],
+                'type' => 'cup',
+                'detail' => $status,
+                'url' => '/cup/' . $cup['slug']
+            ];
+        }
+
+        return $competitions;
+    }
+
+    /**
+     * Get a team's position in league standings with ordinal suffix.
+     */
+    private function getTeamPosition(string $teamId, array $standings): string
+    {
+        foreach ($standings as $idx => $row) {
+            if ($row['teamId'] === $teamId) {
+                return $this->ordinal($idx + 1);
+            }
+        }
+        return '-';
+    }
+
+    /**
+     * Get a team's status in a cup competition.
+     */
+    private function getTeamCupStatus(string $teamId, array $cup): string
+    {
+        $status = 'Participant';
+
+        foreach ($cup['rounds'] ?? [] as $round) {
+            foreach ($round['fixtures'] ?? [] as $f) {
+                $isHome = ($f['homeTeamId'] ?? '') === $teamId;
+                $isAway = ($f['awayTeamId'] ?? '') === $teamId;
+
+                if (!$isHome && !$isAway) {
+                    continue;
+                }
+
+                if (!isset($f['result'])) {
+                    $status = $round['name'];
+                    continue;
+                }
+
+                $won = $this->didTeamWin($f, $isHome);
+
+                if (!$won) {
+                    $status = 'Knocked out in ' . $round['name'];
+                } elseif (stripos($round['name'], 'Final') !== false) {
+                    $status = 'Winner';
+                } else {
+                    $status = 'Won ' . $round['name'];
+                }
+            }
+        }
+
+        return $status;
+    }
+
+    /**
+     * Determine if a team won a cup fixture.
+     */
+    private function didTeamWin(array $fixture, bool $isHome): bool
+    {
+        $result = $fixture['result'];
+        $home = (int) ($result['homeScore'] ?? 0);
+        $away = (int) ($result['awayScore'] ?? 0);
+
+        if ($home > $away) {
+            return $isHome;
+        }
+        if ($away > $home) {
+            return !$isHome;
+        }
+
+        // Draw - check penalties
+        if (isset($result['penalties'])) {
+            $pHome = (int) ($result['penalties']['homeScore'] ?? 0);
+            $pAway = (int) ($result['penalties']['awayScore'] ?? 0);
+            return $isHome ? ($pHome > $pAway) : ($pAway > $pHome);
+        }
+
+        return false;
+    }
+
+    /**
+     * Convert a number to its ordinal form (1st, 2nd, 3rd, etc.).
+     */
+    private function ordinal(int $number): string
+    {
+        $suffix = 'th';
+
+        if (!in_array(($number % 100), [11, 12, 13])) {
+            switch ($number % 10) {
+                case 1:
+                    $suffix = 'st';
+                    break;
+                case 2:
+                    $suffix = 'nd';
+                    break;
+                case 3:
+                    $suffix = 'rd';
+                    break;
+            }
+        }
+
+        return $number . $suffix;
     }
 }
