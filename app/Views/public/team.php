@@ -85,7 +85,7 @@ HTML;
             <?php if (!empty($competitions)): ?>
                 <div class="flex flex-wrap gap-2 mt-3">
                     <?php foreach ($competitions as $comp): ?>
-                        <a href="<?= htmlspecialchars($comp['url']) ?>"
+                        <a href="<?= $basePath . htmlspecialchars($comp['url']) ?>"
                             class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-white/10 text-white hover:bg-white/20 transition-colors border border-white/10 uppercase tracking-wide gap-1">
                             <?= htmlspecialchars($comp['name']) ?>
                             <?php if (!empty($comp['detail'])): ?>
