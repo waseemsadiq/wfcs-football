@@ -242,8 +242,8 @@
 
                 let penaltyHtml = '';
                 if (result.penalties) {
-                    const pHome = parseInt(result.penalties.homeScore || 0);
-                    const pAway = parseInt(result.penalties.awayScore || 0);
+                    const pHome = parseInt(result.homePens || 0);
+                    const pAway = parseInt(result.awayPens || 0);
                     penaltyHtml = `<div class="text-[10px] text-text-muted font-normal mt-1 text-center">(${pHome} - ${pAway} pens)</div>`;
                 }
 

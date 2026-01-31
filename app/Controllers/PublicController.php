@@ -647,9 +647,9 @@ class PublicController extends Controller
         }
 
         // Draw - check penalties
-        if (isset($result['penalties'])) {
-            $pHome = (int) ($result['penalties']['homeScore'] ?? 0);
-            $pAway = (int) ($result['penalties']['awayScore'] ?? 0);
+        if (isset($result['penalties']) && $result['penalties']) {
+            $pHome = (int) ($result['homePens'] ?? 0);
+            $pAway = (int) ($result['awayPens'] ?? 0);
             return $isHome ? ($pHome > $pAway) : ($pAway > $pHome);
         }
 
