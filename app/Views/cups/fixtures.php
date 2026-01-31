@@ -132,11 +132,19 @@
                                                 </div>
                                                 <!-- Penalties -->
                                                 <div>
-                                                    <label class="flex items-center gap-2 mb-2 font-medium cursor-pointer">
-                                                        <input type="checkbox" name="penalties" value="1"
-                                                            class="rounded border-gray-600 text-primary focus:ring-primary/50"
-                                                            <?= ($fixture['result']['penalties'] ?? false) ? 'checked' : '' ?>>
-                                                        Penalties
+                                                    <label class="flex items-center gap-3 mb-2 font-medium cursor-pointer">
+                                                        <div class="relative inline-block w-11 h-6">
+                                                            <input type="checkbox" name="penalties" value="1"
+                                                                class="sr-only peer"
+                                                                id="penaltiesToggle-<?= $fixture['id'] ?>"
+                                                                role="switch"
+                                                                aria-checked="<?= $hasPenData ? 'true' : 'false' ?>"
+                                                                aria-labelledby="penaltiesLabel-<?= $fixture['id'] ?>"
+                                                                <?= $hasPenData ? 'checked' : '' ?>>
+                                                            <div class="w-11 h-6 bg-gray-600 rounded-full peer-checked:bg-primary transition-colors peer-focus:ring-2 peer-focus:ring-primary/50"></div>
+                                                            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
+                                                        </div>
+                                                        <span id="penaltiesLabel-<?= $fixture['id'] ?>">Penalties</span>
                                                     </label>
                                                     <div class="flex items-center gap-2 ml-6">
                                                         <span class="text-text-muted text-xs">Penalty Score:</span>
