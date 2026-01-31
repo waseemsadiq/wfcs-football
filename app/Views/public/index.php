@@ -1,0 +1,198 @@
+<?php
+/**
+ * Render a fixture row.
+ */
+function renderPublicFixture($fixture, $showResult = true)
+{
+    $homeTeam = $fixture['homeTeam'] ?? null;
+    $awayTeam = $fixture['awayTeam'] ?? null;
+    $result = $fixture['result'] ?? null;
+
+    $time = $fixture['time'] ?? '15:00';
+
+    $homeColour = htmlspecialchars($homeTeam['colour'] ?? '#333333');
+    $awayColour = htmlspecialchars($awayTeam['colour'] ?? '#333333');
+    $homeName = htmlspecialchars($homeTeam['name'] ?? 'TBD');
+    $awayName = htmlspecialchars($awayTeam['name'] ?? 'TBD');
+    $homeId = htmlspecialchars($homeTeam['id'] ?? '');
+    $awayId = htmlspecialchars($awayTeam['id'] ?? '');
+
+    $competition = htmlspecialchars($fixture['competitionName'] ?? '');
+    if (!empty($fixture['roundName'])) {
+        $competition .= ' - ' . htmlspecialchars($fixture['roundName']);
+    }
+
+    $scoreHtml = '';
+    if ($showResult && $result !== null) {
+        $homeScore = (int) ($result['homeScore'] ?? 0);
+        $awayScore = (int) ($result['awayScore'] ?? 0);
+        $scoreHtml = '<div class="font-bold text-xl text-primary bg-surface-hover px-3 py-1 rounded-sm">' . $homeScore . ' - ' . $awayScore . '</div>';
+    } else {
+        $scoreHtml = '<div class="text-base text-text-muted bg-transparent font-medium">' . htmlspecialchars($time) . '</div>';
+    }
+
+    $homeSlug = htmlspecialchars($homeTeam['slug'] ?? $homeId);
+    $awaySlug = htmlspecialchars($awayTeam['slug'] ?? $awayId);
+
+    $homeLink = $homeId ? "<a href=\"/team/{$homeSlug}\" class=\"hover:text-primary transition-colors\">{$homeName}</a>" : $homeName;
+    $awayLink = $awayId ? "<a href=\"/team/{$awaySlug}\" class=\"hover:text-primary transition-colors\">{$awayName}</a>" : $awayName;
+
+    return <<<HTML
+    <li class="flex flex-col items-center py-4 border-b border-border last:border-b-0 gap-1 hover:bg-surface-hover/50 transition-colors px-4 -mx-4 rounded-sm">
+        <div class="flex items-center justify-center gap-4 md:gap-8 w-full">
+            <div class="flex-1 flex items-center justify-end gap-3 font-semibold text-right">
+                {$homeLink}
+                <span class="inline-block w-4 h-4 rounded bg-current shadow-sm" style="color: {$homeColour}; background-color: {$homeColour}"></span>
+            </div>
+            {$scoreHtml}
+            <div class="flex-1 flex items-center justify-start gap-3 font-semibold text-left">
+                <span class="inline-block w-4 h-4 rounded bg-current shadow-sm" style="color: {$awayColour}; background-color: {$awayColour}"></span>
+                {$awayLink}
+            </div>
+        </div>
+        <div class="text-xs text-text-muted font-medium">{$competition}</div>
+    </li>
+HTML;
+}
+?>
+
+<div>
+    <div class="text-center mb-12">
+        <h1
+            class="text-4xl font-extrabold tracking-tight mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">
+            Welcome</h1>
+        <?php if (isset($seasonName) && $seasonName): ?>
+            <p class="text-text-muted text-lg font-medium"><?= htmlspecialchars($seasonName) ?> Season</p>
+        <?php endif; ?>
+    </div>
+
+    <!-- Recent Results -->
+    <section class="mb-16">
+        <div class="flex items-center gap-4 mb-6">
+            <h2 class="text-2xl font-bold">Recent Results</h2>
+            <div class="h-px bg-border flex-1"></div>
+        </div>
+        <div class="card p-0">
+            <?php if (empty($recentResults)): ?>
+                <div class="text-center py-12 text-text-muted">
+                    <p>No recent results</p>
+                </div>
+            <?php else: ?>
+                <?php
+                $groupedResults = [];
+                foreach ($recentResults as $fixture) {
+                    $date = $fixture['date'] ?? 'TBD';
+                    $groupedResults[$date][] = $fixture;
+                }
+                ?>
+                <div class="flex flex-col">
+                    <?php foreach ($groupedResults as $date => $fixtures): ?>
+                        <div class="bg-surface/50 border-b border-border py-2 text-center">
+                            <span class="text-xs font-bold text-text-muted uppercase tracking-wider">
+                                <?= $date !== 'TBD' ? date('D j M', strtotime($date)) : 'TBD' ?>
+                            </span>
+                        </div>
+                        <ul class="divide-y divide-border border-b border-border last:border-0 px-6">
+                            <?php foreach ($fixtures as $fixture): ?>
+                                <?= renderPublicFixture($fixture, true) ?>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
+    </section>
+
+    <!-- Upcoming Fixtures -->
+    <section class="mb-16">
+        <div class="flex items-center gap-4 mb-6">
+            <h2 class="text-2xl font-bold">Upcoming Fixtures</h2>
+            <div class="h-px bg-border flex-1"></div>
+        </div>
+        <div class="card p-0">
+            <?php if (empty($upcomingFixtures)): ?>
+                <div class="text-center py-12 text-text-muted">
+                    <p>No upcoming fixtures</p>
+                </div>
+            <?php else: ?>
+                <?php
+                $groupedUpcoming = [];
+                foreach ($upcomingFixtures as $fixture) {
+                    $date = $fixture['date'] ?? 'TBD';
+                    $groupedUpcoming[$date][] = $fixture;
+                }
+                ?>
+                <div class="flex flex-col">
+                    <?php foreach ($groupedUpcoming as $date => $fixtures): ?>
+                        <div class="bg-surface/50 border-b border-border py-2 text-center">
+                            <span class="text-xs font-bold text-text-muted uppercase tracking-wider">
+                                <?= $date !== 'TBD' ? date('D j M', strtotime($date)) : 'TBD' ?>
+                            </span>
+                        </div>
+                        <ul class="divide-y divide-border border-b border-border last:border-0 px-6">
+                            <?php foreach ($fixtures as $fixture): ?>
+                                <?= renderPublicFixture($fixture, false) ?>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
+    </section>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+        <!-- Leagues -->
+        <div class="card p-0 overflow-hidden">
+            <div class="p-6 border-b border-border bg-surface/50">
+                <h2 class="text-xl font-bold m-0">Leagues</h2>
+            </div>
+            <div class="p-6">
+                <?php if (empty($leagues)): ?>
+                    <div class="text-center py-8 text-text-muted">
+                        <p>No active leagues</p>
+                    </div>
+                <?php else: ?>
+                    <ul class="space-y-2">
+                        <?php foreach ($leagues as $league): ?>
+                            <li>
+                                <a href="/league/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>"
+                                    class="flex items-center gap-3 p-3 rounded-sm hover:bg-surface-hover transition-colors group">
+                                    <span class="text-xl group-hover:scale-110 transition-transform">🏆</span>
+                                    <span
+                                        class="font-semibold text-text-main group-hover:text-primary transition-colors"><?= htmlspecialchars($league['name']) ?></span>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- Cups -->
+        <div class="card p-0 overflow-hidden">
+            <div class="p-6 border-b border-border bg-surface/50">
+                <h2 class="text-xl font-bold m-0">Cups</h2>
+            </div>
+            <div class="p-6">
+                <?php if (empty($cups)): ?>
+                    <div class="text-center py-8 text-text-muted">
+                        <p>No active cups</p>
+                    </div>
+                <?php else: ?>
+                    <ul class="space-y-2">
+                        <?php foreach ($cups as $cup): ?>
+                            <li>
+                                <a href="/cup/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>"
+                                    class="flex items-center gap-3 p-3 rounded-sm hover:bg-surface-hover transition-colors group">
+                                    <span class="text-xl group-hover:scale-110 transition-transform">🏅</span>
+                                    <span
+                                        class="font-semibold text-text-main group-hover:text-primary transition-colors"><?= htmlspecialchars($cup['name']) ?></span>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>

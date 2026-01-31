@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= isset($title) ? htmlspecialchars($title) . ' - ' : '' ?>WFCS Football</title>
+    <link rel="stylesheet" href="/css/output.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="bg-background text-text-main font-sans antialiased min-h-screen flex flex-col">
+    <header class="bg-surface/80 backdrop-blur-md border-b border-border py-5 mb-12 sticky top-0 z-50">
+        <div class="max-w-[1200px] mx-auto px-6 w-full flex justify-between items-center">
+            <a href="/" class="flex items-center no-underline">
+                <img src="/images/logo-white.svg" alt="WFCS Football" class="h-20 w-20">
+            </a>
+
+            <!-- Desktop Navigation (hidden on mobile) -->
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="/"
+                    class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Home</a>
+                <a href="/leagues"
+                    class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Leagues</a>
+                <?php if (isset($_SESSION['admin_id'])): ?>
+                    <a href="/admin"
+                        class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Admin
+                        Stuff</a>
+                <?php endif; ?>
+                <a href="/login" aria-label="Admin Login" class="text-text-muted hover:text-primary transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                </a>
+            </nav>
+
+            <!-- Mobile Hamburger Menu (visible only on mobile) -->
+            <button id="mobile-menu-btn-public"
+                class="md:hidden p-2 text-text-muted hover:text-primary transition-colors" aria-label="Open menu">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebar-overlay-public" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden"
+        onclick="closeSidebarPublic()"></div>
+
+    <!-- Mobile Sidebar -->
+    <aside id="mobile-sidebar-public"
+        class="fixed top-0 right-0 h-full w-64 bg-surface border-l border-border z-50 transform translate-x-full transition-transform duration-300 ease-in-out">
+        <div class="flex flex-col h-full">
+            <!-- Sidebar Header -->
+            <div class="flex items-center justify-between p-6 border-b border-border">
+                <span class="text-lg font-bold text-primary">Menu</span>
+                <button onclick="closeSidebarPublic()" class="p-2 text-text-muted hover:text-primary transition-colors"
+                    aria-label="Close menu">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Sidebar Navigation -->
+            <nav class="flex-1 flex flex-col p-6 space-y-4">
+                <a href="/"
+                    class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Home</a>
+                <a href="/leagues"
+                    class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Leagues</a>
+                <?php if (isset($_SESSION['admin_id'])): ?>
+                    <a href="/admin"
+                        class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Admin
+                        Stuff</a>
+                <?php endif; ?>
+                <a href="/login"
+                    class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    Admin Login
+                </a>
+            </nav>
+        </div>
+    </aside>
+
+    <script>
+        function openSidebarPublic() {
+            document.getElementById('mobile-sidebar-public').classList.remove('translate-x-full');
+            document.getElementById('sidebar-overlay-public').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSidebarPublic() {
+            document.getElementById('mobile-sidebar-public').classList.add('translate-x-full');
+            document.getElementById('sidebar-overlay-public').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        document.getElementById('mobile-menu-btn-public').addEventListener('click', openSidebarPublic);
+    </script>
+
+    <main class="flex-1">
+        <div class="max-w-[1200px] mx-auto px-4 md:px-6 w-full">
+            <?= $content ?>
+        </div>
+    </main>
+
+    <footer class="mt-20 py-12 text-center text-text-muted border-t border-border text-sm">
+        <div class="max-w-[1200px] mx-auto px-6 w-full">
+            <p>&copy; <?= date('Y') ?> WFCS Football | App by <a href="https://www.waseemsadiq.com"
+                    target="_blank">Waseem Sadiq</a></p>
+        </div>
+    </footer>
+</body>
+
+</html>

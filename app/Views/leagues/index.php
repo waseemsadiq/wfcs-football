@@ -1,0 +1,56 @@
+<div class="text-center mb-12">
+    <h1
+        class="text-4xl font-extrabold tracking-tight mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">
+        Leagues</h1>
+</div>
+
+<div class="card">
+    <div class="flex justify-between items-center mb-8">
+        <h2 class="text-2xl font-bold m-0">All Leagues</h2>
+        <a href="/admin/leagues/create" class="btn btn-primary">+ Create League</a>
+    </div>
+
+    <?php if (empty($leagues)): ?>
+        <div class="text-center py-16 px-8">
+            <p class="text-text-muted mb-6 text-lg">No leagues created yet.</p>
+            <p class="text-text-muted mb-8">Create your first league to start organising fixtures.</p>
+            <a href="/admin/leagues/create" class="btn btn-primary">Create Your First League</a>
+        </div>
+    <?php else: ?>
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr>
+                        <th class="table-th">League</th>
+                        <th class="table-th">Season</th>
+                        <th class="table-th">Teams</th>
+                        <th class="table-th">Fixtures</th>
+                        <th class="table-th text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($leagues as $league): ?>
+                        <tr class="hover:bg-surface-hover transition-colors">
+                            <td class="table-td">
+                                <a href="/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>"
+                                    class="font-bold text-text-main no-underline hover:text-primary transition-colors">
+                                    <?= htmlspecialchars($league['name']) ?>
+                                </a>
+                            </td>
+                            <td class="table-td"><span
+                                    class="text-text-muted"><?= htmlspecialchars($league['seasonName'] ?? '') ?></span></td>
+                            <td class="table-td"><?= count($league['teamIds'] ?? []) ?></td>
+                            <td class="table-td"><?= count($league['fixtures'] ?? []) ?></td>
+                            <td class="table-td text-right">
+                                <a href="/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>"
+                                    class="btn btn-secondary btn-sm mr-2">View</a>
+                                <a href="/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>/fixtures"
+                                    class="btn btn-secondary btn-sm">Fixtures</a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
+</div>

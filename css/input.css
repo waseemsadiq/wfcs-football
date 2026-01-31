@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background text-text-main font-sans antialiased min-h-screen flex flex-col;
+  }
+  h1, h2, h3 {
+    @apply text-text-main leading-tight;
+  }
+  h1 {
+    @apply text-4xl font-extrabold tracking-tight mb-2;
+    background: linear-gradient(to right, #fff, #94a3b8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  h2 {
+    @apply text-2xl font-bold mb-6;
+  }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
+     appearance: textfield;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-sm font-bold no-underline transition-all duration-200 cursor-pointer border-none text-sm uppercase tracking-wide;
+  }
+  .btn-primary {
+    @apply bg-primary text-primary-text hover:bg-primary-hover hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(74,222,128,0.3)];
+  }
+  .btn-secondary {
+    @apply bg-transparent border border-border text-text-main hover:bg-surface-hover hover:border-text-muted;
+  }
+  .btn-sm {
+      @apply px-4 py-2 text-sm;
+  }
+  
+  .card {
+     @apply bg-surface rounded-md p-8 shadow-md border border-border transition-all duration-200 h-full hover:-translate-y-0.5 hover:shadow-glow hover:border-primary;
+  }
+
+  .form-input {
+      @apply w-full px-4 py-3.5 bg-background border border-border text-text-main rounded-sm text-base transition-all duration-200 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10;
+  }
+  
+  .table-th {
+      @apply text-left p-4 border-b border-border text-text-muted font-semibold uppercase text-sm tracking-wider;
+  }
+  
+  .table-td {
+      @apply p-4 border-b border-border text-text-main align-middle;
+  }
+}
