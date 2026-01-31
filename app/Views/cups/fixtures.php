@@ -94,42 +94,71 @@
                                             </summary>
                                             <div
                                                 class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3 bg-surface-hover/30 p-4 rounded text-sm">
+                                                <?php
+                                                // Determine initial toggle state based on existing data
+                                                $hasETData = ($fixture['result'] !== null) && (isset($fixture['result']['homeScoreET']) || isset($fixture['result']['awayScoreET']));
+                                                $hasPenData = ($fixture['result'] !== null) && (isset($fixture['result']['homePens']) || isset($fixture['result']['awayPens']));
+                                                ?>
                                                 <!-- Extra Time -->
                                                 <div>
-                                                    <label class="flex items-center gap-2 mb-2 font-medium cursor-pointer">
-                                                        <input type="checkbox" name="extraTime" value="1"
-                                                            class="rounded border-gray-600 text-primary focus:ring-primary/50"
-                                                            <?= ($fixture['result']['extraTime'] ?? false) ? 'checked' : '' ?>>
-                                                        Went to Extra Time
+                                                    <label class="flex items-center gap-3 mb-2 font-medium cursor-pointer">
+                                                        <div class="relative inline-block w-11 h-6">
+                                                            <input type="checkbox" name="extraTime" value="1"
+                                                                class="sr-only peer"
+                                                                id="extraTimeToggle-<?= $fixture['id'] ?>"
+                                                                role="switch"
+                                                                aria-checked="<?= $hasETData ? 'true' : 'false' ?>"
+                                                                aria-labelledby="extraTimeLabel-<?= $fixture['id'] ?>"
+                                                                <?= $hasETData ? 'checked' : '' ?>>
+                                                            <div class="w-11 h-6 bg-gray-600 rounded-full peer-checked:bg-primary transition-colors peer-focus:ring-2 peer-focus:ring-primary/50"></div>
+                                                            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
+                                                        </div>
+                                                        <span id="extraTimeLabel-<?= $fixture['id'] ?>">Went to Extra Time</span>
                                                     </label>
-                                                    <div class="flex items-center gap-2 ml-6">
-                                                        <span class="text-text-muted text-xs">Score after ET:</span>
-                                                        <input type="number" name="homeScoreET" min="0" max="99"
-                                                            class="form-input w-12 text-center py-1 px-1 text-xs"
-                                                            value="<?= $fixture['result']['homeScoreET'] ?? '' ?>" placeholder="-">
-                                                        <span class="text-text-muted">-</span>
-                                                        <input type="number" name="awayScoreET" min="0" max="99"
-                                                            class="form-input w-12 text-center py-1 px-1 text-xs"
-                                                            value="<?= $fixture['result']['awayScoreET'] ?? '' ?>" placeholder="-">
+                                                    <div class="et-inputs transition-all duration-200"
+                                                         id="etInputs-<?= $fixture['id'] ?>"
+                                                         style="<?= $hasETData ? '' : 'display: none;' ?>">
+                                                        <div class="flex items-center gap-2 ml-6">
+                                                            <span class="text-text-muted text-xs">Score after ET:</span>
+                                                            <input type="number" name="homeScoreET" min="0" max="99"
+                                                                class="form-input w-12 text-center py-1 px-1 text-xs"
+                                                                value="<?= $fixture['result']['homeScoreET'] ?? '' ?>" placeholder="-">
+                                                            <span class="text-text-muted">-</span>
+                                                            <input type="number" name="awayScoreET" min="0" max="99"
+                                                                class="form-input w-12 text-center py-1 px-1 text-xs"
+                                                                value="<?= $fixture['result']['awayScoreET'] ?? '' ?>" placeholder="-">
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <!-- Penalties -->
                                                 <div>
-                                                    <label class="flex items-center gap-2 mb-2 font-medium cursor-pointer">
-                                                        <input type="checkbox" name="penalties" value="1"
-                                                            class="rounded border-gray-600 text-primary focus:ring-primary/50"
-                                                            <?= ($fixture['result']['penalties'] ?? false) ? 'checked' : '' ?>>
-                                                        Penalties
+                                                    <label class="flex items-center gap-3 mb-2 font-medium cursor-pointer">
+                                                        <div class="relative inline-block w-11 h-6">
+                                                            <input type="checkbox" name="penalties" value="1"
+                                                                class="sr-only peer"
+                                                                id="penaltiesToggle-<?= $fixture['id'] ?>"
+                                                                role="switch"
+                                                                aria-checked="<?= $hasPenData ? 'true' : 'false' ?>"
+                                                                aria-labelledby="penaltiesLabel-<?= $fixture['id'] ?>"
+                                                                <?= $hasPenData ? 'checked' : '' ?>>
+                                                            <div class="w-11 h-6 bg-gray-600 rounded-full peer-checked:bg-primary transition-colors peer-focus:ring-2 peer-focus:ring-primary/50"></div>
+                                                            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
+                                                        </div>
+                                                        <span id="penaltiesLabel-<?= $fixture['id'] ?>">Penalties</span>
                                                     </label>
-                                                    <div class="flex items-center gap-2 ml-6">
-                                                        <span class="text-text-muted text-xs">Penalty Score:</span>
-                                                        <input type="number" name="homePens" min="0" max="99"
-                                                            class="form-input w-12 text-center py-1 px-1 text-xs"
-                                                            value="<?= $fixture['result']['homePens'] ?? '' ?>" placeholder="-">
-                                                        <span class="text-text-muted">-</span>
-                                                        <input type="number" name="awayPens" min="0" max="99"
-                                                            class="form-input w-12 text-center py-1 px-1 text-xs"
-                                                            value="<?= $fixture['result']['awayPens'] ?? '' ?>" placeholder="-">
+                                                    <div class="pen-inputs transition-all duration-200"
+                                                         id="penInputs-<?= $fixture['id'] ?>"
+                                                         style="<?= $hasPenData ? '' : 'display: none;' ?>">
+                                                        <div class="flex items-center gap-2 ml-6">
+                                                            <span class="text-text-muted text-xs">Penalty Score:</span>
+                                                            <input type="number" name="homePens" min="0" max="99"
+                                                                class="form-input w-12 text-center py-1 px-1 text-xs"
+                                                                value="<?= $fixture['result']['homePens'] ?? '' ?>" placeholder="-">
+                                                            <span class="text-text-muted">-</span>
+                                                            <input type="number" name="awayPens" min="0" max="99"
+                                                                class="form-input w-12 text-center py-1 px-1 text-xs"
+                                                                value="<?= $fixture['result']['awayPens'] ?? '' ?>" placeholder="-">
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -257,6 +286,37 @@
 </div>
 
 <script>
+    // Toggle switch show/hide logic
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle all ET toggles
+        document.querySelectorAll('[id^="extraTimeToggle-"]').forEach(toggle => {
+            const fixtureId = toggle.id.replace('extraTimeToggle-', '');
+            const inputs = document.getElementById('etInputs-' + fixtureId);
+
+            toggle.addEventListener('change', function() {
+                if (this.checked) {
+                    inputs.style.display = '';
+                } else {
+                    inputs.style.display = 'none';
+                }
+            });
+        });
+
+        // Handle all penalty toggles
+        document.querySelectorAll('[id^="penaltiesToggle-"]').forEach(toggle => {
+            const fixtureId = toggle.id.replace('penaltiesToggle-', '');
+            const inputs = document.getElementById('penInputs-' + fixtureId);
+
+            toggle.addEventListener('change', function() {
+                if (this.checked) {
+                    inputs.style.display = '';
+                } else {
+                    inputs.style.display = 'none';
+                }
+            });
+        });
+    });
+
     let isRegenerated = false;
 
     function handleModalClose() {
