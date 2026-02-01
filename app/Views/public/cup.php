@@ -15,16 +15,16 @@
         include __DIR__ . '/../partials/empty_state.php';
         ?>
     <?php else: ?>
-        <div class="space-y-8">
+        <div class="space-y-16">
             <?php foreach ($rounds as $round): ?>
-                <div class="bg-surface rounded-md shadow-glow border border-border overflow-hidden">
-                    <div
-                        class="px-6 py-4 border-b border-border bg-surface-hover/50 border-l-4 border-l-primary flex items-center gap-2">
-                        <span class="text-lg font-bold text-text-main"><?= htmlspecialchars($round['name']) ?></span>
-                    </div>
-                    <div class="p-6">
+                <section>
+                    <?php
+                    $title = $round['name'];
+                    include __DIR__ . '/../partials/section_header.php';
+                    ?>
+                    <div class="card p-0 overflow-hidden">
                         <?php if (empty($round['fixtures'])): ?>
-                            <div class="text-center py-8 text-text-muted">
+                            <div class="text-center py-8 text-text-muted p-6">
                                 <p>No fixtures in this round</p>
                             </div>
                         <?php else: ?>
@@ -35,7 +35,7 @@
                             </ul>
                         <?php endif; ?>
                     </div>
-                </div>
+                </section>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
