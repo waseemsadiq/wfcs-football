@@ -35,19 +35,7 @@
                         <?php endforeach; ?>
                     </select>
 
-                    <!-- View Toggle -->
-                    <div class="flex gap-2">
-                        <button id="bracket-btn"
-                            class="px-4 py-3 rounded-sm font-semibold text-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary whitespace-nowrap"
-                            onclick="setViewMode('bracket')">
-                            Bracket
-                        </button>
-                        <button id="fixtures-btn"
-                            class="px-4 py-3 rounded-sm font-semibold text-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary whitespace-nowrap"
-                            onclick="setViewMode('fixtures')">
-                            Fixtures
-                        </button>
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -94,32 +82,17 @@
         if (!cupSelect) return;
 
         // View mode management (global for onclick handlers)
-        window.setViewMode = function(mode) {
+        window.setViewMode = function (mode) {
             const bracketView = document.getElementById('bracket-view');
             const fixturesView = document.getElementById('fixtures-view');
-            const bracketBtn = document.getElementById('bracket-btn');
-            const fixturesBtn = document.getElementById('fixtures-btn');
-
             if (mode === 'bracket') {
                 // Show bracket, hide fixtures
                 bracketView.classList.remove('hidden');
                 fixturesView.classList.add('hidden');
-
-                // Update button states
-                bracketBtn.classList.add('bg-primary', 'text-white');
-                bracketBtn.classList.remove('bg-surface-hover', 'text-text-muted');
-                fixturesBtn.classList.remove('bg-primary', 'text-white');
-                fixturesBtn.classList.add('bg-surface-hover', 'text-text-muted');
             } else if (mode === 'fixtures') {
                 // Show fixtures, hide bracket
                 fixturesView.classList.remove('hidden');
                 bracketView.classList.add('hidden');
-
-                // Update button states
-                fixturesBtn.classList.add('bg-primary', 'text-white');
-                fixturesBtn.classList.remove('bg-surface-hover', 'text-text-muted');
-                bracketBtn.classList.remove('bg-primary', 'text-white');
-                bracketBtn.classList.add('bg-surface-hover', 'text-text-muted');
             }
 
             // Save preference to localStorage
@@ -132,7 +105,7 @@
         }
 
         // Render bracket view (all content sanitized via escapeHtml before innerHTML)
-        function renderBracket(rounds) {
+        function renderBracket(rounds, cupName) {
             const bracketContainer = document.getElementById('bracket-container');
 
             if (!rounds || rounds.length === 0) {
@@ -140,7 +113,17 @@
                 return;
             }
 
-            let html = '<div class="card overflow-hidden"><div class="overflow-x-auto pb-4"><div class="flex gap-12 min-w-max px-4">';
+            let html = `
+                <div class="card overflow-hidden">
+                    <div class="p-6 border-b border-border bg-surface/50 flex justify-between items-center">
+                        <h2 class="text-xl font-bold m-0">${escapeHtml(cupName)}</h2>
+                        <button onclick="setViewMode('fixtures')" class="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-sm text-sm font-bold transition-colors">
+                            Fixtures
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto pb-4 pt-6">
+                        <div class="flex gap-12 min-w-max px-4">
+            `;
 
             rounds.forEach(round => {
                 html += `
@@ -259,7 +242,7 @@
                 const data = await response.json();
 
                 // Render both views
-                renderBracket(data.rounds);
+                renderBracket(data.rounds, data.cup.name);
                 renderRounds(data.rounds);
 
                 // Determine which view to show
@@ -300,12 +283,26 @@
 
             let html = '';
 
-            rounds.forEach(round => {
+            rounds.forEach((round, index) => {
+                let headerContent = `<h2 class="text-xl font-bold m-0">${escapeHtml(round.name)}</h2>`;
+
+                // If first round, add the View Bracket button
+                if (index === 0) {
+                    headerContent = `
+                        <div class="flex justify-between items-center w-full">
+                            <h2 class="text-xl font-bold m-0">${escapeHtml(round.name)}</h2>
+                            <button onclick="setViewMode('bracket')" class="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-sm text-sm font-bold transition-colors">
+                                Bracket
+                            </button>
+                        </div>
+                    `;
+                }
+
                 html += `
                     <section class="mb-16 last:mb-0">
                         <div class="card p-0 overflow-hidden">
                             <div class="p-6 border-b border-border bg-surface/50">
-                                <h2 class="text-xl font-bold m-0">${escapeHtml(round.name)}</h2>
+                                ${headerContent}
                             </div>
                             <div class="divide-y divide-border px-4">
                 `;
