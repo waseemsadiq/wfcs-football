@@ -7,3 +7,8 @@ galvani
 /.DS_Store
 **/.DS_Store
 .env
+
+# Planning session files
+findings.md
+progress.md
+task_plan.md
