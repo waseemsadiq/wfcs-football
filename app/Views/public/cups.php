@@ -114,7 +114,7 @@
             }
 
             let html = `
-                <div class="card overflow-hidden">
+                <div class="card p-0 overflow-hidden">
                     <div class="p-6 border-b border-border bg-surface/50 flex justify-between items-center">
                         <h2 class="text-xl font-bold m-0">${escapeHtml(cupName)}</h2>
                         <button onclick="setViewMode('fixtures')" class="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-sm text-sm font-bold transition-colors">
