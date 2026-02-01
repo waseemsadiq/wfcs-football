@@ -1,5 +1,6 @@
 .worktrees/
 docs/plans/
+docs/user/
 
 node_modules/
 dist/
