@@ -2,6 +2,10 @@
 .wiki/
 docs/plans/
 docs/user/
+data/cups/
+data/leagues/
+data/seasons/
+data/teams/
 
 node_modules/
 dist/
