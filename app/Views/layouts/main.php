@@ -25,7 +25,7 @@ $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
     <meta property="og:description" content="Manage your football leagues, cups, and tournaments with ease.">
     <meta property="og:image" content="<?= $basePath ?>/images/og-image.png">
 
-    <link rel="stylesheet" href="<?= $basePath ?>/css/output.css?v=20260201-blue">
+    <link rel="stylesheet" href="<?= $basePath ?>/css/output.css?v=20260201-2145">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
