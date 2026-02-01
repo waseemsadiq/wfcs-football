@@ -16,7 +16,7 @@ $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
 
 <body class="bg-background text-text-main font-sans antialiased min-h-screen flex flex-col">
     <header class="bg-surface/80 backdrop-blur-md border-b border-border py-5 mb-12 sticky top-0 z-50">
-        <div class="max-w-[1200px] mx-auto px-6 w-full flex justify-between items-center">
+        <div class="max-w-[1200px] mx-auto px-4 md:px-6 w-full flex justify-between items-center">
             <a href="<?= $basePath ?>/" class="flex items-center no-underline">
                 <img src="<?= $basePath ?>/images/logo-white.svg" alt="WFCS Football" class="h-20 w-20 hide-light">
                 <img src="<?= $basePath ?>/images/logo.svg" alt="WFCS Football" class="h-20 w-20 hide-dark">
@@ -174,7 +174,7 @@ $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
     </main>
 
     <footer class="mt-20 py-12 text-center text-text-muted border-t border-border text-sm">
-        <div class="max-w-[1200px] mx-auto px-6 w-full">
+        <div class="max-w-[1200px] mx-auto px-4 md:px-6 w-full">
             <p>&copy; <?= date('Y') ?> WFCS Football | App by <a href="https://www.waseemsadiq.com"
                     target="_blank">Waseem Sadiq</a></p>
         </div>
