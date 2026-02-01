@@ -90,7 +90,7 @@ Click the admin link and enter your password.
 
 ## Running Tests
 
-WFCS includes a comprehensive test suite with 58 tests covering all core functionality.
+WFCS Football includes a comprehensive test suite with 58 tests covering all core functionality.
 
 ```bash
 npm test
@@ -134,9 +134,9 @@ root/
 
 ### Fixture Generation
 
-When you create a league, WFCS automatically generates all fixtures for the season using a round-robin algorithm. Each team plays every other team both home and away. The system handles even numbers of teams smoothly and generates BYE rounds for odd-numbered leagues.
+When you create a league, WFCS Football automatically generates all fixtures for the season using a round-robin algorithm. Each team plays every other team both home and away. The system handles even numbers of teams smoothly and generates BYE rounds for odd-numbered leagues.
 
-You can adjust fixture frequency when creating the league (weekly, fortnightly, or monthly), and WFCS spaces matches accordingly across the season.
+You can adjust fixture frequency when creating the league (weekly, fortnightly, or monthly), and WFCS Football spaces matches accordingly across the season.
 
 ### Standings Calculation
 
@@ -161,11 +161,11 @@ Your admin area is protected by:
 
 ### Data Storage
 
-All data is stored in JSON files within the `/data` directory. No database setup required. WFCS works perfectly for small to medium-sized clubs and organisations.
+All data is stored in JSON files within the `/data` directory. No database setup required. WFCS Football works perfectly for small to medium-sized clubs and organisations.
 
 ## Deploying to Production
 
-WFCS stores production-ready files in the `/dist` folder. When deploying:
+WFCS Football stores production-ready files in the `/dist` folder. When deploying:
 
 **1. Ensure `/dist` is up to date**
 
