@@ -81,15 +81,8 @@ class DashboardController extends Controller
             $cupModel = new Cup();
             $cup = $cupModel->find($id);
             if ($cup && !empty($cup['rounds'])) {
-                // Flatten cup rounds into a single list of fixtures
-                $allFixtures = [];
-                foreach ($cup['rounds'] as $round) {
-                    foreach ($round['fixtures'] as $f) {
-                        $f['roundName'] = $round['name']; // Add round context
-                        $allFixtures[] = $f;
-                    }
-                }
-                $fixtures = $this->filterUpcoming($allFixtures);
+                // For cups, find the first round with unplayed fixtures and return all fixtures in that round
+                $fixtures = $this->filterUpcomingCupRound($cup['rounds']);
             }
         }
 
@@ -142,5 +135,39 @@ class DashboardController extends Controller
         });
 
         return array_values($nextRound);
+    }
+
+    /**
+     * Filter cup fixtures to find all matches in the next upcoming round.
+     * Returns all fixtures in the first round that has unplayed matches.
+     */
+    private function filterUpcomingCupRound(array $rounds): array
+    {
+        foreach ($rounds as $round) {
+            $unplayedInRound = [];
+            $hasUnplayed = false;
+
+            foreach ($round['fixtures'] as $fixture) {
+                // Check if fixture is unplayed and has a date set
+                if (empty($fixture['result']) && !empty($fixture['date'])) {
+                    $fixture['roundName'] = $round['name'];
+                    $unplayedInRound[] = $fixture;
+                    $hasUnplayed = true;
+                }
+            }
+
+            // Return all fixtures from the first round with unplayed matches
+            if ($hasUnplayed) {
+                // Sort by date for display order
+                usort($unplayedInRound, function ($a, $b) {
+                    $dateA = $a['date'] . ' ' . ($a['time'] ?? '00:00');
+                    $dateB = $b['date'] . ' ' . ($b['time'] ?? '00:00');
+                    return strcmp($dateA, $dateB);
+                });
+                return $unplayedInRound;
+            }
+        }
+
+        return [];
     }
 }
