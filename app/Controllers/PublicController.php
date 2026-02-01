@@ -401,57 +401,48 @@ class PublicController extends Controller
 
         ob_start();
 
-        // Group fixtures by date for upcoming fixtures (when $showResult is false)
-        if (!$showResult) {
-            // Group by date
-            $groupedFixtures = [];
-            $dates = [];
+        // Group fixtures by date (for both recent results and upcoming fixtures)
+        $groupedFixtures = [];
+        $dates = [];
 
-            foreach ($fixtures as $fixture) {
-                $date = $fixture['date'] ?? 'TBD';
-                if (!isset($groupedFixtures[$date])) {
-                    $groupedFixtures[$date] = [];
-                    $dates[] = $date;
-                }
-                $groupedFixtures[$date][] = $fixture;
+        foreach ($fixtures as $fixture) {
+            $date = $fixture['date'] ?? 'TBD';
+            if (!isset($groupedFixtures[$date])) {
+                $groupedFixtures[$date] = [];
+                $dates[] = $date;
             }
+            $groupedFixtures[$date][] = $fixture;
+        }
 
-            // Sort dates (TBD goes to end)
-            usort($dates, function($a, $b) {
-                if ($a === 'TBD') return 1;
-                if ($b === 'TBD') return -1;
-                return strtotime($a) - strtotime($b);
-            });
+        // Sort dates based on whether showing results (descending) or upcoming (ascending)
+        usort($dates, function($a, $b) use ($showResult) {
+            if ($a === 'TBD') return 1;
+            if ($b === 'TBD') return -1;
 
-            echo '<div class="flex flex-col">';
-            foreach ($dates as $date) {
-                echo '<div class="bg-surface border-l-4 border-l-primary border-b border-border py-2 text-center">';
-                echo '<span class="text-xs font-bold text-text-muted uppercase tracking-wider">';
-                echo $date !== 'TBD' ? date('D j M', strtotime($date)) : 'TBD';
-                echo '</span></div>';
-                echo '<ul class="divide-y divide-border border-b border-border last:border-0">';
+            $comparison = strtotime($a) - strtotime($b);
 
-                foreach ($groupedFixtures[$date] as $fixture) {
-                    $showDate = false;
-                    $showCompetition = false;
-                    include BASE_PATH . '/app/Views/partials/public_fixture.php';
-                }
+            // For recent results, show newest first (descending)
+            // For upcoming, show soonest first (ascending)
+            return $showResult ? -$comparison : $comparison;
+        });
 
-                echo '</ul>';
-            }
-            echo '</div>';
-        } else {
-            // For recent results, show date inline with each fixture
-            echo '<ul class="divide-y divide-border">';
+        echo '<div class="flex flex-col">';
+        foreach ($dates as $date) {
+            echo '<div class="bg-surface border-l-4 border-l-primary border-b border-border py-2 text-center">';
+            echo '<span class="text-xs font-bold text-text-muted uppercase tracking-wider">';
+            echo $date !== 'TBD' ? date('D j M', strtotime($date)) : 'TBD';
+            echo '</span></div>';
+            echo '<ul class="divide-y divide-border border-b border-border last:border-0">';
 
-            foreach ($fixtures as $fixture) {
-                $showDate = true;
+            foreach ($groupedFixtures[$date] as $fixture) {
+                $showDate = false;
                 $showCompetition = false;
                 include BASE_PATH . '/app/Views/partials/public_fixture.php';
             }
 
             echo '</ul>';
         }
+        echo '</div>';
 
         return ob_get_clean();
     }
