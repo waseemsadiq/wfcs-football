@@ -107,7 +107,7 @@ All tests execute in under one second and should show 100% pass rate.
 ## Project Structure
 
 ```
-footie/
+root/
 ├── index.php                 # Application entry point
 ├── config/
 │   ├── app.php              # Configuration settings
@@ -189,7 +189,7 @@ Edit your `.env` on the server and set `FOOTIE_DEBUG=false`.
 
 Rename `.htaccess.txt` to `.htaccess` on your server. This enables clean URLs (e.g., `/leagues` instead of `/index.php?page=leagues`).
 
-If deploying to a subdirectory, Footie detects the path automatically and adjusts URLs accordingly.
+If deploying to a subdirectory, WFCS Football detects the path automatically and adjusts URLs accordingly.
 
 ## Configuration
 
@@ -204,7 +204,7 @@ ADMIN_PASSWORD_HASH=...         # Your bcrypt password hash
 
 ### Tailwind CSS
 
-Footie uses Tailwind CSS 4.1 for styling with a dark theme (slate-950 background and green accents).
+WFCS Football uses Tailwind CSS 4.1 for styling with a dark theme (slate-950 background and green accents).
 
 Edit `css/input.css` to customise colours or add custom styles. Always recompile after changes:
 
