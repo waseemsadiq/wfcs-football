@@ -9,6 +9,7 @@ galvani
 .env
 
 # Planning session files
+CLAUDE.md
 findings.md
 progress.md
 task_plan.md
