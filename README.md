@@ -273,4 +273,4 @@ For issues or questions, check the documentation in the `/docs` folder or review
 
 ## Licence
 
-This project is proprietary software.
+This project is open source and licensed under the MIT License. You're free to use, modify, and distribute this software. See the LICENSE file for full details.
