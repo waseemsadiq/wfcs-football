@@ -1,7 +1,6 @@
 .worktrees/
 .wiki/
-docs/plans/
-docs/user/
+docs/
 data/cups/
 data/leagues/
 data/seasons/
