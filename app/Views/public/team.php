@@ -6,13 +6,12 @@
         </a>
     </div>
 
-    <div class="flex items-center gap-6 mb-12 bg-surface p-8 rounded-md shadow-glow border border-border">
-        <div class="w-16 h-16 rounded-md shadow-lg ring-2 ring-white/10"
+    <div class="flex items-center gap-6 mb-12 bg-surface p-8 rounded-md shadow-md border border-border">
+        <div class="w-16 h-16 rounded-md shadow-lg ring-2 ring-border"
             style="background-color: <?= htmlspecialchars($team['colour'] ?? '#333333') ?>">
         </div>
         <div>
-            <h1
-                class="text-4xl font-extrabold m-0 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">
+            <h1 class="text-4xl font-extrabold m-0 text-text-main">
                 <?= htmlspecialchars($team['name']) ?>
             </h1>
 
@@ -20,10 +19,10 @@
                 <div class="flex flex-wrap gap-2 mt-3">
                     <?php foreach ($competitions as $comp): ?>
                         <a href="<?= $basePath . htmlspecialchars($comp['url']) ?>"
-                            class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-white/10 text-white hover:bg-white/20 transition-colors border border-white/10 uppercase tracking-wide gap-1">
+                            class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-primary/10 text-primary hover:bg-primary/20 transition-colors border border-primary/20 uppercase tracking-wide gap-1">
                             <?= htmlspecialchars($comp['name']) ?>
                             <?php if (!empty($comp['detail'])): ?>
-                                <span class="text-white/60 font-medium">(<?= htmlspecialchars($comp['detail']) ?>)</span>
+                                <span class="text-text-muted font-medium">(<?= htmlspecialchars($comp['detail']) ?>)</span>
                             <?php endif; ?>
                         </a>
                     <?php endforeach; ?>

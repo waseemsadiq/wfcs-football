@@ -48,7 +48,7 @@
         <!-- Content Container -->
         <div id="team-content" class="hidden">
             <!-- Team Header -->
-            <div class="flex items-center gap-6 mb-12 bg-surface p-8 rounded-md shadow-glow border border-border"
+            <div class="flex items-center gap-6 mb-12 bg-surface p-8 rounded-md shadow-md border border-border"
                 id="team-header">
                 <!-- Content injected via JS -->
             </div>
@@ -160,10 +160,10 @@
             if (competitions && competitions.length > 0) {
                 compsHtml = '<div class="flex flex-wrap gap-2 mt-3">';
                 competitions.forEach(comp => {
-                    const detailHtml = comp.detail ? `<span class="text-white/60 font-medium">(${escapeHtml(comp.detail)})</span>` : '';
+                    const detailHtml = comp.detail ? `<span class="text-text-muted font-medium">(${escapeHtml(comp.detail)})</span>` : '';
                     compsHtml += `
                         <a href="<?= $basePath ?>${comp.url}"
-                            class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-white/10 text-white hover:bg-white/20 transition-colors border border-white/10 uppercase tracking-wide gap-1">
+                            class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-primary/10 text-primary hover:bg-primary/20 transition-colors border border-primary/20 uppercase tracking-wide gap-1">
                             ${escapeHtml(comp.name)}
                             ${detailHtml}
                         </a>
@@ -173,11 +173,11 @@
             }
 
             teamHeader.innerHTML = `
-                <div class="w-16 h-16 rounded-md shadow-lg ring-2 ring-white/10 flex-shrink-0"
+                <div class="w-16 h-16 rounded-md shadow-lg ring-2 ring-border flex-shrink-0"
                     style="background-color: ${escapeHtml(team.colour || '#333333')}">
                 </div>
                 <div>
-                    <h1 class="text-4xl font-extrabold m-0 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">
+                    <h1 class="text-4xl font-extrabold m-0 text-text-main">
                         ${escapeHtml(team.name)}
                     </h1>
                     ${compsHtml}
