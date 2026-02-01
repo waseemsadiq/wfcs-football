@@ -18,11 +18,24 @@
             </div>
         </div>
     <?php else: ?>
-        <!-- Cup Header with Selector and View Toggle -->
-        <div class="mb-8">
-            <div class="card p-0 overflow-hidden">
-                <div class="p-6 border-b border-border bg-surface/50 flex items-center justify-between gap-4">
-                    <!-- View Toggle Buttons -->
+        <!-- Cup Selector and View Toggle -->
+        <div class="mb-8 max-w-md mx-auto">
+            <div class="card p-6">
+                <label for="cup-select" class="block text-sm font-bold text-text-muted uppercase tracking-wider mb-3">
+                    Select Cup
+                </label>
+                <div class="flex gap-4 items-center">
+                    <!-- Cup Selector -->
+                    <select id="cup-select"
+                        class="flex-1 bg-surface border border-border text-text-main rounded-sm px-4 py-3 font-semibold focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                        <?php foreach ($cups as $cup): ?>
+                            <option value="<?= htmlspecialchars($cup['slug']) ?>">
+                                <?= htmlspecialchars($cup['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+
+                    <!-- View Toggle -->
                     <div class="flex gap-2">
                         <button id="bracket-btn"
                             class="px-4 py-3 rounded-sm font-semibold text-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary whitespace-nowrap"
@@ -34,21 +47,6 @@
                             onclick="setViewMode('fixtures')">
                             Fixtures
                         </button>
-                    </div>
-
-                    <!-- Cup Selector and Label -->
-                    <div class="flex flex-col items-center gap-2">
-                        <label for="cup-select" class="text-xs font-bold text-text-muted uppercase tracking-wider">
-                            Select Cup
-                        </label>
-                        <select id="cup-select"
-                            class="bg-surface border border-border text-text-main rounded-sm px-4 py-3 font-semibold focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all min-w-48">
-                            <?php foreach ($cups as $cup): ?>
-                                <option value="<?= htmlspecialchars($cup['slug']) ?>">
-                                    <?= htmlspecialchars($cup['name']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
                     </div>
                 </div>
             </div>
