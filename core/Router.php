@@ -177,7 +177,12 @@ class Router
         http_response_code(404);
         echo '<h1>Page not found</h1>';
         echo '<p>Sorry, the page you are looking for does not exist.</p>';
-        echo '<p><a href="/">Back to home</a> | <a href="/admin">Admin dashboard</a></p>';
+        // Calculate base path for links
+        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+        $basePath = rtrim(dirname($scriptName), '/\\');
+        $basePath = str_replace('\\', '/', $basePath); // Windows compat
+
+        echo '<p><a href="' . $basePath . '/">Back to home</a> | <a href="' . $basePath . '/admin">Admin dashboard</a></p>';
 
         // Debug info - only show in debug mode
         if ($this->debug) {
