@@ -12,6 +12,16 @@ class Router
 {
     private array $routes = [];
     private array $protectedRoutes = [];
+    private bool $debug = false;
+
+    /**
+     * Set debug mode for the router.
+     */
+    public function setDebug(bool $debug): self
+    {
+        $this->debug = $debug;
+        return $this;
+    }
 
     /**
      * Register a GET route.
@@ -169,13 +179,15 @@ class Router
         echo '<p>Sorry, the page you are looking for does not exist.</p>';
         echo '<p><a href="/">Back to home</a> | <a href="/admin">Admin dashboard</a></p>';
 
-        // Debug info - view source to see this
-        echo "<!-- \n";
-        echo "Debug Info:\n";
-        echo "Request URI: " . ($_SERVER['REQUEST_URI'] ?? 'unset') . "\n";
-        echo "Normalized URI: " . $this->normaliseUri($_SERVER['REQUEST_URI'] ?? '/') . "\n";
-        echo "Script Name: " . ($_SERVER['SCRIPT_NAME'] ?? 'unset') . "\n";
-        echo "Disk Path: " . __FILE__ . "\n";
-        echo "-->";
+        // Debug info - only show in debug mode
+        if ($this->debug) {
+            echo "<!-- \n";
+            echo "Debug Info:\n";
+            echo "Request URI: " . ($_SERVER['REQUEST_URI'] ?? 'unset') . "\n";
+            echo "Normalized URI: " . $this->normaliseUri($_SERVER['REQUEST_URI'] ?? '/') . "\n";
+            echo "Script Name: " . ($_SERVER['SCRIPT_NAME'] ?? 'unset') . "\n";
+            echo "Disk Path: " . __FILE__ . "\n";
+            echo "-->";
+        }
     }
 }

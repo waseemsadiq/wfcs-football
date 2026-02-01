@@ -109,6 +109,9 @@ if (session_status() === PHP_SESSION_NONE) {
 // Load routes and dispatch request
 $router = require BASE_PATH . '/config/routes.php';
 
+// Set debug mode on router for error page display
+$router->setDebug($config['debug']);
+
 $uri = $_SERVER['REQUEST_URI'] ?? '/';
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
