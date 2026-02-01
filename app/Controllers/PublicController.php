@@ -580,12 +580,6 @@ class PublicController extends Controller
     {
         $competitions = [];
 
-        // Calculate base path for subfolder installations
-        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
-        $basePath = rtrim(dirname($scriptName), '/\\');
-        $basePath = str_replace('\\', '/', $basePath); // Windows compat
-        $basePath = ($basePath !== '' && $basePath !== '/') ? $basePath : '';
-
         foreach ($leagues as $league) {
             if (!in_array($teamId, $league['teamIds'] ?? [])) {
                 continue;
@@ -599,7 +593,7 @@ class PublicController extends Controller
                 'slug' => $league['slug'],
                 'type' => 'league',
                 'detail' => $position,
-                'url' => $basePath . '/league/' . $league['slug']
+                'url' => '/league/' . $league['slug']
             ];
         }
 
@@ -615,7 +609,7 @@ class PublicController extends Controller
                 'slug' => $cup['slug'],
                 'type' => 'cup',
                 'detail' => $status,
-                'url' => $basePath . '/cup/' . $cup['slug']
+                'url' => '/cup/' . $cup['slug']
             ];
         }
 
