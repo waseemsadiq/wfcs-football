@@ -1,7 +1,7 @@
 <div class="max-w-4xl mx-auto">
     <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
         <h1
-            class="text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">
+            class="text-4xl font-extrabold tracking-tight text-text-main">
             <?= htmlspecialchars($season['name']) ?></h1>
         <div class="flex gap-4">
             <?php if (empty($season['isActive'])): ?>

@@ -1,6 +1,6 @@
 <div class="text-center mb-12">
     <h1
-        class="text-4xl font-extrabold tracking-tight mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">
+        class="text-4xl font-extrabold tracking-tight mb-2 text-text-main">
         Leagues</h1>
 </div>
 

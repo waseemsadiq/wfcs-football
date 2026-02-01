@@ -9,7 +9,7 @@
 ?>
 
 <div class="mb-8 text-center">
-    <h1 class="text-4xl font-extrabold m-0 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 mb-2">
+    <h1 class="text-4xl font-extrabold m-0 text-text-main mb-2">
         <?= htmlspecialchars($title) ?>
     </h1>
     <?php if (isset($subtitle) && $subtitle): ?>

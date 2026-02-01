@@ -1,7 +1,7 @@
 <div class="max-w-4xl mx-auto">
     <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
         <h1
-            class="text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 flex items-center">
+            class="text-4xl font-extrabold tracking-tight text-text-main flex items-center">
             <span class="inline-block w-6 h-6 rounded-sm mr-4 shadow-sm"
                 style="background-color: <?= htmlspecialchars($team['colour'] ?? '#1a5f2a') ?>;"></span>
             <?= htmlspecialchars($team['name']) ?>

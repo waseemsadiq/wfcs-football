@@ -1,7 +1,6 @@
 <div>
     <div class="text-center mb-12">
-        <h1
-            class="text-4xl font-extrabold tracking-tight mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">
+        <h1 class="text-4xl font-extrabold tracking-tight mb-2 text-text-main">
             Welcome</h1>
         <?php if (isset($seasonName) && $seasonName): ?>
             <p class="text-text-muted text-lg font-medium"><?= htmlspecialchars($seasonName) ?> Season</p>
