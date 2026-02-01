@@ -183,40 +183,50 @@
 
             const today = new Date().toISOString().split('T')[0];
 
+            // Group fixtures by date
+            const fixturesByDate = {};
+            fixtures.forEach(fixture => {
+                const date = fixture.date;
+                if (!fixturesByDate[date]) {
+                    fixturesByDate[date] = [];
+                }
+                fixturesByDate[date].push(fixture);
+            });
+
             let html = '<div class="grid gap-3">';
 
-            // Check if fixtures are from multiple dates? The API returns a "round" which implies one date usually.
-            // We'll header with the date.
-            const firstDate = fixtures[0].date;
-            const dateObj = new Date(firstDate);
-            const dateStr = dateObj.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+            // Render each date group
+            Object.keys(fixturesByDate).sort().forEach(date => {
+                const dateObj = new Date(date);
+                const dateStr = dateObj.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
 
-            html += `<h3 class="text-sm font-bold text-text-muted uppercase tracking-wider mb-2 sticky top-0 bg-surface py-2">${dateStr}</h3>`;
+                html += `<h3 class="text-sm font-bold text-text-muted uppercase tracking-wider mb-2 mt-4 first:mt-0">${dateStr}</h3>`;
 
-            fixtures.forEach(fixture => {
-                const showInputs = fixture.date <= today;
-                const homeName = fixture.homeTeam ? fixture.homeTeam.name : 'TBD';
-                const awayName = fixture.awayTeam ? fixture.awayTeam.name : 'TBD';
-                const homeColor = fixture.homeTeam ? fixture.homeTeam.colour : '#333';
-                const awayColor = fixture.awayTeam ? fixture.awayTeam.colour : '#333';
+                fixturesByDate[date].forEach(fixture => {
+                    const showInputs = fixture.date <= today;
+                    const homeName = fixture.homeTeam ? fixture.homeTeam.name : 'TBD';
+                    const awayName = fixture.awayTeam ? fixture.awayTeam.name : 'TBD';
+                    const homeColor = fixture.homeTeam ? fixture.homeTeam.colour : '#333';
+                    const awayColor = fixture.awayTeam ? fixture.awayTeam.colour : '#333';
 
-                html += `
-                    <div class="flex flex-row items-center gap-4 bg-surface-hover/30 border border-border rounded-lg p-3 hover:border-primary/30 transition-colors">
-                        <div class="flex-1 flex items-center justify-end gap-3 text-right">
-                            <span class="font-semibold text-sm md:text-base">${homeName}</span>
-                            <span class="w-3 h-3 rounded-sm shadow-sm" style="background-color: ${homeColor}"></span>
+                    html += `
+                        <div class="flex flex-row items-center gap-4 bg-surface-hover/30 border border-border rounded-lg p-3 hover:border-primary/30 transition-colors">
+                            <div class="flex-1 flex items-center justify-end gap-3 text-right">
+                                <span class="font-semibold text-sm md:text-base">${homeName}</span>
+                                <span class="w-3 h-3 rounded-sm shadow-sm" style="background-color: ${homeColor}"></span>
+                            </div>
+                            
+                            <div class="flex flex-col items-center justify-center min-w-[120px]">
+                                ${showInputs ? renderScoreInputs(fixture, type, slug) : renderTime(fixture)}
+                            </div>
+
+                            <div class="flex-1 flex items-center justify-start gap-3 text-left">
+                                <span class="w-3 h-3 rounded-sm shadow-sm" style="background-color: ${awayColor}"></span>
+                                <span class="font-semibold text-sm md:text-base">${awayName}</span>
+                            </div>
                         </div>
-                        
-                        <div class="flex flex-col items-center justify-center min-w-[120px]">
-                            ${showInputs ? renderScoreInputs(fixture, type, slug) : renderTime(fixture)}
-                        </div>
-
-                        <div class="flex-1 flex items-center justify-start gap-3 text-left">
-                            <span class="w-3 h-3 rounded-sm shadow-sm" style="background-color: ${awayColor}"></span>
-                            <span class="font-semibold text-sm md:text-base">${awayName}</span>
-                        </div>
-                    </div>
-                `;
+                    `;
+                });
             });
 
             html += '</div>';
