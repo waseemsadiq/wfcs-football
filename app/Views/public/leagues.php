@@ -35,8 +35,8 @@
                 <div class="card p-0 overflow-hidden">
                     <div class="p-6 border-b border-border bg-surface/50 flex items-center justify-between gap-4">
                         <h2 class="text-xl font-bold m-0">Standings</h2>
-                        <div class="flex flex-col items-center gap-2">
-                            <label for="league-select" class="text-xs font-bold text-text-muted uppercase tracking-wider">
+                        <div class="flex items-center gap-3">
+                            <label for="league-select" class="text-sm font-bold text-text-muted uppercase tracking-wider whitespace-nowrap">
                                 Select League
                             </label>
                             <select id="league-select"
