@@ -400,20 +400,59 @@ class PublicController extends Controller
         $basePath = ($basePath !== '' && $basePath !== '/') ? $basePath : '';
 
         ob_start();
-        echo '<ul class="divide-y divide-border">';
 
-        foreach ($fixtures as $fixture) {
-            // Configure potential variables for the partial
-            $showDate = true;
-            $showCompetition = false;
+        // Group fixtures by date for upcoming fixtures (when $showResult is false)
+        if (!$showResult) {
+            // Group by date
+            $groupedFixtures = [];
+            $dates = [];
 
-            // Include the partial
-            // adjust depending on where this file is running.
-            // BASE_PATH is defined in index.php
-            include BASE_PATH . '/app/Views/partials/public_fixture.php';
+            foreach ($fixtures as $fixture) {
+                $date = $fixture['date'] ?? 'TBD';
+                if (!isset($groupedFixtures[$date])) {
+                    $groupedFixtures[$date] = [];
+                    $dates[] = $date;
+                }
+                $groupedFixtures[$date][] = $fixture;
+            }
+
+            // Sort dates (TBD goes to end)
+            usort($dates, function($a, $b) {
+                if ($a === 'TBD') return 1;
+                if ($b === 'TBD') return -1;
+                return strtotime($a) - strtotime($b);
+            });
+
+            echo '<div class="flex flex-col">';
+            foreach ($dates as $date) {
+                echo '<div class="bg-surface border-l-4 border-l-primary border-b border-border py-2 text-center">';
+                echo '<span class="text-xs font-bold text-text-muted uppercase tracking-wider">';
+                echo $date !== 'TBD' ? date('D j M', strtotime($date)) : 'TBD';
+                echo '</span></div>';
+                echo '<ul class="divide-y divide-border border-b border-border last:border-0">';
+
+                foreach ($groupedFixtures[$date] as $fixture) {
+                    $showDate = false;
+                    $showCompetition = false;
+                    include BASE_PATH . '/app/Views/partials/public_fixture.php';
+                }
+
+                echo '</ul>';
+            }
+            echo '</div>';
+        } else {
+            // For recent results, show date inline with each fixture
+            echo '<ul class="divide-y divide-border">';
+
+            foreach ($fixtures as $fixture) {
+                $showDate = true;
+                $showCompetition = false;
+                include BASE_PATH . '/app/Views/partials/public_fixture.php';
+            }
+
+            echo '</ul>';
         }
 
-        echo '</ul>';
         return ob_get_clean();
     }
 
