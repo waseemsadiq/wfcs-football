@@ -1,6 +1,7 @@
 .worktrees/
 .wiki/
 docs/
+sync-wiki.sh
 data/cups/
 data/leagues/
 data/seasons/
