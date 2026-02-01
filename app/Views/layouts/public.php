@@ -69,7 +69,7 @@ $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
                     </svg>
                 </button>
                 <a href="<?= $basePath ?>/login" aria-label="Admin Login"
-                    class="text-text-muted hover:text-primary transition-colors">
+                    class="text-text-muted hover:text-primary hover:scale-110 hover:opacity-70 transition-transform duration-200 inline-block">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
