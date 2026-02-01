@@ -1,4 +1,4 @@
-<div class="max-w-2xl mx-auto">
+<div class="">
     <div class="flex justify-between items-center mb-8">
         <h1 class="text-3xl font-bold m-0">Edit <?= htmlspecialchars($team['name']) ?></h1>
         <a href="<?=$basePath?>/admin/teams/<?= htmlspecialchars($team['slug'] ?? $team['id']) ?>"

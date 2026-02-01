@@ -1,4 +1,4 @@
-<div class="max-w-4xl mx-auto">
+<div class="">
     <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
         <h1
             class="text-4xl font-extrabold tracking-tight text-text-main">

@@ -1,4 +1,4 @@
-<div class="max-w-5xl mx-auto">
+<div class="">
     <?php $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\'); ?>
     <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
         <h1

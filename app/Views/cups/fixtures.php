@@ -1,4 +1,4 @@
-<div class="max-w-5xl mx-auto">
+<div class="">
     <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
         <div>
             <h1 class="text-3xl font-bold m-0 tracking-tight"><?= htmlspecialchars($cup['name']) ?></h1>

@@ -1,4 +1,4 @@
-<div class="max-w-4xl mx-auto">
+<div class="">
     <div class="flex justify-between items-center mb-8">
         <div>
             <h1 class="text-3xl font-bold m-0 tracking-tight">Edit Cup</h1>
