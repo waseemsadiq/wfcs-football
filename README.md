@@ -37,7 +37,7 @@ You'll need:
 **1. Clone or extract the project**
 
 ```bash
-cd /Users/waseem/Desktop/blethering/footie
+cd /[project_directory]
 ```
 
 **2. Install dependencies**
