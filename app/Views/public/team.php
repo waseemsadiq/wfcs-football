@@ -1,4 +1,4 @@
-<div class="container">
+<div>
     <div class="mb-8">
         <a href="<?= $basePath ?>/"
             class="text-primary hover:text-primary-hover transition-colors font-medium flex items-center gap-2">

@@ -1,4 +1,4 @@
-<div class="container">
+<div>
     <div class="mb-4 text-center">
         <h1 class="text-4xl font-extrabold m-0 text-text-main mb-2">
             <?= htmlspecialchars($cup['name']) ?>
