@@ -1,43 +1,63 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-/* Theme Variables - these override Tailwind's compiled values */
-:root {
-  /* Dark theme (default) */
+/* Custom theme tokens for Tailwind v4 */
+@theme {
+  /* Colours - Dark theme (default) */
   --color-background: #020617;
   --color-surface: #0f172a;
   --color-surface-hover: #1e293b;
   --color-primary: #4ade80;
   --color-primary-hover: #22c55e;
   --color-primary-text: #020617;
+  --color-secondary: #334155;
+  --color-secondary-hover: #475569;
+  --color-secondary-text: #f8fafc;
+  --color-danger: #ef4444;
+  --color-danger-hover: #dc2626;
   --color-text-main: #f8fafc;
   --color-text-muted: #94a3b8;
   --color-border: #1e293b;
+
+  /* Font family */
+  --font-sans: "Outfit", sans-serif;
+
+  /* Border radius */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+
+  /* Shadows */
+  --shadow-glow: 0 0 15px rgba(74, 222, 128, 0.15);
 }
 
+/* Light theme overrides */
 :root.light {
-  /* Light theme */
   --color-background: #f8fafc;
   --color-surface: #ffffff;
   --color-surface-hover: #f1f5f9;
   --color-primary: #16a34a;
   --color-primary-hover: #15803d;
   --color-primary-text: #ffffff;
+  --color-secondary: #e2e8f0;
+  --color-secondary-hover: #cbd5e1;
+  --color-secondary-text: #0f172a;
+  --color-danger: #dc2626;
+  --color-danger-hover: #b91c1c;
   --color-text-main: #0f172a;
   --color-text-muted: #64748b;
   --color-border: #e2e8f0;
 }
 
+/* Base styles */
 @layer base {
   body {
     @apply bg-background text-text-main font-sans antialiased min-h-screen flex flex-col;
   }
-  h1,
-  h2,
-  h3 {
+
+  h1, h2, h3 {
     @apply text-text-main leading-tight;
   }
+
   h1 {
     @apply text-4xl font-extrabold tracking-tight mb-2;
     background: linear-gradient(to right, #fff, #94a3b8);
@@ -45,52 +65,74 @@
     background-clip: text;
     color: transparent;
   }
-  /* Light theme h1 gradient */
+
   :root.light h1 {
     background: linear-gradient(to right, #0f172a, #64748b);
     -webkit-background-clip: text;
     background-clip: text;
   }
+
   h2 {
     @apply text-2xl font-bold mb-6;
   }
+
   input[type="number"]::-webkit-inner-spin-button,
   input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     appearance: none;
     margin: 0;
   }
+
   input[type="number"] {
     -moz-appearance: textfield;
     appearance: textfield;
   }
+
   input[type="date"]::-webkit-calendar-picker-indicator,
   input[type="time"]::-webkit-calendar-picker-indicator {
     filter: invert(1);
     cursor: pointer;
   }
+
   :root.light input[type="date"]::-webkit-calendar-picker-indicator,
   :root.light input[type="time"]::-webkit-calendar-picker-indicator {
     filter: none;
   }
 }
 
+/* Component styles */
 @layer components {
   .btn {
     @apply inline-flex items-center justify-center px-6 py-3 rounded-sm font-bold no-underline transition-all duration-200 cursor-pointer border-none text-sm uppercase tracking-wide;
   }
+
   .btn-primary {
-    @apply bg-primary text-primary-text hover:bg-primary-hover hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(74,222,128,0.3)];
+    @apply bg-primary text-primary-text hover:bg-primary-hover hover:-translate-y-px;
+    box-shadow: 0 4px 12px rgba(74, 222, 128, 0.2);
   }
+
+  :root.light .btn-primary {
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);
+  }
+
   .btn-secondary {
     @apply bg-transparent border border-border text-text-main hover:bg-surface-hover hover:border-text-muted;
   }
+
   .btn-sm {
     @apply px-4 py-2 text-sm;
   }
 
   .card {
-    @apply bg-surface rounded-md p-8 shadow-md border border-border transition-all duration-200 h-full hover:-translate-y-0.5 hover:shadow-glow hover:border-primary;
+    @apply bg-surface rounded-md p-8 shadow-md border border-border transition-all duration-200 h-full hover:-translate-y-0.5 hover:border-primary;
+  }
+
+  :root:not(.light) .card:hover {
+    @apply shadow-glow;
+  }
+
+  :root.light .card:hover {
+    box-shadow: 0 0 15px rgba(22, 163, 74, 0.15);
   }
 
   .form-input {
@@ -105,102 +147,22 @@
     @apply p-4 border-b border-border text-text-main align-middle;
   }
 
-  /* Theme toggle button */
   .theme-toggle {
     @apply p-2 rounded-sm text-text-muted hover:text-primary hover:bg-surface-hover transition-colors;
   }
 }
 
-/* Theme-based visibility utilities */
-:root:not(.light) .hide-dark {
-  display: none !important;
-}
+/* Theme visibility utilities */
+@layer utilities {
+  .hide-dark {
+    :root:not(.light) & {
+      display: none !important;
+    }
+  }
 
-:root.light .hide-light {
-  display: none !important;
-}
-
-/* Light theme colour overrides using CSS custom properties */
-:root.light body {
-  background-color: var(--color-background);
-  color: var(--color-text-main);
-}
-
-:root.light .bg-background {
-  background-color: var(--color-background);
-}
-
-:root.light .bg-surface {
-  background-color: var(--color-surface);
-}
-
-:root.light .bg-surface\/80 {
-  background-color: rgba(255, 255, 255, 0.8);
-}
-
-:root.light .bg-surface-hover {
-  background-color: var(--color-surface-hover);
-}
-
-:root.light .bg-primary {
-  background-color: var(--color-primary);
-}
-
-:root.light .hover\:bg-primary-hover:hover {
-  background-color: var(--color-primary-hover);
-}
-
-:root.light .hover\:bg-surface-hover:hover {
-  background-color: var(--color-surface-hover);
-}
-
-:root.light .text-text-main {
-  color: var(--color-text-main);
-}
-
-:root.light .text-text-muted {
-  color: var(--color-text-muted);
-}
-
-:root.light .text-primary {
-  color: var(--color-primary);
-}
-
-:root.light .text-primary-text {
-  color: var(--color-primary-text);
-}
-
-:root.light .hover\:text-primary:hover {
-  color: var(--color-primary);
-}
-
-:root.light .border-border {
-  border-color: var(--color-border);
-}
-
-:root.light .hover\:border-primary:hover {
-  border-color: var(--color-primary);
-}
-
-:root.light .focus\:border-primary:focus {
-  border-color: var(--color-primary);
-}
-
-:root.light .focus\:ring-primary\/10:focus {
-  --tw-ring-color: rgba(22, 163, 74, 0.1);
-}
-
-:root.light .card:hover {
-  box-shadow: 0 0 15px rgba(22, 163, 74, 0.15);
-  border-color: var(--color-primary);
-}
-
-:root.light .btn-primary {
-  background-color: var(--color-primary);
-  color: var(--color-primary-text);
-}
-
-:root.light .btn-primary:hover {
-  background-color: var(--color-primary-hover);
-  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+  .hide-light {
+    :root.light & {
+      display: none !important;
+    }
+  }
 }
