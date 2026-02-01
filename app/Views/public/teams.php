@@ -55,22 +55,20 @@
 
             <!-- Recent Results -->
             <section class="mb-16" id="recent-results-section">
-                <div class="flex items-center gap-4 mb-6">
-                    <h2 class="text-2xl font-bold">Recent Results</h2>
-                    <div class="h-px bg-border flex-1"></div>
-                </div>
-                <div class="card">
+                <div class="card p-0 overflow-hidden">
+                    <div class="p-6 border-b border-border bg-surface/50">
+                        <h2 class="text-xl font-bold m-0">Recent Results</h2>
+                    </div>
                     <ul id="recent-results-content" class="divide-y divide-border"></ul>
                 </div>
             </section>
 
             <!-- Upcoming Fixtures -->
             <section class="mb-16" id="upcoming-fixtures-section">
-                <div class="flex items-center gap-4 mb-6">
-                    <h2 class="text-2xl font-bold">Upcoming Fixtures</h2>
-                    <div class="h-px bg-border flex-1"></div>
-                </div>
-                <div class="card">
+                <div class="card p-0 overflow-hidden">
+                    <div class="p-6 border-b border-border bg-surface/50">
+                        <h2 class="text-xl font-bold m-0">Upcoming Fixtures</h2>
+                    </div>
                     <ul id="upcoming-fixtures-content" class="divide-y divide-border"></ul>
                 </div>
             </section>

@@ -303,11 +303,10 @@
             rounds.forEach(round => {
                 html += `
                     <section class="mb-16 last:mb-0">
-                        <div class="flex items-center gap-4 mb-6">
-                            <h2 class="text-2xl font-bold">${escapeHtml(round.name)}</h2>
-                            <div class="h-px bg-border flex-1"></div>
-                        </div>
                         <div class="card p-0 overflow-hidden">
+                            <div class="p-6 border-b border-border bg-surface/50">
+                                <h2 class="text-xl font-bold m-0">${escapeHtml(round.name)}</h2>
+                            </div>
                             <div class="divide-y divide-border px-4">
                 `;
 
@@ -344,7 +343,7 @@
                         }
 
                         html += `
-                            <div class="bg-surface/50 -mx-4 border-b border-border py-2 text-center sticky top-0 z-10">
+                            <div class="bg-surface border-l-4 border-l-primary border-b border-border py-2 text-center sticky top-0 z-10">
                                 <span class="text-xs font-bold text-text-muted uppercase tracking-wider">
                                     ${dateDisplay}
                                 </span>
