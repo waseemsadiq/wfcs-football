@@ -112,9 +112,9 @@ class DashboardController extends Controller
      */
     private function filterUpcoming(array $fixtures): array
     {
-        // 1. Filter out played matches (those with a result)
+        // 1. Filter out played matches (those with a result) and fixtures without dates
         $unplayed = array_filter($fixtures, function ($f) {
-            return empty($f['result']);
+            return empty($f['result']) && !empty($f['date']);
         });
 
         if (empty($unplayed)) {
