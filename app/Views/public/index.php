@@ -28,7 +28,7 @@
                 ?>
                 <div class="flex flex-col">
                     <?php foreach ($groupedResults as $date => $fixtures): ?>
-                        <div class="bg-surface/50 border-b border-border py-2 text-center">
+                        <div class="bg-surface border-l-4 border-l-primary border-b border-border py-2 text-center">
                             <span class="text-xs font-bold text-text-muted uppercase tracking-wider">
                                 <?= $date !== 'TBD' ? date('D j M', strtotime($date)) : 'TBD' ?>
                             </span>
@@ -65,7 +65,7 @@
                 ?>
                 <div class="flex flex-col">
                     <?php foreach ($groupedUpcoming as $date => $fixtures): ?>
-                        <div class="bg-surface/50 border-b border-border py-2 text-center">
+                        <div class="bg-surface border-l-4 border-l-primary border-b border-border py-2 text-center">
                             <span class="text-xs font-bold text-text-muted uppercase tracking-wider">
                                 <?= $date !== 'TBD' ? date('D j M', strtotime($date)) : 'TBD' ?>
                             </span>
