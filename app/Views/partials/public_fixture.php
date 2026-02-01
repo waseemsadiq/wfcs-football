@@ -80,8 +80,8 @@ if ($showResult && $result !== null) {
 $homeSlug = htmlspecialchars($homeTeam['slug'] ?? $homeId);
 $awaySlug = htmlspecialchars($awayTeam['slug'] ?? $awayId);
 
-$homeLink = $homeId ? "<a href=\"/team/{$homeSlug}\" class=\"hover:text-primary transition-colors\">{$homeName}</a>" : $homeName;
-$awayLink = $awayId ? "<a href=\"/team/{$awaySlug}\" class=\"hover:text-primary transition-colors\">{$awayName}</a>" : $awayName;
+$homeLink = $homeId ? "<a href=\"{$basePath}/team/{$homeSlug}\" class=\"hover:text-primary transition-colors\">{$homeName}</a>" : $homeName;
+$awayLink = $awayId ? "<a href=\"{$basePath}/team/{$awaySlug}\" class=\"hover:text-primary transition-colors\">{$awayName}</a>" : $awayName;
 ?>
 
 <li

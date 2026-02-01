@@ -393,6 +393,12 @@ class PublicController extends Controller
             return '<div class="text-center py-12 text-text-muted"><p>No fixtures</p></div>';
         }
 
+        // Calculate base path for subfolder installations
+        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+        $basePath = rtrim(dirname($scriptName), '/\\');
+        $basePath = str_replace('\\', '/', $basePath); // Windows compat
+        $basePath = ($basePath !== '' && $basePath !== '/') ? $basePath : '';
+
         ob_start();
         echo '<ul class="divide-y divide-border">';
 
@@ -574,6 +580,12 @@ class PublicController extends Controller
     {
         $competitions = [];
 
+        // Calculate base path for subfolder installations
+        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+        $basePath = rtrim(dirname($scriptName), '/\\');
+        $basePath = str_replace('\\', '/', $basePath); // Windows compat
+        $basePath = ($basePath !== '' && $basePath !== '/') ? $basePath : '';
+
         foreach ($leagues as $league) {
             if (!in_array($teamId, $league['teamIds'] ?? [])) {
                 continue;
@@ -587,7 +599,7 @@ class PublicController extends Controller
                 'slug' => $league['slug'],
                 'type' => 'league',
                 'detail' => $position,
-                'url' => '/league/' . $league['slug']
+                'url' => $basePath . '/league/' . $league['slug']
             ];
         }
 
@@ -603,7 +615,7 @@ class PublicController extends Controller
                 'slug' => $cup['slug'],
                 'type' => 'cup',
                 'detail' => $status,
-                'url' => '/cup/' . $cup['slug']
+                'url' => $basePath . '/cup/' . $cup['slug']
             ];
         }
 
