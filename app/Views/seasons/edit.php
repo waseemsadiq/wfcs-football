@@ -37,9 +37,9 @@
             <div class="mb-6">
                 <label class="block text-sm font-medium text-text-muted mb-2">Status</label>
                 <?php if (!empty($season['isActive'])): ?>
-                    <div class="p-3 bg-green-500/10 border border-green-500/30 rounded-sm inline-block">
-                        <span class="text-green-400 font-bold uppercase tracking-wider text-sm flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-green-500"></span> Active Season
+                    <div class="p-3 bg-blue-500/10 border border-blue-500/30 rounded-sm inline-block">
+                        <span class="text-blue-400 font-bold uppercase tracking-wider text-sm flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-blue-500"></span> Active Season
                         </span>
                     </div>
                 <?php else: ?>

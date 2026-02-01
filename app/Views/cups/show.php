@@ -201,7 +201,7 @@
                 // Show success state
                 btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg> Saved!';
                 btn.classList.remove('bg-primary');
-                btn.classList.add('bg-green-600');
+                btn.classList.add('bg-blue-600');
 
                 // Reload page after short delay to show updated bracket
                 setTimeout(() => {

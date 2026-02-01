@@ -35,8 +35,8 @@
   --color-background: #f8fafc;
   --color-surface: #ffffff;
   --color-surface-hover: #f1f5f9;
-  --color-primary: #16a34a;
-  --color-primary-hover: #15803d;
+  --color-primary: #45A2DA;
+  --color-primary-hover: #3891c7;
   --color-primary-text: #ffffff;
   --color-secondary: #e2e8f0;
   --color-secondary-hover: #cbd5e1;
@@ -112,7 +112,7 @@
   }
 
   :root.light .btn-primary {
-    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);
+    box-shadow: 0 4px 12px rgba(69, 162, 218, 0.2);
   }
 
   .btn-secondary {
@@ -132,7 +132,7 @@
   }
 
   :root.light .card:hover {
-    box-shadow: 0 0 15px rgba(22, 163, 74, 0.15);
+    box-shadow: 0 0 15px rgba(69, 162, 218, 0.15);
   }
 
   .form-input {

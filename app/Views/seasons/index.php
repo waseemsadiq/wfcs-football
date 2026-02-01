@@ -44,7 +44,7 @@
                             <td class="table-td">
                                 <?php if (!empty($season['isActive'])): ?>
                                     <span
-                                        class="inline-block px-2 py-1 rounded-sm text-xs font-bold uppercase tracking-wider bg-green-500/20 text-green-400 border border-green-500/30">Active</span>
+                                        class="inline-block px-2 py-1 rounded-sm text-xs font-bold uppercase tracking-wider bg-blue-500/20 text-blue-400 border border-blue-500/30">Active</span>
                                 <?php else: ?>
                                     <span
                                         class="inline-block px-2 py-1 rounded-sm text-xs font-bold uppercase tracking-wider bg-slate-700/50 text-slate-400 border border-slate-700">Inactive</span>

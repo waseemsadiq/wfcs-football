@@ -1775,8 +1775,8 @@
   --color-background: #f8fafc;
   --color-surface: #ffffff;
   --color-surface-hover: #f1f5f9;
-  --color-primary: #16a34a;
-  --color-primary-hover: #15803d;
+  --color-primary: #45A2DA;
+  --color-primary-hover: #3891c7;
   --color-primary-text: #ffffff;
   --color-secondary: #e2e8f0;
   --color-secondary-hover: #cbd5e1;
@@ -1887,7 +1887,7 @@
     box-shadow: 0 4px 12px rgba(74, 222, 128, 0.2);
   }
   :root.light .btn-primary {
-    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);
+    box-shadow: 0 4px 12px rgba(69, 162, 218, 0.2);
   }
   .btn-secondary {
     border-style: var(--tw-border-style);
@@ -1944,7 +1944,7 @@
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
   :root.light .card:hover {
-    box-shadow: 0 0 15px rgba(22, 163, 74, 0.15);
+    box-shadow: 0 0 15px rgba(69, 162, 218, 0.15);
   }
   .form-input {
     width: 100%;

@@ -261,12 +261,12 @@
                 }
 
                 btn.innerHTML = CHECK_SVG;
-                btn.classList.add('bg-green-600');
+                btn.classList.add('bg-blue-600');
 
                 setTimeout(() => {
                     btn.disabled = false;
                     btn.innerHTML = originalContent;
-                    btn.classList.remove('bg-green-600');
+                    btn.classList.remove('bg-blue-600');
                 }, 1000);
 
                 setTimeout(() => window.location.reload(), updateDisplay ? 2000 : 1000);

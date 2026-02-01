@@ -94,7 +94,7 @@ $basePath = $basePath ?? '';
                                     <?php foreach ($row['form'] as $result): ?>
                                         <?php
                                         $colorClass = match ($result) {
-                                            'W' => 'bg-green-500 text-white',
+                                            'W' => 'bg-blue-500 text-white',
                                             'D' => 'bg-gray-500 text-white',
                                             'L' => 'bg-danger text-white',
                                             default => 'bg-gray-700 text-gray-300'

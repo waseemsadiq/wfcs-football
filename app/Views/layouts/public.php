@@ -8,7 +8,7 @@ $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= isset($title) ? htmlspecialchars($title) . ' - ' : '' ?>WFCS Football</title>
-    <link rel="stylesheet" href="<?= $basePath ?>/css/output.css">
+    <link rel="stylesheet" href="<?= $basePath ?>/css/output.css?v=20260201-blue">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -19,7 +19,7 @@ $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
         <div class="max-w-[1200px] mx-auto px-4 md:px-6 w-full flex justify-between items-center">
             <a href="<?= $basePath ?>/" class="flex items-center no-underline">
                 <img src="<?= $basePath ?>/images/logo-white.svg" alt="WFCS Football" class="h-20 w-20 hide-light">
-                <img src="<?= $basePath ?>/images/logo.svg" alt="WFCS Football" class="h-20 w-20 hide-dark">
+                <img src="<?= $basePath ?>/images/logo-blue.svg" alt="WFCS Football" class="h-20 w-20 hide-dark">
             </a>
 
             <!-- Desktop Navigation (hidden on mobile) -->
