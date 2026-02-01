@@ -530,33 +530,6 @@ class CupsController extends Controller
     }
 
     /**
-     * Enrich cup rounds with team names and colours.
-     */
-    private function enrichRoundsWithTeamData(array $rounds, array $teams): array
-    {
-        $enrichedRounds = [];
-
-        foreach ($rounds as $round) {
-            $enrichedFixtures = [];
-            foreach ($round['fixtures'] as $fixture) {
-                $homeTeam = $this->findById($teams, $fixture['homeTeamId'] ?? '');
-                $awayTeam = $this->findById($teams, $fixture['awayTeamId'] ?? '');
-                $fixture['homeTeamName'] = $homeTeam['name'] ?? 'TBD';
-                $fixture['awayTeamName'] = $awayTeam['name'] ?? 'TBD';
-                $fixture['homeTeamColour'] = $homeTeam['colour'] ?? '#ccc';
-                $fixture['awayTeamColour'] = $awayTeam['colour'] ?? '#ccc';
-                $enrichedFixtures[] = $fixture;
-            }
-            $enrichedRounds[] = [
-                'name' => $round['name'],
-                'fixtures' => $enrichedFixtures,
-            ];
-        }
-
-        return $enrichedRounds;
-    }
-
-    /**
      * Determine the winner of a cup fixture based on result data.
      * Returns 'home', 'away', or null for a draw.
      */

@@ -304,4 +304,67 @@ class Controller
 
         return null;
     }
+
+    /**
+     * Enrich a single fixture with team names and colours.
+     *
+     * @param array $fixture The fixture to enrich
+     * @param array $teams Array of all teams
+     * @param string $defaultName Default name for missing teams (e.g., 'TBD', 'Unknown')
+     * @return array The enriched fixture
+     */
+    protected function enrichFixtureWithTeamData(array $fixture, array $teams, string $defaultName = 'TBD'): array
+    {
+        $homeTeam = $this->findById($teams, $fixture['homeTeamId'] ?? null);
+        $awayTeam = $this->findById($teams, $fixture['awayTeamId'] ?? null);
+
+        $fixture['homeTeamName'] = $homeTeam['name'] ?? $defaultName;
+        $fixture['awayTeamName'] = $awayTeam['name'] ?? $defaultName;
+        $fixture['homeTeamColour'] = $homeTeam['colour'] ?? '#ccc';
+        $fixture['awayTeamColour'] = $awayTeam['colour'] ?? '#ccc';
+
+        return $fixture;
+    }
+
+    /**
+     * Enrich cup rounds with team data.
+     *
+     * @param array $rounds Array of cup rounds with fixtures
+     * @param array $teams Array of all teams
+     * @return array Enriched rounds
+     */
+    protected function enrichRoundsWithTeamData(array $rounds, array $teams): array
+    {
+        $enrichedRounds = [];
+
+        foreach ($rounds as $round) {
+            $enrichedFixtures = [];
+            foreach ($round['fixtures'] as $fixture) {
+                $enrichedFixtures[] = $this->enrichFixtureWithTeamData($fixture, $teams);
+            }
+            $enrichedRounds[] = [
+                'name' => $round['name'],
+                'fixtures' => $enrichedFixtures,
+            ];
+        }
+
+        return $enrichedRounds;
+    }
+
+    /**
+     * Enrich an array of league fixtures with team data.
+     *
+     * @param array $fixtures Array of fixtures
+     * @param array $teams Array of all teams
+     * @param string $defaultName Default name for missing teams
+     * @return array Enriched fixtures
+     */
+    protected function enrichLeagueFixtures(array $fixtures, array $teams, string $defaultName = 'Unknown'): array
+    {
+        $enriched = [];
+        foreach ($fixtures as $fixture) {
+            $enriched[] = $this->enrichFixtureWithTeamData($fixture, $teams, $defaultName);
+        }
+        return $enriched;
+    }
 }

@@ -152,16 +152,7 @@ class LeaguesController extends Controller
         $standings = $this->league->calculateStandings($league, $teams);
 
         // Enrich fixtures with team names
-        $fixtures = [];
-        foreach ($league['fixtures'] ?? [] as $fixture) {
-            $homeTeam = $this->findById($teams, $fixture['homeTeamId']);
-            $awayTeam = $this->findById($teams, $fixture['awayTeamId']);
-            $fixture['homeTeamName'] = $homeTeam['name'] ?? 'Unknown';
-            $fixture['awayTeamName'] = $awayTeam['name'] ?? 'Unknown';
-            $fixture['homeTeamColour'] = $homeTeam['colour'] ?? '#000';
-            $fixture['awayTeamColour'] = $awayTeam['colour'] ?? '#000';
-            $fixtures[] = $fixture;
-        }
+        $fixtures = $this->enrichLeagueFixtures($league['fixtures'] ?? [], $teams);
 
         // Sort fixtures by date
         usort($fixtures, fn($a, $b) => strcmp($a['date'], $b['date']));
@@ -294,15 +285,7 @@ class LeaguesController extends Controller
         }
 
         $teams = $this->team->all();
-        $fixtures = [];
-
-        foreach ($league['fixtures'] ?? [] as $fixture) {
-            $homeTeam = $this->findById($teams, $fixture['homeTeamId']);
-            $awayTeam = $this->findById($teams, $fixture['awayTeamId']);
-            $fixture['homeTeamName'] = $homeTeam['name'] ?? 'Unknown';
-            $fixture['awayTeamName'] = $awayTeam['name'] ?? 'Unknown';
-            $fixtures[] = $fixture;
-        }
+        $fixtures = $this->enrichLeagueFixtures($league['fixtures'] ?? [], $teams);
 
         usort($fixtures, fn($a, $b) => strcmp($a['date'], $b['date']));
 
@@ -417,69 +400,17 @@ class LeaguesController extends Controller
             return;
         }
 
-        // Get parameters from POST with fallback to league data
-        $startDate = $this->post('startDate', $league['startDate'] ?? date('Y-m-d'));
+        $startDate = $this->post('startDate', $league['startDate'] ?? date('Y-m-d')) ?: date('Y-m-d');
         $frequency = $this->post('frequency', $league['frequency'] ?? 'weekly');
         $matchTime = $this->post('matchTime', $league['matchTime'] ?? '15:00');
 
-        if (!$startDate) {
-            $startDate = date('Y-m-d');
-        }
-
-        // Identify existing played fixtures
-        $existingFixtures = $league['fixtures'] ?? [];
-        $playedFixtures = array_filter($existingFixtures, fn($f) => ($f['result'] ?? null) !== null);
-        $playedPairings = array_map(fn($f) => $f['homeTeamId'] . '-' . $f['awayTeamId'], $playedFixtures);
-
-        // Generate full new set of fixtures
-        $newFixtures = $this->league->generateFixtures($teamIds, $startDate, $frequency, $matchTime);
-
-        // Filter out new fixtures that match already played pairings
-        // (i.e. we only want the unplayed ones from the new generation)
-        $unplayedNewFixtures = array_filter($newFixtures, function ($f) use ($playedPairings) {
-            $pairing = $f['homeTeamId'] . '-' . $f['awayTeamId'];
-            return !in_array($pairing, $playedPairings);
-        });
-
-        // Combine played with new unplayed
-
-        // Build map of busy dates for each team from played fixtures
-        $busyDates = [];
-        foreach ($playedFixtures as $f) {
-            $busyDates[$f['homeTeamId']][$f['date']] = true;
-            $busyDates[$f['awayTeamId']][$f['date']] = true;
-        }
-
-        // Resolving conflicts for unplayed fixtures
-        foreach ($unplayedNewFixtures as &$f) {
-            $home = $f['homeTeamId'];
-            $away = $f['awayTeamId'];
-            $date = $f['date'];
-
-            // While either team is busy on this date, move date forward
-            // (e.g. if they already played a game on this calculated date)
-            // We check against the original busy set mostly, but we should also
-            // ensure we don't clash with newly moved fixtures if we wanted to be perfect.
-            // But generateFixtures guarantees no self-clashes in the new set.
-            // The conflict is only against the played set.
-            while (isset($busyDates[$home][$date]) || isset($busyDates[$away][$date])) {
-                $date = date('Y-m-d', strtotime($date . ' +1 day'));
-            }
-            $f['date'] = $date;
-
-            // Mark as busy to prevent subsequent generated matches for these teams 
-            // from claiming this shifted slot if the generator was somehow dense, 
-            // though standard round-robin usually spaces them out.
-            // Adding this safety ensures even dense schedules respect the shift.
-            $busyDates[$home][$date] = true;
-            $busyDates[$away][$date] = true;
-        }
-        unset($f); // Break reference
-
-        $finalFixtures = array_merge($playedFixtures, $unplayedNewFixtures);
-
-        // Sort by date/time
-        usort($finalFixtures, fn($a, $b) => strcmp($a['date'] . $a['time'], $b['date'] . $b['time']));
+        $finalFixtures = $this->mergePlayedWithNewFixtures(
+            $league['fixtures'] ?? [],
+            $teamIds,
+            $startDate,
+            $frequency,
+            $matchTime
+        );
 
         $this->league->update($league['id'], [
             'fixtures' => $finalFixtures,
@@ -503,4 +434,105 @@ class LeaguesController extends Controller
         $this->redirect('/admin/leagues/' . $slug . '/fixtures');
     }
 
+    /**
+     * Merge played fixtures with newly generated ones, preserving results.
+     *
+     * @param array $existingFixtures Current fixtures (may have results)
+     * @param array $teamIds Team IDs for fixture generation
+     * @param string $startDate Start date for new fixtures
+     * @param string $frequency Fixture frequency
+     * @param string $matchTime Default match time
+     * @return array Merged and sorted fixtures
+     */
+    private function mergePlayedWithNewFixtures(
+        array $existingFixtures,
+        array $teamIds,
+        string $startDate,
+        string $frequency,
+        string $matchTime
+    ): array {
+        $playedFixtures = $this->extractPlayedFixtures($existingFixtures);
+        $playedPairings = $this->extractFixturePairings($playedFixtures);
+
+        $newFixtures = $this->league->generateFixtures($teamIds, $startDate, $frequency, $matchTime);
+        $unplayedNewFixtures = $this->filterUnplayedFixtures($newFixtures, $playedPairings);
+
+        $busyDates = $this->buildBusyDatesMap($playedFixtures);
+        $rescheduledFixtures = $this->resolveSchedulingConflicts($unplayedNewFixtures, $busyDates);
+
+        $finalFixtures = array_merge($playedFixtures, $rescheduledFixtures);
+        usort($finalFixtures, fn($a, $b) => strcmp($a['date'] . $a['time'], $b['date'] . $b['time']));
+
+        return $finalFixtures;
+    }
+
+    /**
+     * Extract fixtures that have been played (have results).
+     */
+    private function extractPlayedFixtures(array $fixtures): array
+    {
+        return array_filter($fixtures, fn($f) => ($f['result'] ?? null) !== null);
+    }
+
+    /**
+     * Extract home-away pairings from fixtures for comparison.
+     */
+    private function extractFixturePairings(array $fixtures): array
+    {
+        return array_map(fn($f) => $f['homeTeamId'] . '-' . $f['awayTeamId'], $fixtures);
+    }
+
+    /**
+     * Filter out fixtures that match already played pairings.
+     */
+    private function filterUnplayedFixtures(array $fixtures, array $playedPairings): array
+    {
+        return array_filter($fixtures, function ($f) use ($playedPairings) {
+            $pairing = $f['homeTeamId'] . '-' . $f['awayTeamId'];
+            return !in_array($pairing, $playedPairings, true);
+        });
+    }
+
+    /**
+     * Build a map of dates when each team is busy (has a fixture).
+     */
+    private function buildBusyDatesMap(array $fixtures): array
+    {
+        $busyDates = [];
+        foreach ($fixtures as $f) {
+            $busyDates[$f['homeTeamId']][$f['date']] = true;
+            $busyDates[$f['awayTeamId']][$f['date']] = true;
+        }
+        return $busyDates;
+    }
+
+    /**
+     * Resolve scheduling conflicts by moving fixtures to available dates.
+     *
+     * @param array $fixtures Fixtures to check for conflicts
+     * @param array $busyDates Map of team busy dates (modified by reference)
+     * @return array Fixtures with resolved dates
+     */
+    private function resolveSchedulingConflicts(array $fixtures, array &$busyDates): array
+    {
+        $resolved = [];
+
+        foreach ($fixtures as $fixture) {
+            $home = $fixture['homeTeamId'];
+            $away = $fixture['awayTeamId'];
+            $date = $fixture['date'];
+
+            while (isset($busyDates[$home][$date]) || isset($busyDates[$away][$date])) {
+                $date = date('Y-m-d', strtotime($date . ' +1 day'));
+            }
+
+            $fixture['date'] = $date;
+            $busyDates[$home][$date] = true;
+            $busyDates[$away][$date] = true;
+
+            $resolved[] = $fixture;
+        }
+
+        return $resolved;
+    }
 }
