@@ -5,12 +5,13 @@
 
 <div class="card">
     <?php if (empty($cups)): ?>
-        <div class="text-center py-16 px-8">
-            <h2 class="text-xl font-bold mb-4">No Cups Found</h2>
-            <p class="text-text-muted mb-8 max-w-md mx-auto">Cup competitions allow you to create knockout tournaments.
-                Create your first cup to generate a bracket and fixtures.</p>
-            <a href="<?=$basePath?>/admin/cups/create" class="btn btn-primary">Create Your First Cup</a>
-        </div>
+        <?php
+        $message = 'Cup competitions allow you to create knockout tournaments. Create your first cup to generate a bracket and fixtures.';
+        $actionUrl = $basePath . '/admin/cups/create';
+        $actionText = 'Create Your First Cup';
+        $padding = 'py-16';
+        include __DIR__ . '/../partials/empty_state.php';
+        ?>
     <?php else: ?>
         <div class="overflow-x-auto">
             <table class="w-full border-collapse text-left">

@@ -5,14 +5,11 @@
 ?>
 
 <div class="w-full">
-    <div class="mb-8 text-center">
-        <h1
-            class="text-4xl font-extrabold m-0 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 mb-2">
-            Leagues</h1>
-        <?php if (isset($seasonName) && $seasonName): ?>
-            <p class="text-text-muted text-lg font-medium mb-4"><?= htmlspecialchars($seasonName) ?> Season</p>
-        <?php endif; ?>
-    </div>
+    <?php
+    $title = 'Leagues';
+    $subtitle = (isset($seasonName) && $seasonName) ? htmlspecialchars($seasonName) . ' Season' : null;
+    include __DIR__ . '/../partials/page_header.php';
+    ?>
 
     <?php if (empty($leagues)): ?>
         <div class="card">
@@ -52,10 +49,10 @@
         <div id="league-content">
             <!-- Standings -->
             <section class="mb-16" id="standings-section">
-                <div class="flex items-center gap-4 mb-6">
-                    <h2 class="text-2xl font-bold">Standings</h2>
-                    <div class="h-px bg-border flex-1"></div>
-                </div>
+                <?php
+                $title = 'Standings';
+                include __DIR__ . '/../partials/section_header.php';
+                ?>
                 <div class="card p-0 overflow-hidden">
                     <div id="standings-content" class="p-0"></div>
                 </div>
@@ -63,10 +60,10 @@
 
             <!-- Recent Results -->
             <section class="mb-16" id="recent-results-section">
-                <div class="flex items-center gap-4 mb-6">
-                    <h2 class="text-2xl font-bold">Recent Results</h2>
-                    <div class="h-px bg-border flex-1"></div>
-                </div>
+                <?php
+                $title = 'Recent Results';
+                include __DIR__ . '/../partials/section_header.php';
+                ?>
                 <div class="card">
                     <ul id="recent-results-content" class="divide-y divide-border"></ul>
                 </div>
@@ -74,10 +71,10 @@
 
             <!-- Upcoming Fixtures -->
             <section class="mb-16" id="upcoming-fixtures-section">
-                <div class="flex items-center gap-4 mb-6">
-                    <h2 class="text-2xl font-bold">Upcoming Fixtures</h2>
-                    <div class="h-px bg-border flex-1"></div>
-                </div>
+                <?php
+                $title = 'Upcoming Fixtures';
+                include __DIR__ . '/../partials/section_header.php';
+                ?>
                 <div class="card">
                     <ul id="upcoming-fixtures-content" class="divide-y divide-border"></ul>
                 </div>

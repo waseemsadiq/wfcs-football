@@ -34,10 +34,10 @@
 
     <!-- Fixtures -->
     <section class="mb-16">
-        <div class="flex items-center gap-4 mb-6">
-            <h2 class="text-2xl font-bold">Fixtures</h2>
-            <div class="h-px bg-border flex-1"></div>
-        </div>
+        <?php
+        $title = 'Fixtures';
+        include __DIR__ . '/../partials/section_header.php';
+        ?>
         <div class="card">
             <?php if (empty($fixtures)): ?>
                 <div class="text-center py-12 text-text-muted">

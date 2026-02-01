@@ -229,61 +229,13 @@
     </div>
 </div>
 
-<!-- Modal -->
-<div id="regenerateModal"
-    class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm items-center justify-center z-50 p-4">
-    <div
-        class="bg-surface border border-border rounded-xl shadow-2xl max-w-lg w-full transform transition-all p-6 relative">
-        <h2 class="text-2xl font-bold mb-2">Regenerate Cup Fixtures</h2>
-        <p class="text-text-muted mb-6">If results exist, only unplayed fixtures will be rescheduled. Otherwise, the
-            bracket will be re-drawn.</p>
-
-        <form id="regenerateForm" method="POST"
-            action="<?=$basePath?>/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>/regenerate-fixtures">
-            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
-            <input type="hidden" name="ajax" value="1">
-
-            <div id="modal-message" class="hidden p-4 rounded mb-4 text-sm font-medium"></div>
-
-            <div id="modal-fields" class="space-y-4">
-                <div>
-                    <label for="modal-startDate" class="block text-sm font-medium text-text-muted mb-1">First round
-                        Date</label>
-                    <input type="date" id="modal-startDate" name="startDate"
-                        value="<?= htmlspecialchars($cup['startDate'] ?? date('Y-m-d')) ?>" class="form-input" required>
-                </div>
-
-                <div>
-                    <label for="modal-frequency" class="block text-sm font-medium text-text-muted mb-1">Round
-                        Frequency</label>
-                    <select id="modal-frequency" name="frequency" class="form-input" required>
-                        <option value="weekly" <?= ($cup['frequency'] ?? 'weekly') === 'weekly' ? 'selected' : '' ?>>Weekly
-                        </option>
-                        <option value="fortnightly" <?= ($cup['frequency'] ?? '') === 'fortnightly' ? 'selected' : '' ?>>
-                            Fortnightly</option>
-                        <option value="monthly" <?= ($cup['frequency'] ?? '') === 'monthly' ? 'selected' : '' ?>>Monthly
-                        </option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="modal-matchTime" class="block text-sm font-medium text-text-muted mb-1">Typical Match
-                        Time</label>
-                    <input type="time" id="modal-matchTime" name="matchTime"
-                        value="<?= htmlspecialchars($cup['matchTime'] ?? '15:00') ?>" class="form-input" required>
-                </div>
-            </div>
-
-            <div class="flex justify-end gap-3 mt-8 pt-4 border-t border-border">
-                <button type="button" id="modal-cancel" onclick="handleModalClose()"
-                    class="btn btn-secondary">Cancel</button>
-                <button type="submit" id="modal-submit"
-                    class="btn btn-primary bg-yellow-600 hover:bg-yellow-700 border-yellow-600 hover:border-yellow-700 text-white">Regenerate
-                    Now</button>
-            </div>
-        </form>
-    </div>
-</div>
+<?php
+$modalId = 'regenerateModal';
+$competitionType = 'cup';
+$formAction = $basePath . '/admin/cups/' . htmlspecialchars($cup['slug'] ?? $cup['id']) . '/regenerate-fixtures';
+$competition = $cup;
+include __DIR__ . '/../partials/regenerate_modal.php';
+?>
 
 <script>
     // Toggle switch show/hide logic
@@ -315,65 +267,5 @@
                 }
             });
         });
-    });
-
-    let isRegenerated = false;
-
-    function handleModalClose() {
-        if (isRegenerated) {
-            window.location.reload();
-        } else {
-            const modal = document.getElementById('regenerateModal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-    }
-
-    document.getElementById('regenerateForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const form = this;
-        const submitBtn = document.getElementById('modal-submit');
-        const messageDiv = document.getElementById('modal-message');
-        const fieldsDiv = document.getElementById('modal-fields');
-
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<span class="animate-spin inline-block mr-2 text-white">&#9696;</span> Regenerating...';
-
-        const formData = new FormData(form);
-
-        fetch(form.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    isRegenerated = true;
-                    messageDiv.textContent = data.message;
-                    messageDiv.className = 'p-4 rounded mb-4 text-sm font-medium bg-green-500/10 text-green-500 border border-green-500/20';
-                    messageDiv.style.display = 'block';
-                    fieldsDiv.style.display = 'none';
-                    submitBtn.style.display = 'none';
-                    document.getElementById('modal-cancel').textContent = 'Close & Refresh';
-                    document.getElementById('modal-cancel').className = 'btn btn-primary';
-                } else {
-                    messageDiv.textContent = data.error || 'An error occurred.';
-                    messageDiv.className = 'p-4 rounded mb-4 text-sm font-medium bg-red-500/10 text-red-500 border border-red-500/20';
-                    messageDiv.style.display = 'block';
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Regenerate Now';
-                }
-            })
-            .catch(error => {
-                messageDiv.textContent = 'A network error occurred.';
-                messageDiv.className = 'p-4 rounded mb-4 text-sm font-medium bg-red-500/10 text-red-500 border border-red-500/20';
-                messageDiv.style.display = 'block';
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Regenerate Now';
-            });
     });
 </script>

@@ -11,9 +11,10 @@
 
     <!-- Cup Rounds -->
     <?php if (empty($rounds)): ?>
-        <div class="text-center py-12 text-text-muted">
-            <p>No fixtures scheduled</p>
-        </div>
+        <?php
+        $message = 'No fixtures scheduled';
+        include __DIR__ . '/../partials/empty_state.php';
+        ?>
     <?php else: ?>
         <div class="space-y-8">
             <?php foreach ($rounds as $round): ?>

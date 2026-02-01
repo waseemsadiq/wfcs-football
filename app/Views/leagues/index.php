@@ -11,11 +11,13 @@
     </div>
 
     <?php if (empty($leagues)): ?>
-        <div class="text-center py-16 px-8">
-            <p class="text-text-muted mb-6 text-lg">No leagues created yet.</p>
-            <p class="text-text-muted mb-8">Create your first league to start organising fixtures.</p>
-            <a href="<?=$basePath?>/admin/leagues/create" class="btn btn-primary">Create Your First League</a>
-        </div>
+        <?php
+        $message = 'No leagues created yet. Create your first league to start organising fixtures.';
+        $actionUrl = $basePath . '/admin/leagues/create';
+        $actionText = 'Create Your First League';
+        $padding = 'py-16';
+        include __DIR__ . '/../partials/empty_state.php';
+        ?>
     <?php else: ?>
         <div class="overflow-x-auto">
             <table class="w-full border-collapse">

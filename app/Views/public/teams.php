@@ -5,16 +5,11 @@
 ?>
 
 <div class="w-full">
-    <div class="mb-8 text-center">
-        <h1
-            class="text-4xl font-extrabold m-0 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 mb-2">
-            Teams</h1>
-        <?php if (isset($seasonName) && $seasonName): ?>
-            <p class="text-text-muted text-lg font-medium mb-4">
-                <?= htmlspecialchars($seasonName) ?> Season
-            </p>
-        <?php endif; ?>
-    </div>
+    <?php
+    $title = 'Teams';
+    $subtitle = (isset($seasonName) && $seasonName) ? htmlspecialchars($seasonName) . ' Season' : null;
+    include __DIR__ . '/../partials/page_header.php';
+    ?>
 
     <?php if (empty($teams)): ?>
         <div class="card">

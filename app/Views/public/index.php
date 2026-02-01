@@ -10,10 +10,10 @@
 
     <!-- Recent Results -->
     <section class="mb-16">
-        <div class="flex items-center gap-4 mb-6">
-            <h2 class="text-2xl font-bold">Recent Results</h2>
-            <div class="h-px bg-border flex-1"></div>
-        </div>
+        <?php
+        $title = 'Recent Results';
+        include __DIR__ . '/../partials/section_header.php';
+        ?>
         <div class="card p-0">
             <?php if (empty($recentResults)): ?>
                 <div class="text-center py-12 text-text-muted">
@@ -47,10 +47,10 @@
 
     <!-- Upcoming Fixtures -->
     <section class="mb-16">
-        <div class="flex items-center gap-4 mb-6">
-            <h2 class="text-2xl font-bold">Upcoming Fixtures</h2>
-            <div class="h-px bg-border flex-1"></div>
-        </div>
+        <?php
+        $title = 'Upcoming Fixtures';
+        include __DIR__ . '/../partials/section_header.php';
+        ?>
         <div class="card p-0">
             <?php if (empty($upcomingFixtures)): ?>
                 <div class="text-center py-12 text-text-muted">

@@ -18,11 +18,13 @@
     </div>
 
     <?php if (empty($teams)): ?>
-        <div class="text-center py-16 px-8">
-            <p class="text-text-muted mb-6 text-lg">No teams added yet.</p>
-            <p class="text-text-muted mb-8">Get started by adding your first team.</p>
-            <a href="<?=$basePath?>/admin/teams/create" class="btn btn-primary">Add Your First Team</a>
-        </div>
+        <?php
+        $message = 'No teams added yet. Get started by adding your first team.';
+        $actionUrl = $basePath . '/admin/teams/create';
+        $actionText = 'Add Your First Team';
+        $padding = 'py-16';
+        include __DIR__ . '/../partials/empty_state.php';
+        ?>
     <?php else: ?>
         <div class="overflow-x-auto">
             <table class="w-full border-collapse">

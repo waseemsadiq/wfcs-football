@@ -14,86 +14,10 @@
     <!-- Standings -->
     <div class="card mb-8">
         <h2 class="text-xl font-bold mb-6">Standings</h2>
-        <?php if (empty($standings)): ?>
-            <div class="text-center py-8 text-text-muted">
-                <p>No standings data available yet.</p>
-            </div>
-        <?php else: ?>
-            <div class="overflow-x-auto">
-                <table class="w-full border-collapse text-sm">
-                    <thead>
-                        <tr>
-                            <th class="table-th w-12 text-center">Pos</th>
-                            <th class="table-th text-left">Team</th>
-                            <th class="table-th w-12 text-center font-semibold" title="Played">P</th>
-                            <th class="table-th w-12 text-center font-semibold" title="Won">W</th>
-                            <th class="table-th w-12 text-center font-semibold" title="Drawn">D</th>
-                            <th class="table-th w-12 text-center font-semibold" title="Lost">L</th>
-                            <th class="table-th w-12 text-center font-semibold hidden sm:table-cell" title="Goals For">GF
-                            </th>
-                            <th class="table-th w-12 text-center font-semibold hidden sm:table-cell" title="Goals Against">
-                                GA</th>
-                            <th class="table-th w-12 text-center font-semibold" title="Goal Difference">GD</th>
-                            <th class="table-th w-16 text-center font-bold text-text-main">Pts</th>
-                            <th class="table-th w-32 text-left hidden md:table-cell">Form</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php $position = 1; ?>
-                        <?php foreach ($standings as $row): ?>
-                            <tr class="hover:bg-surface-hover/50 transition-colors border-b border-border last:border-0">
-                                <td class="p-3 text-center text-text-muted"><?= $position++ ?></td>
-                                <td class="p-3">
-                                    <div class="flex items-center gap-3">
-                                        <span class="inline-block w-3 h-3 rounded-sm shadow-sm flex-shrink-0"
-                                            style="background-color: <?= htmlspecialchars($row['teamColour']) ?>"></span>
-                                        <a href="<?= $basePath ?>/admin/teams/<?= htmlspecialchars($row['teamSlug'] ?? $row['teamId']) ?>"
-                                            class="font-semibold text-text-main hover:text-primary transition-colors">
-                                            <?= htmlspecialchars($row['teamName']) ?>
-                                        </a>
-                                    </div>
-                                </td>
-                                <td class="p-3 text-center text-text-muted"><?= $row['played'] ?></td>
-                                <td class="p-3 text-center text-text-muted"><?= $row['won'] ?></td>
-                                <td class="p-3 text-center text-text-muted"><?= $row['drawn'] ?></td>
-                                <td class="p-3 text-center text-text-muted"><?= $row['lost'] ?></td>
-                                <td class="p-3 text-center text-text-muted hidden sm:table-cell"><?= $row['goalsFor'] ?></td>
-                                <td class="p-3 text-center text-text-muted hidden sm:table-cell"><?= $row['goalsAgainst'] ?>
-                                </td>
-                                <td
-                                    class="p-3 text-center font-medium <?= $row['goalDifference'] > 0 ? 'text-green-500' : ($row['goalDifference'] < 0 ? 'text-red-500' : 'text-text-muted') ?>">
-                                    <?= $row['goalDifference'] > 0 ? '+' . $row['goalDifference'] : $row['goalDifference'] ?>
-                                </td>
-                                <td class="p-3 text-center font-bold text-lg text-text-main"><?= $row['points'] ?></td>
-                                <td class="p-3 hidden md:table-cell">
-                                    <div class="flex items-center justify-start gap-1">
-                                        <?php if (!empty($row['form'])): ?>
-                                            <?php foreach ($row['form'] as $result): ?>
-                                                <?php
-                                                $colorClass = match ($result) {
-                                                    'W' => 'bg-green-500 text-white',
-                                                    'D' => 'bg-gray-500 text-white',
-                                                    'L' => 'bg-danger text-white',
-                                                    default => 'bg-gray-700 text-gray-300'
-                                                };
-                                                ?>
-                                                <span
-                                                    class="w-5 h-5 flex items-center justify-center rounded text-[10px] font-bold <?= $colorClass ?>"
-                                                    title="<?= $result ?>">
-                                                    <?= $result ?>
-                                                </span>
-                                            <?php endforeach; ?>
-                                        <?php else: ?>
-                                            <span class="text-text-muted text-xs">-</span>
-                                        <?php endif; ?>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        <?php endif; ?>
+        <?php
+        $context = 'admin';
+        include __DIR__ . '/../partials/standings_table.php';
+        ?>
     </div>
 
     <!-- Recent Results -->
