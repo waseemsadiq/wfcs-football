@@ -68,9 +68,11 @@ $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
 
                 <form method="POST" action="<?= $basePath ?>/logout" class="ml-4">
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(\Core\Auth::csrfToken()) ?>">
-                    <button type="submit"
-                        class="btn btn-sm bg-transparent border border-danger text-danger hover:bg-danger/10">Log
-                        out</button>
+                    <button type="submit" class="text-danger hover:text-danger/80 transition-colors p-2" aria-label="Log out">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 014-4 4 4 0 014 4m0 0v4m-8 0h12a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6a2 2 0 012-2z" />
+                        </svg>
+                    </button>
                 </form>
             </nav>
 
