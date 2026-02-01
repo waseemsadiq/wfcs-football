@@ -19,3 +19,8 @@ CLAUDE.md
 findings.md
 progress.md
 task_plan.md
+
+# Dev tools and artifacts
+.playwright-mcp/
+generate-icons.js
+
