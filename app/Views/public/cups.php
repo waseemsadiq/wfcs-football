@@ -343,7 +343,7 @@
                         }
 
                         html += `
-                            <div class="bg-surface border-l-4 border-l-primary border-b border-border py-2 text-center sticky top-0 z-10">
+                            <div class="bg-surface border-l-4 border-l-primary border-b border-border py-2 text-center -mx-4 px-4 sticky top-0 z-10">
                                 <span class="text-xs font-bold text-text-muted uppercase tracking-wider">
                                     ${dateDisplay}
                                 </span>
