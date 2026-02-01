@@ -1,13 +1,15 @@
-<div class="text-center mb-12">
-    <h1 class="text-4xl font-extrabold tracking-tight mb-2 text-text-main">
-        Cups</h1>
-</div>
+<?php
+$title = 'Cups';
+include __DIR__ . '/../partials/admin_page_header.php';
+?>
 
 <div class="card">
-    <div class="flex justify-between items-center mb-8">
-        <h2 class="text-2xl font-bold m-0">All Cups</h2>
-        <a href="<?= $basePath ?>/admin/cups/create" class="btn btn-primary">+ Create Cup</a>
-    </div>
+    <?php
+    $title = 'All Cups';
+    $createUrl = $basePath . '/admin/cups/create';
+    $createText = '+ Create Cup';
+    include __DIR__ . '/../partials/admin_card_header.php';
+    ?>
 
     <?php if (empty($cups)): ?>
         <?php

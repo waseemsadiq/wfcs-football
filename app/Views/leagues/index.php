@@ -1,14 +1,15 @@
-<div class="text-center mb-12">
-    <h1
-        class="text-4xl font-extrabold tracking-tight mb-2 text-text-main">
-        Leagues</h1>
-</div>
+<?php
+$title = 'Leagues';
+include __DIR__ . '/../partials/admin_page_header.php';
+?>
 
 <div class="card">
-    <div class="flex justify-between items-center mb-8">
-        <h2 class="text-2xl font-bold m-0">All Leagues</h2>
-        <a href="<?=$basePath?>/admin/leagues/create" class="btn btn-primary">+ Create League</a>
-    </div>
+    <?php
+    $title = 'All Leagues';
+    $createUrl = $basePath . '/admin/leagues/create';
+    $createText = '+ Create League';
+    include __DIR__ . '/../partials/admin_card_header.php';
+    ?>
 
     <?php if (empty($leagues)): ?>
         <?php
@@ -34,7 +35,7 @@
                     <?php foreach ($leagues as $league): ?>
                         <tr class="hover:bg-surface-hover transition-colors">
                             <td class="table-td">
-                                <a href="<?=$basePath?>/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>"
+                                <a href="<?= $basePath ?>/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>"
                                     class="font-bold text-text-main no-underline hover:text-primary transition-colors">
                                     <?= htmlspecialchars($league['name']) ?>
                                 </a>
@@ -44,9 +45,9 @@
                             <td class="table-td"><?= count($league['teamIds'] ?? []) ?></td>
                             <td class="table-td"><?= count($league['fixtures'] ?? []) ?></td>
                             <td class="table-td text-right">
-                                <a href="<?=$basePath?>/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>"
+                                <a href="<?= $basePath ?>/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>"
                                     class="btn btn-secondary btn-sm mr-2">View</a>
-                                <a href="<?=$basePath?>/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>/fixtures"
+                                <a href="<?= $basePath ?>/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>/fixtures"
                                     class="btn btn-secondary btn-sm">Fixtures</a>
                             </td>
                         </tr>

@@ -1,21 +1,24 @@
-<div class="text-center mb-12">
-    <h1
-        class="text-4xl font-extrabold tracking-tight mb-2 text-text-main">
-        Seasons</h1>
-</div>
+<?php
+$title = 'Seasons';
+include __DIR__ . '/../partials/admin_page_header.php';
+?>
 
 <div class="card">
-    <div class="flex justify-between items-center mb-8">
-        <h2 class="text-2xl font-bold m-0">All Seasons</h2>
-        <a href="<?=$basePath?>/admin/seasons/create" class="btn btn-primary">+ Create Season</a>
-    </div>
+    <?php
+    $title = 'All Seasons';
+    $createUrl = $basePath . '/admin/seasons/create';
+    $createText = '+ Create Season';
+    include __DIR__ . '/../partials/admin_card_header.php';
+    ?>
 
     <?php if (empty($seasons)): ?>
-        <div class="text-center py-16 px-8">
-            <p class="text-text-muted mb-6 text-lg">No seasons created yet.</p>
-            <p class="text-text-muted mb-8">Create your first season to start organising your leagues and cups.</p>
-            <a href="<?=$basePath?>/admin/seasons/create" class="btn btn-primary">Create Your First Season</a>
-        </div>
+        <?php
+        $message = 'No seasons created yet. Create your first season to start organising your leagues and cups.';
+        $actionUrl = $basePath . '/admin/seasons/create';
+        $actionText = 'Create Your First Season';
+        $padding = 'py-16';
+        include __DIR__ . '/../partials/empty_state.php';
+        ?>
     <?php else: ?>
         <div class="overflow-x-auto">
             <table class="w-full border-collapse">
@@ -34,7 +37,7 @@
                     <?php foreach ($seasons as $season): ?>
                         <tr class="hover:bg-surface-hover transition-colors">
                             <td class="table-td">
-                                <a href="<?=$basePath?>/admin/seasons/<?= htmlspecialchars($season['slug'] ?? $season['id']) ?>"
+                                <a href="<?= $basePath ?>/admin/seasons/<?= htmlspecialchars($season['slug'] ?? $season['id']) ?>"
                                     class="font-bold text-text-main no-underline hover:text-primary transition-colors">
                                     <?= htmlspecialchars($season['name']) ?>
                                 </a>
@@ -56,7 +59,7 @@
                                 <div class="flex items-center justify-end gap-2">
                                     <?php if (empty($season['isActive'])): ?>
                                         <form method="POST"
-                                            action="<?=$basePath?>/admin/seasons/<?= htmlspecialchars($season['slug'] ?? $season['id']) ?>/set-active"
+                                            action="<?= $basePath ?>/admin/seasons/<?= htmlspecialchars($season['slug'] ?? $season['id']) ?>/set-active"
                                             class="inline-block">
                                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
                                             <button type="submit"
@@ -64,10 +67,10 @@
                                                 Active</button>
                                         </form>
                                     <?php endif; ?>
-                                    <a href="<?=$basePath?>/admin/seasons/<?= htmlspecialchars($season['slug'] ?? $season['id']) ?>/edit"
+                                    <a href="<?= $basePath ?>/admin/seasons/<?= htmlspecialchars($season['slug'] ?? $season['id']) ?>/edit"
                                         class="btn btn-secondary btn-sm">Edit</a>
                                     <form method="POST"
-                                        action="<?=$basePath?>/admin/seasons/<?= htmlspecialchars($season['slug'] ?? $season['id']) ?>/delete"
+                                        action="<?= $basePath ?>/admin/seasons/<?= htmlspecialchars($season['slug'] ?? $season['id']) ?>/delete"
                                         class="inline-block"
                                         onsubmit="return confirm('Are you sure you want to delete this season?');">
                                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
