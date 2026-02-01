@@ -9,11 +9,11 @@
 
     <!-- Recent Results -->
     <section class="mb-16">
-        <?php
-        $title = 'Recent Results';
-        include __DIR__ . '/../partials/section_header.php';
-        ?>
-        <div class="card p-0">
+        <div class="card p-0 overflow-hidden">
+            <?php
+            $title = 'Recent Results';
+            include __DIR__ . '/../partials/card_header.php';
+            ?>
             <?php if (empty($recentResults)): ?>
                 <div class="text-center py-12 text-text-muted">
                     <p>No recent results</p>
@@ -46,11 +46,11 @@
 
     <!-- Upcoming Fixtures -->
     <section class="mb-16">
-        <?php
-        $title = 'Upcoming Fixtures';
-        include __DIR__ . '/../partials/section_header.php';
-        ?>
-        <div class="card p-0">
+        <div class="card p-0 overflow-hidden">
+            <?php
+            $title = 'Upcoming Fixtures';
+            include __DIR__ . '/../partials/card_header.php';
+            ?>
             <?php if (empty($upcomingFixtures)): ?>
                 <div class="text-center py-12 text-text-muted">
                     <p>No upcoming fixtures</p>

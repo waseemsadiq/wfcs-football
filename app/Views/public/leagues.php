@@ -49,33 +49,33 @@
         <div id="league-content">
             <!-- Standings -->
             <section class="mb-16" id="standings-section">
-                <?php
-                $title = 'Standings';
-                include __DIR__ . '/../partials/section_header.php';
-                ?>
                 <div class="card p-0 overflow-hidden">
+                    <?php
+                    $title = 'Standings';
+                    include __DIR__ . '/../partials/card_header.php';
+                    ?>
                     <div id="standings-content" class="p-0"></div>
                 </div>
             </section>
 
             <!-- Recent Results -->
             <section class="mb-16" id="recent-results-section">
-                <?php
-                $title = 'Recent Results';
-                include __DIR__ . '/../partials/section_header.php';
-                ?>
-                <div class="card">
+                <div class="card p-0 overflow-hidden">
+                    <?php
+                    $title = 'Recent Results';
+                    include __DIR__ . '/../partials/card_header.php';
+                    ?>
                     <ul id="recent-results-content" class="divide-y divide-border"></ul>
                 </div>
             </section>
 
             <!-- Upcoming Fixtures -->
             <section class="mb-16" id="upcoming-fixtures-section">
-                <?php
-                $title = 'Upcoming Fixtures';
-                include __DIR__ . '/../partials/section_header.php';
-                ?>
-                <div class="card">
+                <div class="card p-0 overflow-hidden">
+                    <?php
+                    $title = 'Upcoming Fixtures';
+                    include __DIR__ . '/../partials/card_header.php';
+                    ?>
                     <ul id="upcoming-fixtures-content" class="divide-y divide-border"></ul>
                 </div>
             </section>

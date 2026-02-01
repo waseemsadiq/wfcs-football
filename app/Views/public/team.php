@@ -33,11 +33,11 @@
 
     <!-- Fixtures -->
     <section class="mb-16">
-        <?php
-        $title = 'Fixtures';
-        include __DIR__ . '/../partials/section_header.php';
-        ?>
-        <div class="card">
+        <div class="card p-0 overflow-hidden">
+            <?php
+            $title = 'Fixtures';
+            include __DIR__ . '/../partials/card_header.php';
+            ?>
             <?php if (empty($fixtures)): ?>
                 <div class="text-center py-12 text-text-muted">
                     <p>No fixtures scheduled</p>

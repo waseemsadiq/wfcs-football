@@ -18,11 +18,11 @@
         <div class="space-y-16">
             <?php foreach ($rounds as $round): ?>
                 <section>
-                    <?php
-                    $title = $round['name'];
-                    include __DIR__ . '/../partials/section_header.php';
-                    ?>
                     <div class="card p-0 overflow-hidden">
+                        <?php
+                        $title = $round['name'];
+                        include __DIR__ . '/../partials/card_header.php';
+                        ?>
                         <?php if (empty($round['fixtures'])): ?>
                             <div class="text-center py-8 text-text-muted p-6">
                                 <p>No fixtures in this round</p>

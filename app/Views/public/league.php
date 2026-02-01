@@ -16,11 +16,11 @@
 
     <!-- Standings -->
     <section class="mb-16">
-        <?php
-        $title = 'Standings';
-        include __DIR__ . '/../partials/section_header.php';
-        ?>
         <div class="card p-0 overflow-hidden">
+            <?php
+            $title = 'Standings';
+            include __DIR__ . '/../partials/card_header.php';
+            ?>
             <div class="p-0">
                 <?php
                 $context = 'public';
@@ -32,11 +32,11 @@
 
     <!-- Fixtures -->
     <section class="mb-16">
-        <?php
-        $title = 'Fixtures';
-        include __DIR__ . '/../partials/section_header.php';
-        ?>
-        <div class="card">
+        <div class="card p-0 overflow-hidden">
+            <?php
+            $title = 'Fixtures';
+            include __DIR__ . '/../partials/card_header.php';
+            ?>
             <?php if (empty($fixtures)): ?>
                 <?php
                 $message = 'No fixtures scheduled';
