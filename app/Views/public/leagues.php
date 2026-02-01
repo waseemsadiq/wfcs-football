@@ -35,14 +35,19 @@
                 <div class="card p-0 overflow-hidden">
                     <div class="p-6 border-b border-border bg-surface/50 flex items-center justify-between gap-4">
                         <h2 class="text-xl font-bold m-0">Standings</h2>
-                        <select id="league-select"
-                            class="bg-surface border border-border text-text-main rounded-sm px-4 py-3 font-semibold focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all min-w-48">
-                            <?php foreach ($leagues as $league): ?>
-                                <option value="<?= htmlspecialchars($league['slug']) ?>">
-                                    <?= htmlspecialchars($league['name']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+                        <div class="flex items-center gap-3">
+                            <label for="league-select" class="hidden md:block text-sm font-bold text-text-muted uppercase tracking-wider">
+                                Select League
+                            </label>
+                            <select id="league-select"
+                                class="bg-surface border border-border text-text-main rounded-sm px-4 py-3 font-semibold focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all min-w-48">
+                                <?php foreach ($leagues as $league): ?>
+                                    <option value="<?= htmlspecialchars($league['slug']) ?>">
+                                        <?= htmlspecialchars($league['name']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
                     </div>
                     <div id="standings-content" class="p-0"></div>
                 </div>
