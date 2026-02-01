@@ -1,6 +1,6 @@
 <div class="bg-surface w-full max-w-md p-10 rounded-md shadow-glow border border-border">
     <div class="flex items-center justify-center gap-4 mb-2">
-        <img src="<?= $basePath ?>/images/logo-white.svg" alt="WFCS Football Logo" class="h-12 w-12">
+        <img src="<?= $basePath ?>/images/logo-blue.svg" alt="WFCS Football Logo" class="h-12 w-12">
         <h1 class="text-3xl font-bold">WFCS Football</h1>
     </div>
     <p class="text-center text-text-muted mb-8">Enter the admin password to continue</p>
