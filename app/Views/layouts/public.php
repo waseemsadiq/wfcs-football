@@ -2,7 +2,7 @@
 $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
 ?>
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en-GB" class="<?= isset($_COOKIE['theme']) && $_COOKIE['theme'] === 'light' ? 'light' : '' ?>">
 
 <head>
     <meta charset="UTF-8">
@@ -18,7 +18,8 @@ $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
     <header class="bg-surface/80 backdrop-blur-md border-b border-border py-5 mb-12 sticky top-0 z-50">
         <div class="max-w-[1200px] mx-auto px-6 w-full flex justify-between items-center">
             <a href="<?= $basePath ?>/" class="flex items-center no-underline">
-                <img src="<?= $basePath ?>/images/logo-white.svg" alt="WFCS Football" class="h-20 w-20">
+                <img src="<?= $basePath ?>/images/logo-white.svg" alt="WFCS Football" class="h-20 w-20 hide-light">
+                <img src="<?= $basePath ?>/images/logo.svg" alt="WFCS Football" class="h-20 w-20 hide-dark">
             </a>
 
             <!-- Desktop Navigation (hidden on mobile) -->
@@ -36,6 +37,19 @@ $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
                         class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Admin
                         Stuff</a>
                 <?php endif; ?>
+                <!-- Theme Toggle -->
+                <button id="theme-toggle-public" class="theme-toggle" aria-label="Toggle theme">
+                    <svg class="h-5 w-5 hide-light" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <svg class="h-5 w-5 hide-dark" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
                 <a href="<?= $basePath ?>/login" aria-label="Admin Login"
                     class="text-text-muted hover:text-primary transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -102,11 +116,29 @@ $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
                     </svg>
                     Admin Login
                 </a>
+
+                <!-- Mobile Theme Toggle -->
+                <button id="theme-toggle-mobile-public" class="theme-toggle flex items-center gap-2 mt-4"
+                    aria-label="Toggle theme">
+                    <svg class="h-5 w-5 hide-light" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <svg class="h-5 w-5 hide-dark" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                    <span class="hide-light">Light Mode</span>
+                    <span class="hide-dark">Dark Mode</span>
+                </button>
             </nav>
         </div>
     </aside>
 
     <script>
+        // Sidebar functions
         function openSidebarPublic() {
             document.getElementById('mobile-sidebar-public').classList.remove('translate-x-full');
             document.getElementById('sidebar-overlay-public').classList.remove('hidden');
@@ -120,6 +152,19 @@ $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
         }
 
         document.getElementById('mobile-menu-btn-public').addEventListener('click', openSidebarPublic);
+
+        // Theme toggle
+        (function () {
+            function toggleTheme() {
+                const html = document.documentElement;
+                html.classList.toggle('light');
+                const isLight = html.classList.contains('light');
+                document.cookie = 'theme=' + (isLight ? 'light' : 'dark') + ';path=/;max-age=31536000';
+            }
+
+            document.getElementById('theme-toggle-public')?.addEventListener('click', toggleTheme);
+            document.getElementById('theme-toggle-mobile-public')?.addEventListener('click', toggleTheme);
+        })();
     </script>
 
     <main class="flex-1">

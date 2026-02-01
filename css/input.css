@@ -2,6 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Theme Variables - these override Tailwind's compiled values */
+:root {
+  /* Dark theme (default) */
+  --color-background: #020617;
+  --color-surface: #0f172a;
+  --color-surface-hover: #1e293b;
+  --color-primary: #4ade80;
+  --color-primary-hover: #22c55e;
+  --color-primary-text: #020617;
+  --color-text-main: #f8fafc;
+  --color-text-muted: #94a3b8;
+  --color-border: #1e293b;
+}
+
+:root.light {
+  /* Light theme */
+  --color-background: #f8fafc;
+  --color-surface: #ffffff;
+  --color-surface-hover: #f1f5f9;
+  --color-primary: #16a34a;
+  --color-primary-hover: #15803d;
+  --color-primary-text: #ffffff;
+  --color-text-main: #0f172a;
+  --color-text-muted: #64748b;
+  --color-border: #e2e8f0;
+}
+
 @layer base {
   body {
     @apply bg-background text-text-main font-sans antialiased min-h-screen flex flex-col;
@@ -17,6 +44,12 @@
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+  }
+  /* Light theme h1 gradient */
+  :root.light h1 {
+    background: linear-gradient(to right, #0f172a, #64748b);
+    -webkit-background-clip: text;
+    background-clip: text;
   }
   h2 {
     @apply text-2xl font-bold mb-6;
@@ -35,6 +68,10 @@
   input[type="time"]::-webkit-calendar-picker-indicator {
     filter: invert(1);
     cursor: pointer;
+  }
+  :root.light input[type="date"]::-webkit-calendar-picker-indicator,
+  :root.light input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: none;
   }
 }
 
@@ -67,4 +104,103 @@
   .table-td {
     @apply p-4 border-b border-border text-text-main align-middle;
   }
+
+  /* Theme toggle button */
+  .theme-toggle {
+    @apply p-2 rounded-sm text-text-muted hover:text-primary hover:bg-surface-hover transition-colors;
+  }
+}
+
+/* Theme-based visibility utilities */
+:root:not(.light) .hide-dark {
+  display: none !important;
+}
+
+:root.light .hide-light {
+  display: none !important;
+}
+
+/* Light theme colour overrides using CSS custom properties */
+:root.light body {
+  background-color: var(--color-background);
+  color: var(--color-text-main);
+}
+
+:root.light .bg-background {
+  background-color: var(--color-background);
+}
+
+:root.light .bg-surface {
+  background-color: var(--color-surface);
+}
+
+:root.light .bg-surface\/80 {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+:root.light .bg-surface-hover {
+  background-color: var(--color-surface-hover);
+}
+
+:root.light .bg-primary {
+  background-color: var(--color-primary);
+}
+
+:root.light .hover\:bg-primary-hover:hover {
+  background-color: var(--color-primary-hover);
+}
+
+:root.light .hover\:bg-surface-hover:hover {
+  background-color: var(--color-surface-hover);
+}
+
+:root.light .text-text-main {
+  color: var(--color-text-main);
+}
+
+:root.light .text-text-muted {
+  color: var(--color-text-muted);
+}
+
+:root.light .text-primary {
+  color: var(--color-primary);
+}
+
+:root.light .text-primary-text {
+  color: var(--color-primary-text);
+}
+
+:root.light .hover\:text-primary:hover {
+  color: var(--color-primary);
+}
+
+:root.light .border-border {
+  border-color: var(--color-border);
+}
+
+:root.light .hover\:border-primary:hover {
+  border-color: var(--color-primary);
+}
+
+:root.light .focus\:border-primary:focus {
+  border-color: var(--color-primary);
+}
+
+:root.light .focus\:ring-primary\/10:focus {
+  --tw-ring-color: rgba(22, 163, 74, 0.1);
+}
+
+:root.light .card:hover {
+  box-shadow: 0 0 15px rgba(22, 163, 74, 0.15);
+  border-color: var(--color-primary);
+}
+
+:root.light .btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-primary-text);
+}
+
+:root.light .btn-primary:hover {
+  background-color: var(--color-primary-hover);
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
 }
