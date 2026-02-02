@@ -69,7 +69,7 @@ if ($showResult && $result !== null) {
     }
 
     $scoreHtml = '<div class="flex flex-col items-center justify-center">';
-    $scoreHtml .= '<div class="font-bold text-xl text-primary bg-surface-hover px-3 py-1 rounded-sm leading-none">' . $homeScore . ' - ' . $awayScore . '</div>';
+    $scoreHtml .= '<div class="font-bold text-xl text-text-main bg-surface-hover px-3 py-1 rounded-sm leading-none">' . $homeScore . ' - ' . $awayScore . '</div>';
     $scoreHtml .= $detailsHtml;
     $scoreHtml .= '</div>';
 } else {

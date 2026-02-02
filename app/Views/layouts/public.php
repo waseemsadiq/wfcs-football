@@ -1,36 +1,5 @@
-<?php
-$basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
-?>
-<!DOCTYPE html>
-<html lang="en-GB" class="<?= !isset($_COOKIE['theme']) || $_COOKIE['theme'] === 'light' ? 'light' : '' ?>">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= isset($title) ? htmlspecialchars($title) . ' - ' : '' ?>WFCS Football</title>
-    <link rel="apple-touch-icon" sizes="180x180" href="<?= $basePath ?>/images/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="<?= $basePath ?>/images/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="<?= $basePath ?>/images/favicon-16x16.png">
-    <link rel="manifest" href="<?= $basePath ?>/site.webmanifest">
-    <link rel="mask-icon" href="<?= $basePath ?>/images/favicon.svg" color="#45A2DA">
-    <link rel="shortcut icon" href="<?= $basePath ?>/images/favicon.ico">
-    <meta name="msapplication-TileColor" content="#ffc40d">
-    <meta name="msapplication-config" content="<?= $basePath ?>/browserconfig.xml">
-    <meta name="theme-color" content="#ffffff">
-
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url"
-        content="<?= (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]" ?>">
-    <meta property="og:title" content="<?= isset($title) ? htmlspecialchars($title) . ' - ' : '' ?>WFCS Football">
-    <meta property="og:description" content="Manage your football leagues, cups, and tournaments with ease.">
-    <meta property="og:image" content="<?= $basePath ?>/images/og-image.png">
-
-    <link rel="stylesheet" href="<?= $basePath ?>/css/output.css?v=20260201-2145">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-</head>
+<?php include __DIR__ . '/../partials/html-start.php'; ?>
+<?php $titleSuffix = ''; include __DIR__ . '/../partials/head.php'; ?>
 
 <body class="bg-background text-text-main font-sans antialiased min-h-screen flex flex-col">
     <!-- Skip to main content link for keyboard users -->
@@ -39,8 +8,8 @@ $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
     <header class="bg-surface/80 backdrop-blur-md border-b border-border py-5 mb-12 sticky top-0 z-50">
         <div class="max-w-[1200px] mx-auto px-4 md:px-6 w-full flex justify-between items-center">
             <a href="<?= $basePath ?>/" class="flex items-center no-underline">
-                <img src="<?= $basePath ?>/images/logo-white.svg" alt="WFCS Football" class="h-20 w-20 hide-light">
-                <img src="<?= $basePath ?>/images/logo-blue.svg" alt="WFCS Football" class="h-20 w-20 hide-dark">
+                <img src="<?= $basePath ?>/images/logo-white.svg" alt="WFCS Football" class="h-20 w-20 hide-light" fetchpriority="high">
+                <img src="<?= $basePath ?>/images/logo-blue.svg" alt="WFCS Football" class="h-20 w-20 hide-dark" fetchpriority="high">
             </a>
 
             <!-- Desktop Navigation (hidden on mobile) -->
@@ -120,7 +89,7 @@ $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
                 <a href="<?= $basePath ?>/leagues"
                     class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Leagues</a>
                 <a href="<?= $basePath ?>/cups"
-                    class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Cups</a>
+                    class="text-text-muted font-sem-bold text-base transition-colors uppercase tracking-wider hover:text-primary">Cups</a>
                 <a href="<?= $basePath ?>/teams"
                     class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Teams</a>
                 <?php if (isset($_SESSION['admin_id'])): ?>
@@ -173,20 +142,9 @@ $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
         }
 
         document.getElementById('mobile-menu-btn-public').addEventListener('click', openSidebarPublic);
-
-        // Theme toggle
-        (function () {
-            function toggleTheme() {
-                const html = document.documentElement;
-                html.classList.toggle('light');
-                const isLight = html.classList.contains('light');
-                document.cookie = 'theme=' + (isLight ? 'light' : 'dark') + ';path=/;max-age=31536000';
-            }
-
-            document.getElementById('theme-toggle-public')?.addEventListener('click', toggleTheme);
-            document.getElementById('theme-toggle-mobile-public')?.addEventListener('click', toggleTheme);
-        })();
     </script>
+
+    <?php include __DIR__ . '/../partials/theme-toggle-script.php'; ?>
 
     <main id="main-content" class="flex-1">
         <div class="max-w-[1200px] mx-auto px-4 md:px-6 w-full">
@@ -194,12 +152,7 @@ $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
         </div>
     </main>
 
-    <footer class="mt-20 py-12 text-center text-text-muted border-t border-border text-sm">
-        <div class="max-w-[1200px] mx-auto px-4 md:px-6 w-full">
-            <p>&copy; <?= date('Y') ?> WFCS Football | App by <a href="https://www.waseemsadiq.com"
-                    target="_blank">Waseem Sadiq</a></p>
-        </div>
-    </footer>
+    <?php include __DIR__ . '/../partials/footer.php'; ?>
 </body>
 
 </html>
