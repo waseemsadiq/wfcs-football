@@ -18,7 +18,7 @@
             <div class="mb-6">
                 <label for="name" class="block text-sm font-medium text-text-muted mb-2">Cup Name <span
                         class="text-danger">*</span></label>
-                <input type="text" id="name" name="name" class="form-input" required
+                <input type="text" id="name" name="name" class="form-input" required aria-required="true"
                     value="<?= htmlspecialchars($cup['name']) ?>" placeholder="Enter cup name">
             </div>
 

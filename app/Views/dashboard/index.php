@@ -35,8 +35,9 @@
             </select>
         </div>
 
-        <div id="fixtures-loader" class="hidden flex justify-center py-8">
+        <div id="fixtures-loader" class="hidden flex justify-center py-8" role="status" aria-live="polite" aria-label="Loading fixtures">
             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <span class="sr-only">Loading fixtures...</span>
         </div>
 
         <div id="fixtures-container" class="space-y-4 opacity-100 transition-opacity duration-300">

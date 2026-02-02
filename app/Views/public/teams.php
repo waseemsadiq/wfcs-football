@@ -38,8 +38,8 @@
         <!-- Loading State -->
         <div id="loading-state" class="hidden">
             <div class="card">
-                <div class="text-center py-12">
-                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
+                <div class="text-center py-12" role="status" aria-live="polite">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4" aria-hidden="true"></div>
                     <p class="text-text-muted">Loading team data...</p>
                 </div>
             </div>

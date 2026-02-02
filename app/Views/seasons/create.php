@@ -10,7 +10,7 @@
 
             <div class="mb-6">
                 <label for="id" class="block text-sm font-medium text-text-muted mb-2">Season ID</label>
-                <input type="text" id="id" name="id" class="form-input" required placeholder="e.g. 2024-25"
+                <input type="text" id="id" name="id" class="form-input" required aria-required="true" placeholder="e.g. 2024-25"
                     pattern="[a-zA-Z0-9\-]+" title="Use letters, numbers, and hyphens only">
                 <p class="mt-2 text-sm text-text-muted">A unique identifier for this season (letters, numbers, and
                     hyphens only).</p>
@@ -18,17 +18,17 @@
 
             <div class="mb-6">
                 <label for="name" class="block text-sm font-medium text-text-muted mb-2">Season Name</label>
-                <input type="text" id="name" name="name" class="form-input" required placeholder="e.g. 2024/25 Season">
+                <input type="text" id="name" name="name" class="form-input" required aria-required="true" placeholder="e.g. 2024/25 Season">
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
                     <label for="startDate" class="block text-sm font-medium text-text-muted mb-2">Start Date</label>
-                    <input type="date" id="startDate" name="startDate" class="form-input" required>
+                    <input type="date" id="startDate" name="startDate" class="form-input" required aria-required="true">
                 </div>
                 <div>
                     <label for="endDate" class="block text-sm font-medium text-text-muted mb-2">End Date</label>
-                    <input type="date" id="endDate" name="endDate" class="form-input" required>
+                    <input type="date" id="endDate" name="endDate" class="form-input" required aria-required="true">
                 </div>
             </div>
 

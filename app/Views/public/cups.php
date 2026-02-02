@@ -43,8 +43,8 @@
         <!-- Loading State -->
         <div id="loading-state" class="hidden">
             <div class="card">
-                <div class="text-center py-12">
-                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
+                <div class="text-center py-12" role="status" aria-live="polite">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4" aria-hidden="true"></div>
                     <p class="text-text-muted">Loading cup data...</p>
                 </div>
             </div>
@@ -116,7 +116,7 @@
             let html = `
                 <div class="card p-0 overflow-hidden">
                     <div class="p-6 border-b border-border bg-surface/50 flex justify-between items-center">
-                        <h2 class="text-xl font-bold m-0">${escapeHtml(cupName)}</h2>
+                        <h2 class="text-xl font-bold m-0">Tournament Bracket</h2>
                         <button onclick="setViewMode('fixtures')" class="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-sm text-sm font-bold transition-colors">
                             Fixtures
                         </button>

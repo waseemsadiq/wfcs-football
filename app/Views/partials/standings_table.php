@@ -97,10 +97,16 @@ $basePath = $basePath ?? '';
                                             'L' => 'bg-loss text-white',
                                             default => 'bg-surface-hover text-text-muted'
                                         };
+                                        $titleText = match ($result) {
+                                            'W' => 'Win',
+                                            'D' => 'Draw',
+                                            'L' => 'Loss',
+                                            default => $result
+                                        };
                                         ?>
                                         <span
                                             class="w-5 h-5 flex items-center justify-center rounded text-[10px] font-bold <?= $colorClass ?>"
-                                            title="<?= $result ?>">
+                                            title="<?= $titleText ?>">
                                             <?= $result ?>
                                         </span>
                                     <?php endforeach; ?>

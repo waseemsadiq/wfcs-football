@@ -23,14 +23,14 @@
                     <label for="name"
                         class="block mb-2 font-semibold text-text-muted text-sm uppercase tracking-wide">League Name
                         *</label>
-                    <input type="text" id="name" name="name" class="form-input" required
+                    <input type="text" id="name" name="name" class="form-input" required aria-required="true"
                         placeholder="e.g. Premier Division">
                 </div>
 
                 <div class="mb-6">
                     <label for="seasonId"
                         class="block mb-2 font-semibold text-text-muted text-sm uppercase tracking-wide">Season *</label>
-                    <select id="seasonId" name="seasonId" class="form-input" required>
+                    <select id="seasonId" name="seasonId" class="form-input" required aria-required="true">
                         <option value="">Select a season</option>
                         <?php foreach ($seasons as $season): ?>
                             <option value="<?= htmlspecialchars($season['id']) ?>">
@@ -46,14 +46,14 @@
                         <label for="startDate"
                             class="block mb-2 font-semibold text-text-muted text-sm uppercase tracking-wide">First Fixture
                             Date *</label>
-                        <input type="date" id="startDate" name="startDate" class="form-input" required>
+                        <input type="date" id="startDate" name="startDate" class="form-input" required aria-required="true">
                     </div>
 
                     <div>
                         <label for="frequency"
                             class="block mb-2 font-semibold text-text-muted text-sm uppercase tracking-wide">Match Frequency
                             *</label>
-                        <select id="frequency" name="frequency" class="form-input" required>
+                        <select id="frequency" name="frequency" class="form-input" required aria-required="true">
                             <option value="weekly">Weekly</option>
                             <option value="fortnightly">Fortnightly</option>
                             <option value="monthly">Monthly</option>
@@ -64,7 +64,7 @@
                         <label for="matchTime"
                             class="block mb-2 font-semibold text-text-muted text-sm uppercase tracking-wide">Typical Match
                             Time *</label>
-                        <input type="time" id="matchTime" name="matchTime" class="form-input" required value="15:00">
+                        <input type="time" id="matchTime" name="matchTime" class="form-input" required aria-required="true" value="15:00">
                     </div>
                 </div>
 

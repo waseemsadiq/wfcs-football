@@ -69,7 +69,7 @@
                                                         class="flex-grow truncate text-sm"><?= htmlspecialchars($fixture['homeTeamName']) ?></span>
                                                     <input type="number" name="homeScore" min="0" max="99"
                                                         class="w-12 text-center p-1 rounded bg-surface border border-border focus:border-primary focus:outline-none text-sm font-bold ml-2"
-                                                        placeholder="0" required>
+                                                        placeholder="0" required aria-required="true">
                                                 </div>
 
                                                 <!-- Away Team -->
@@ -80,7 +80,7 @@
                                                         class="flex-grow truncate text-sm"><?= htmlspecialchars($fixture['awayTeamName']) ?></span>
                                                     <input type="number" name="awayScore" min="0" max="99"
                                                         class="w-12 text-center p-1 rounded bg-surface border border-border focus:border-primary focus:outline-none text-sm font-bold ml-2"
-                                                        placeholder="0" required>
+                                                        placeholder="0" required aria-required="true">
                                                 </div>
 
                                                 <!-- Save Button -->

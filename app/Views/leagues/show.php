@@ -77,11 +77,11 @@
                                     onsubmit="saveResult(event, '<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>', '<?= htmlspecialchars($fixture['id']) ?>')">
                                     <input type="number" name="homeScore" min="0" max="99"
                                         class="w-10 text-center p-1 rounded bg-surface border border-border focus:border-primary focus:outline-none text-xs font-bold"
-                                        value="<?= $fixture['result']['homeScore'] ?>" required>
+                                        value="<?= $fixture['result']['homeScore'] ?>" required aria-required="true">
                                     <span class="text-text-muted font-bold text-xs">:</span>
                                     <input type="number" name="awayScore" min="0" max="99"
                                         class="w-10 text-center p-1 rounded bg-surface border border-border focus:border-primary focus:outline-none text-xs font-bold"
-                                        value="<?= $fixture['result']['awayScore'] ?>" required>
+                                        value="<?= $fixture['result']['awayScore'] ?>" required aria-required="true">
                                     <button type="submit"
                                         class="p-1 rounded bg-primary text-white hover:bg-primary-hover shadow-sm transition-colors"
                                         title="Save Result">
@@ -156,11 +156,11 @@
                                         class="flex items-center gap-2">
                                         <input type="number" name="homeScore" min="0" max="99"
                                             class="w-10 text-center p-1 rounded bg-surface border border-border focus:border-primary focus:outline-none text-xs font-bold"
-                                            placeholder="-" required>
+                                            placeholder="-" required aria-required="true">
                                         <span class="text-text-muted font-bold text-xs">:</span>
                                         <input type="number" name="awayScore" min="0" max="99"
                                             class="w-10 text-center p-1 rounded bg-surface border border-border focus:border-primary focus:outline-none text-xs font-bold"
-                                            placeholder="-" required>
+                                            placeholder="-" required aria-required="true">
                                         <button type="submit"
                                             class="p-1 rounded bg-primary text-white hover:bg-primary-hover shadow-sm transition-colors"
                                             title="Save Result">

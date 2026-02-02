@@ -6,7 +6,7 @@
     <p class="text-center text-text-muted mb-8">Enter the admin password to continue</p>
 
     <?php if (isset($error) && $error): ?>
-        <div class="bg-danger/10 text-red-300 p-4 rounded-sm border border-danger/20 mb-6">
+        <div role="alert" id="login-error" class="bg-danger/10 text-red-300 p-4 rounded-sm border border-danger/20 mb-6">
             <?= htmlspecialchars($error) ?>
         </div>
     <?php endif; ?>
@@ -16,7 +16,8 @@
         <div>
             <label for="password"
                 class="block mb-2 font-semibold text-text-muted text-sm uppercase tracking-wide">Password</label>
-            <input type="password" id="password" name="password" required autofocus placeholder="Enter admin password"
+            <input type="password" id="password" name="password" required aria-required="true" autofocus placeholder="Enter admin password"
+                <?php if (isset($error) && $error): ?>aria-describedby="login-error" aria-invalid="true"<?php endif; ?>
                 class="form-input">
         </div>
 

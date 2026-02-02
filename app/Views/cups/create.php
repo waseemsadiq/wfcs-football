@@ -41,13 +41,13 @@
                     <div>
                         <label for="name" class="block text-sm font-medium text-text-muted mb-2">Cup Name <span
                                 class="text-danger">*</span></label>
-                        <input type="text" id="name" name="name" class="form-input" required placeholder="e.g. FA Cup">
+                        <input type="text" id="name" name="name" class="form-input" required aria-required="true" placeholder="e.g. FA Cup">
                     </div>
 
                     <div>
                         <label for="seasonId" class="block text-sm font-medium text-text-muted mb-2">Season <span
                                 class="text-danger">*</span></label>
-                        <select id="seasonId" name="seasonId" class="form-input" required>
+                        <select id="seasonId" name="seasonId" class="form-input" required aria-required="true">
                             <option value="">Select a season</option>
                             <?php foreach ($seasons as $season): ?>
                                 <option value="<?= htmlspecialchars($season['id']) ?>">

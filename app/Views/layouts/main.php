@@ -32,6 +32,9 @@ $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
 </head>
 
 <body class="bg-background text-text-main font-sans antialiased min-h-screen flex flex-col">
+    <!-- Skip to main content link for keyboard users -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[60] focus:bg-primary focus:text-white focus:px-4 focus:py-2 focus:rounded-sm focus:font-semibold">Skip to main content</a>
+
     <header class="bg-surface/80 backdrop-blur-md border-b border-border py-4 mb-8 sticky top-0 z-50">
         <div class="max-w-[1200px] mx-auto px-4 md:px-6 w-full flex justify-between items-center">
             <a href="<?= $basePath ?>/admin" class="flex items-center no-underline">
@@ -181,10 +184,10 @@ $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
         })();
     </script>
 
-    <main class="flex-1">
+    <main id="main-content" class="flex-1">
         <div class="max-w-[1200px] mx-auto px-4 md:px-6 w-full">
             <?php if (isset($flash) && $flash): ?>
-                <div
+                <div role="alert"
                     class="mb-6 p-4 rounded-sm border <?= $flash['type'] === 'error' ? 'bg-danger/10 text-red-300 border-danger/30' : 'bg-primary/10 text-primary border-primary/30' ?>">
                     <?= htmlspecialchars($flash['message']) ?>
                 </div>

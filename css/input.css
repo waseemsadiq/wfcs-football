@@ -131,14 +131,16 @@
   }
 
   .card {
-    @apply bg-surface rounded-md p-8 shadow-md border border-border transition-all duration-200 h-full hover:-translate-y-0.5 hover:border-primary;
+    @apply bg-surface rounded-md p-8 shadow-md border border-border transition-all duration-200 h-full hover:-translate-y-0.5 hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background;
   }
 
-  :root:not(.light) .card:hover {
+  :root:not(.light) .card:hover,
+  :root:not(.light) .card:focus-visible {
     @apply shadow-glow;
   }
 
-  :root.light .card:hover {
+  :root.light .card:hover,
+  :root.light .card:focus-visible {
     box-shadow: 0 0 15px rgba(69, 162, 218, 0.15);
   }
 
@@ -171,5 +173,17 @@
     :root.light & {
       display: none !important;
     }
+  }
+}
+
+/* Accessibility: Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

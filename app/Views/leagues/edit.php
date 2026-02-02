@@ -11,7 +11,7 @@
         <div class="mb-8">
             <label for="name" class="block mb-2 font-semibold text-text-muted text-sm uppercase tracking-wide">League
                 Name *</label>
-            <input type="text" id="name" name="name" required value="<?= htmlspecialchars($league['name']) ?>"
+            <input type="text" id="name" name="name" required aria-required="true" value="<?= htmlspecialchars($league['name']) ?>"
                 placeholder="Enter league name" class="form-input">
         </div>
 

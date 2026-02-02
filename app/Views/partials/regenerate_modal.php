@@ -42,7 +42,7 @@ $buttonClass = $isCup ? 'bg-yellow-600 hover:bg-yellow-700 border-yellow-600 hov
                         <?= htmlspecialchars($startDateLabel) ?>
                     </label>
                     <input type="date" id="modal-startDate" name="startDate"
-                        value="<?= htmlspecialchars($competition['startDate'] ?? '') ?>" required class="form-input">
+                        value="<?= htmlspecialchars($competition['startDate'] ?? '') ?>" required aria-required="true" class="form-input">
                 </div>
 
                 <div class="mb-6">
@@ -50,7 +50,7 @@ $buttonClass = $isCup ? 'bg-yellow-600 hover:bg-yellow-700 border-yellow-600 hov
                         class="block mb-2 font-semibold text-text-muted text-sm uppercase tracking-wide">
                         <?= htmlspecialchars($frequencyLabel) ?>
                     </label>
-                    <select id="modal-frequency" name="frequency" required class="form-input">
+                    <select id="modal-frequency" name="frequency" required aria-required="true" class="form-input">
                         <option value="weekly" <?= ($competition['frequency'] ?? 'weekly') === 'weekly' ? 'selected' : '' ?>>Weekly</option>
                         <option value="fortnightly" <?= ($competition['frequency'] ?? '') === 'fortnightly' ? 'selected' : '' ?>>Fortnightly</option>
                         <option value="monthly" <?= ($competition['frequency'] ?? '') === 'monthly' ? 'selected' : '' ?>>Monthly</option>
@@ -61,7 +61,7 @@ $buttonClass = $isCup ? 'bg-yellow-600 hover:bg-yellow-700 border-yellow-600 hov
                     <label for="modal-matchTime"
                         class="block mb-2 font-semibold text-text-muted text-sm uppercase tracking-wide">Typical Match Time</label>
                     <input type="time" id="modal-matchTime" name="matchTime"
-                        value="<?= htmlspecialchars($competition['matchTime'] ?? '15:00') ?>" required
+                        value="<?= htmlspecialchars($competition['matchTime'] ?? '15:00') ?>" required aria-required="true"
                         class="form-input">
                 </div>
             </div>

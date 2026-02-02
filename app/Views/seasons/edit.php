@@ -17,19 +17,19 @@
 
             <div class="mb-6">
                 <label for="name" class="block text-sm font-medium text-text-muted mb-2">Season Name</label>
-                <input type="text" id="name" name="name" class="form-input" required
+                <input type="text" id="name" name="name" class="form-input" required aria-required="true"
                     value="<?= htmlspecialchars($season['name']) ?>" placeholder="e.g. 2024/25 Season">
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
                     <label for="startDate" class="block text-sm font-medium text-text-muted mb-2">Start Date</label>
-                    <input type="date" id="startDate" name="startDate" class="form-input" required
+                    <input type="date" id="startDate" name="startDate" class="form-input" required aria-required="true"
                         value="<?= htmlspecialchars($season['startDate']) ?>">
                 </div>
                 <div>
                     <label for="endDate" class="block text-sm font-medium text-text-muted mb-2">End Date</label>
-                    <input type="date" id="endDate" name="endDate" class="form-input" required
+                    <input type="date" id="endDate" name="endDate" class="form-input" required aria-required="true"
                         value="<?= htmlspecialchars($season['endDate']) ?>">
                 </div>
             </div>
