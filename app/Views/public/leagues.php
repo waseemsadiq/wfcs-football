@@ -39,7 +39,8 @@
         <div id="loading-state" class="hidden">
             <div class="card">
                 <div class="text-center py-12" role="status" aria-live="polite">
-                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4" aria-hidden="true"></div>
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"
+                        aria-hidden="true"></div>
                     <p class="text-text-muted">Loading league data...</p>
                 </div>
             </div>
@@ -224,7 +225,7 @@
                         <td class="p-4 text-center text-text-muted hidden md:table-cell">${row.goalsFor}</td>
                         <td class="p-4 text-center text-text-muted hidden md:table-cell">${row.goalsAgainst}</td>
                         <td class="p-4 text-center font-medium ${gdClass}">${gdDisplay}</td>
-                        <td class="p-4 text-center font-bold text-lg text-white">${row.points}</td>
+                        <td class="p-4 text-center font-bold text-lg text-text-main">${row.points}</td>
                         <td class="p-4 hidden md:table-cell">
                             <div class="flex items-center justify-start gap-1">
                                 ${formHtml}

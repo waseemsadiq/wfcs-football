@@ -85,7 +85,7 @@ $basePath = $basePath ?? '';
                             class="p-4 text-center font-medium <?= $row['goalDifference'] > 0 ? 'text-primary' : ($row['goalDifference'] < 0 ? 'text-danger' : 'text-text-muted') ?>">
                             <?= $row['goalDifference'] > 0 ? '+' . $row['goalDifference'] : $row['goalDifference'] ?>
                         </td>
-                        <td class="p-4 text-center font-bold text-lg text-white"><?= $row['points'] ?></td>
+                        <td class="p-4 text-center font-bold text-lg text-text-main"><?= $row['points'] ?></td>
                         <td class="p-4 hidden md:table-cell">
                             <div class="flex items-center justify-start gap-1">
                                 <?php if (!empty($row['form'])): ?>
