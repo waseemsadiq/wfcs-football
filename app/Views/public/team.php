@@ -1,5 +1,5 @@
 <div>
-    <div class="mb-4 text-center">
+    <div class="mb-12 text-center">
         <div class="flex items-center justify-center gap-4 mb-2">
             <div class="w-8 h-8 rounded-full shadow-sm ring-1 ring-border"
                 style="background-color: <?= htmlspecialchars($team['colour'] ?? '#333333') ?>">
@@ -24,12 +24,6 @@
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
-
-        <p class="mb-8">
-            <a href="<?= $basePath ?>/" class="text-primary hover:text-primary-hover transition-colors font-medium">
-                Back to home
-            </a>
-        </p>
     </div>
 
     <!-- Fixtures -->

@@ -9,8 +9,7 @@ usort($fixtures, function ($a, $b) {
 ?>
 
 <div class="text-center mb-12">
-    <h1
-        class="text-4xl font-extrabold tracking-tight mb-2 text-text-main">
+    <h1 class="text-4xl font-extrabold tracking-tight mb-2 text-text-main">
         <?= htmlspecialchars($league['name']) ?>
     </h1>
     <h2 class="text-2xl font-bold mb-6 text-text-muted">Fixtures</h2>
@@ -18,7 +17,8 @@ usort($fixtures, function ($a, $b) {
 
 <div class="card">
     <div class="flex justify-end gap-4 mb-8">
-        <a href="<?=$basePath?>/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>" class="btn btn-secondary">
+        <a href="<?= $basePath ?>/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>"
+            class="btn btn-secondary">
             Back to League
         </a>
     </div>
@@ -57,7 +57,7 @@ usort($fixtures, function ($a, $b) {
                     <?php foreach ($dateFixtures as $fixture): ?>
                         <div class="bg-background border border-border rounded-sm p-6">
                             <form method="POST"
-                                action="<?=$basePath?>/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>/fixtures">
+                                action="<?= $basePath ?>/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>/fixtures">
                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
                                 <input type="hidden" name="fixtureId" value="<?= htmlspecialchars($fixture['id']) ?>">
 
@@ -65,7 +65,7 @@ usort($fixtures, function ($a, $b) {
                                     <!-- Home Team -->
                                     <div class="text-right flex items-center justify-end gap-4">
                                         <strong class="text-lg"><?= htmlspecialchars($fixture['homeTeamName']) ?></strong>
-                                        <span class="inline-block w-4 h-4 rounded bg-current"
+                                        <span class="inline-block w-4 h-4 rounded-full bg-current"
                                             style="color: <?= htmlspecialchars($fixture['homeTeamColour'] ?? '#000') ?>;"></span>
                                     </div>
 
@@ -84,7 +84,7 @@ usort($fixtures, function ($a, $b) {
 
                                     <!-- Away Team -->
                                     <div class="text-left flex items-center justify-start gap-4">
-                                        <span class="inline-block w-4 h-4 rounded bg-current"
+                                        <span class="inline-block w-4 h-4 rounded-full bg-current"
                                             style="color: <?= htmlspecialchars($fixture['awayTeamColour'] ?? '#000') ?>;"></span>
                                         <strong class="text-lg"><?= htmlspecialchars($fixture['awayTeamName']) ?></strong>
                                     </div>
@@ -144,4 +144,3 @@ usort($fixtures, function ($a, $b) {
         </button>
     </div>
 </div>
-

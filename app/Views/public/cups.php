@@ -426,11 +426,11 @@
                     <div class="flex-1 flex items-center justify-center gap-4 md:gap-8 w-full">
                         <div class="flex-1 flex items-center justify-end gap-3 font-semibold text-right">
                             ${homeLink}
-                            <span class="inline-block w-4 h-4 rounded bg-current shadow-sm" style="color: ${homeColour}; background-color: ${homeColour}"></span>
+                            <span class="inline-block w-4 h-4 rounded-full bg-current shadow-sm" style="color: ${homeColour}; background-color: ${homeColour}"></span>
                         </div>
                         ${scoreHtml}
                         <div class="flex-1 flex items-center justify-start gap-3 font-semibold text-left">
-                            <span class="inline-block w-4 h-4 rounded bg-current shadow-sm" style="color: ${awayColour}; background-color: ${awayColour}"></span>
+                            <span class="inline-block w-4 h-4 rounded-full bg-current shadow-sm" style="color: ${awayColour}; background-color: ${awayColour}"></span>
                             ${awayLink}
                         </div>
                     </div>

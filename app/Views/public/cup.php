@@ -1,11 +1,8 @@
 <div>
-    <div class="mb-4 text-center">
+    <div class="mb-12 text-center">
         <h1 class="text-4xl font-extrabold m-0 text-text-main mb-2">
             <?= htmlspecialchars($cup['name']) ?>
         </h1>
-        <p class="mb-8"><a href="<?= $basePath ?>/"
-                class="text-primary hover:text-primary-hover transition-colors font-medium">Back to
-                home</a></p>
     </div>
 
     <!-- Cup Rounds -->
