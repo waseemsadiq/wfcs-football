@@ -1,8 +1,7 @@
 <?php $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\'); ?>
 <div class="text-center mb-12">
-    <h1
-        class="text-4xl font-extrabold tracking-tight mb-2 text-text-main">
-        Welcome back</h1>
+    <h1 class="text-4xl font-extrabold tracking-tight mb-2 text-text-main">
+        Football Fixtures Manager</h1>
 </div>
 
 <?php if ($activeSeason): ?>
@@ -35,7 +34,8 @@
             </select>
         </div>
 
-        <div id="fixtures-loader" class="hidden flex justify-center py-8" role="status" aria-live="polite" aria-label="Loading fixtures">
+        <div id="fixtures-loader" class="hidden flex justify-center py-8" role="status" aria-live="polite"
+            aria-label="Loading fixtures">
             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             <span class="sr-only">Loading fixtures...</span>
         </div>
