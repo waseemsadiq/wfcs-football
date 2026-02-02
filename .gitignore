@@ -24,3 +24,4 @@ task_plan.md
 .playwright-mcp/
 generate-icons.js
 
+/.agent

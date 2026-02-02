@@ -44,7 +44,7 @@ include __DIR__ . '/../partials/admin_page_header.php';
                         <tr class="hover:bg-surface-hover transition-colors">
                             <td class="table-td">
                                 <div class="flex items-center">
-                                    <span class="inline-block w-3 h-3 rounded-sm mr-3"
+                                    <span class="inline-block w-3 h-3 rounded-full mr-3"
                                         style="background-color: <?= htmlspecialchars($team['colour'] ?? '#1a5f2a') ?>;"></span>
                                     <a href="<?= $basePath ?>/admin/teams/<?= htmlspecialchars($team['slug'] ?? $team['id']) ?>"
                                         class="font-bold text-text-main no-underline hover:text-primary transition-colors">

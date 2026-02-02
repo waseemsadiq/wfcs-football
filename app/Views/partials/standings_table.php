@@ -52,12 +52,11 @@ $basePath = $basePath ?? '';
             <tbody>
                 <?php $pos = 1;
                 foreach ($standings as $row): ?>
-                    <tr
-                        class="border-b border-border hover:bg-surface-hover/50 transition-colors last:border-0">
+                    <tr class="border-b border-border hover:bg-surface-hover/50 transition-colors last:border-0">
                         <td class="p-4 text-center font-medium text-text-muted"><?= $pos++ ?></td>
                         <td class="p-4">
                             <div class="flex items-center gap-3">
-                                <span class="inline-block w-3 h-3 rounded-sm shadow-sm flex-shrink-0"
+                                <span class="inline-block w-3 h-3 rounded-full shadow-sm flex-shrink-0"
                                     style="background-color: <?= htmlspecialchars($row['teamColour']) ?>"></span>
                                 <span class="font-semibold text-text-main">
                                     <?php
@@ -65,8 +64,7 @@ $basePath = $basePath ?? '';
                                         ? $basePath . '/admin/teams/' . htmlspecialchars($row['teamSlug'] ?? $row['teamId'])
                                         : $basePath . '/team/' . htmlspecialchars($row['teamSlug'] ?? $row['teamId']);
                                     ?>
-                                    <a href="<?= $teamUrl ?>"
-                                        class="hover:text-primary transition-colors">
+                                    <a href="<?= $teamUrl ?>" class="hover:text-primary transition-colors">
                                         <?= htmlspecialchars($row['teamName']) ?>
                                     </a>
                                 </span>
@@ -94,10 +92,10 @@ $basePath = $basePath ?? '';
                                     <?php foreach ($row['form'] as $result): ?>
                                         <?php
                                         $colorClass = match ($result) {
-                                            'W' => 'bg-blue-500 text-white',
-                                            'D' => 'bg-gray-500 text-white',
-                                            'L' => 'bg-danger text-white',
-                                            default => 'bg-gray-700 text-gray-300'
+                                            'W' => 'bg-win text-slate-950',
+                                            'D' => 'bg-draw text-white',
+                                            'L' => 'bg-loss text-white',
+                                            default => 'bg-surface-hover text-text-muted'
                                         };
                                         ?>
                                         <span

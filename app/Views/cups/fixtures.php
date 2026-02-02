@@ -41,7 +41,7 @@
                                         <div class="lg:col-span-3 flex items-center justify-end gap-3 text-right order-1 lg:order-1">
                                             <strong
                                                 class="text-sm md:text-base"><?= htmlspecialchars($fixture['homeTeamName']) ?></strong>
-                                            <span class="inline-block w-4 h-4 rounded-sm flex-shrink-0 shadow-sm"
+                                            <span class="inline-block w-4 h-4 rounded-full flex-shrink-0 shadow-sm"
                                                 style="background-color: <?= htmlspecialchars($fixture['homeTeamColour'] ?? '#000') ?>;"></span>
                                         </div>
 
@@ -60,7 +60,7 @@
 
                                         <!-- Away Team -->
                                         <div class="lg:col-span-3 flex items-center justify-start gap-3 order-3 lg:order-3">
-                                            <span class="inline-block w-4 h-4 rounded-sm flex-shrink-0 shadow-sm"
+                                            <span class="inline-block w-4 h-4 rounded-full flex-shrink-0 shadow-sm"
                                                 style="background-color: <?= htmlspecialchars($fixture['awayTeamColour'] ?? '#000') ?>;"></span>
                                             <strong
                                                 class="text-sm md:text-base"><?= htmlspecialchars($fixture['awayTeamName']) ?></strong>

@@ -205,7 +205,7 @@
                 <div class="border border-border rounded-lg bg-surface shadow-sm overflow-hidden relative group hover:border-primary/30 transition-colors">
                     <!-- Home Team -->
                     <div class="flex items-center px-3 py-2 border-b border-border/50 ${homeWon ? 'bg-primary/10 font-bold' : ''}">
-                        <span class="inline-block w-3 h-3 rounded-sm flex-shrink-0 mr-2"
+                        <span class="inline-block w-3 h-3 rounded-full flex-shrink-0 mr-2"
                             style="background-color: ${homeColour};"></span>
                         <span class="flex-grow truncate text-sm">${homeLink}</span>
                         ${result ? `<span class="font-bold text-sm ml-2">${result.homeScore}${result.extraTime ? ' (' + result.homeScoreET + ')' : ''}${result.penalties ? ' [' + result.homePens + ']' : ''}</span>` : ''}
@@ -213,7 +213,7 @@
 
                     <!-- Away Team -->
                     <div class="flex items-center px-3 py-2 ${awayWon ? 'bg-primary/10 font-bold' : ''}">
-                        <span class="inline-block w-3 h-3 rounded-sm flex-shrink-0 mr-2"
+                        <span class="inline-block w-3 h-3 rounded-full flex-shrink-0 mr-2"
                             style="background-color: ${awayColour};"></span>
                         <span class="flex-grow truncate text-sm">${awayLink}</span>
                         ${result ? `<span class="font-bold text-sm ml-2">${result.awayScore}${result.extraTime ? ' (' + result.awayScoreET + ')' : ''}${result.penalties ? ' [' + result.awayPens + ']' : ''}</span>` : ''}

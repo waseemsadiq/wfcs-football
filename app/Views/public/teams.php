@@ -48,8 +48,7 @@
         <!-- Content Container -->
         <div id="team-content" class="hidden">
             <!-- Team Header -->
-            <div class="flex items-center gap-6 mb-12 bg-surface p-8 rounded-md shadow-md border border-border"
-                id="team-header">
+            <div class="mb-12 text-center" id="team-header">
                 <!-- Content injected via JS -->
             </div>
 
@@ -156,7 +155,7 @@
         function renderHeader(team, competitions) {
             let compsHtml = '';
             if (competitions && competitions.length > 0) {
-                compsHtml = '<div class="flex flex-wrap gap-2 mt-3">';
+                compsHtml = '<div class="flex flex-wrap gap-2 justify-center mb-4">';
                 competitions.forEach(comp => {
                     const detailHtml = comp.detail ? `<span class="text-text-muted font-medium">(${escapeHtml(comp.detail)})</span>` : '';
                     compsHtml += `
@@ -171,15 +170,15 @@
             }
 
             teamHeader.innerHTML = `
-                <div class="w-16 h-16 rounded-md shadow-lg ring-2 ring-border flex-shrink-0"
-                    style="background-color: ${escapeHtml(team.colour || '#333333')}">
-                </div>
-                <div>
+                <div class="flex items-center justify-center gap-4 mb-2">
+                    <div class="w-8 h-8 rounded-full shadow-sm ring-1 ring-border"
+                        style="background-color: ${escapeHtml(team.colour || '#333333')}">
+                    </div>
                     <h1 class="text-4xl font-extrabold m-0 text-text-main">
                         ${escapeHtml(team.name)}
                     </h1>
-                    ${compsHtml}
                 </div>
+                ${compsHtml}
             `;
         }
 
@@ -273,11 +272,11 @@
                     <div class="flex items-center justify-center gap-4 md:gap-8 w-full">
                         <div class="flex-1 flex items-center justify-end gap-3 font-semibold text-right">
                             ${homeLink}
-                            <span class="inline-block w-4 h-4 rounded bg-current shadow-sm" style="color: ${homeColour}; background-color: ${homeColour}"></span>
+                            <span class="inline-block w-4 h-4 rounded-full bg-current shadow-sm" style="color: ${homeColour}; background-color: ${homeColour}"></span>
                         </div>
                         ${scoreHtml}
                         <div class="flex-1 flex items-center justify-start gap-3 font-semibold text-left">
-                            <span class="inline-block w-4 h-4 rounded bg-current shadow-sm" style="color: ${awayColour}; background-color: ${awayColour}"></span>
+                            <span class="inline-block w-4 h-4 rounded-full bg-current shadow-sm" style="color: ${awayColour}; background-color: ${awayColour}"></span>
                             ${awayLink}
                         </div>
                     </div>

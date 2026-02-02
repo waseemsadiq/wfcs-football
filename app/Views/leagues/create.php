@@ -77,7 +77,7 @@
                                 class="flex items-center gap-3 p-3 bg-background rounded-sm cursor-pointer border border-transparent hover:border-primary/50 transition-colors">
                                 <input type="checkbox" name="teamIds[]" value="<?= htmlspecialchars($team['id']) ?>"
                                     class="accent-primary w-5 h-5">
-                                <span class="inline-block w-3 h-3 rounded-sm"
+                                <span class="inline-block w-3 h-3 rounded-full"
                                     style="background-color: <?= htmlspecialchars($team['colour'] ?? '#1a5f2a') ?>;"></span>
                                 <span class="text-text-main font-medium"><?= htmlspecialchars($team['name']) ?></span>
                             </label>

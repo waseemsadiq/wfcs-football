@@ -213,7 +213,7 @@
                         <div class="flex flex-row items-center gap-4 bg-surface-hover/30 border border-border rounded-lg p-3 hover:border-primary/30 transition-colors">
                             <div class="flex-1 flex items-center justify-end gap-3 text-right">
                                 <span class="font-semibold text-sm md:text-base">${homeName}</span>
-                                <span class="w-3 h-3 rounded-sm shadow-sm" style="background-color: ${homeColor}"></span>
+                                <span class="w-3 h-3 rounded-full shadow-sm" style="background-color: ${homeColor}"></span>
                             </div>
                             
                             <div class="flex flex-col items-center justify-center min-w-[120px]">
@@ -221,7 +221,7 @@
                             </div>
 
                             <div class="flex-1 flex items-center justify-start gap-3 text-left">
-                                <span class="w-3 h-3 rounded-sm shadow-sm" style="background-color: ${awayColor}"></span>
+                                <span class="w-3 h-3 rounded-full shadow-sm" style="background-color: ${awayColor}"></span>
                                 <span class="font-semibold text-sm md:text-base">${awayName}</span>
                             </div>
                         </div>

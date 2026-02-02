@@ -1,15 +1,14 @@
 <div class="">
     <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-        <h1
-            class="text-4xl font-extrabold tracking-tight text-text-main flex items-center">
-            <span class="inline-block w-6 h-6 rounded-sm mr-4 shadow-sm"
+        <h1 class="text-4xl font-extrabold tracking-tight text-text-main flex items-center">
+            <span class="inline-block w-6 h-6 rounded-full mr-4 shadow-sm"
                 style="background-color: <?= htmlspecialchars($team['colour'] ?? '#1a5f2a') ?>;"></span>
             <?= htmlspecialchars($team['name']) ?>
         </h1>
         <div class="flex gap-4">
-            <a href="<?=$basePath?>/admin/teams/<?= htmlspecialchars($team['slug'] ?? $team['id']) ?>/edit"
+            <a href="<?= $basePath ?>/admin/teams/<?= htmlspecialchars($team['slug'] ?? $team['id']) ?>/edit"
                 class="btn btn-secondary">Edit Team</a>
-            <a href="<?=$basePath?>/admin/teams" class="btn btn-secondary">Back to Teams</a>
+            <a href="<?= $basePath ?>/admin/teams" class="btn btn-secondary">Back to Teams</a>
         </div>
     </div>
 
@@ -39,7 +38,7 @@
 
             <div class="text-text-muted font-medium">Team Colour</div>
             <div class="flex items-center gap-3">
-                <span class="inline-block w-6 h-6 rounded border border-border"
+                <span class="inline-block w-6 h-6 rounded-full border border-border"
                     style="background-color: <?= htmlspecialchars($team['colour'] ?? '#1a5f2a') ?>"></span>
                 <span class="font-mono text-sm"><?= htmlspecialchars($team['colour'] ?? '#1a5f2a') ?></span>
             </div>
@@ -59,7 +58,7 @@
         <?php if (empty($team['players'])): ?>
             <div class="text-center py-12 text-text-muted">
                 <p class="mb-6">No players added to this team yet.</p>
-                <a href="<?=$basePath?>/admin/teams/<?= htmlspecialchars($team['slug'] ?? $team['id']) ?>/edit"
+                <a href="<?= $basePath ?>/admin/teams/<?= htmlspecialchars($team['slug'] ?? $team['id']) ?>/edit"
                     class="btn btn-primary">Add Players</a>
             </div>
         <?php else: ?>
@@ -92,8 +91,9 @@
                     <h3 class="text-lg font-semibold mb-4 text-text-muted uppercase tracking-wide text-sm">Leagues</h3>
                     <ul class="space-y-3">
                         <?php foreach ($leagues as $league): ?>
-                            <li class="flex items-center justify-between p-4 bg-surface-hover/30 rounded border border-border hover:border-primary/50 transition-colors">
-                                <a href="<?=$basePath?>/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>"
+                            <li
+                                class="flex items-center justify-between p-4 bg-surface-hover/30 rounded border border-border hover:border-primary/50 transition-colors">
+                                <a href="<?= $basePath ?>/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>"
                                     class="text-lg font-medium hover:text-primary transition-colors flex-1">
                                     <?= htmlspecialchars($league['name']) ?>
                                 </a>
@@ -109,8 +109,9 @@
                     <h3 class="text-lg font-semibold mb-4 text-text-muted uppercase tracking-wide text-sm">Cups</h3>
                     <ul class="space-y-3">
                         <?php foreach ($cups as $cup): ?>
-                            <li class="flex items-center justify-between p-4 bg-surface-hover/30 rounded border border-border hover:border-primary/50 transition-colors">
-                                <a href="<?=$basePath?>/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>"
+                            <li
+                                class="flex items-center justify-between p-4 bg-surface-hover/30 rounded border border-border hover:border-primary/50 transition-colors">
+                                <a href="<?= $basePath ?>/admin/cups/<?= htmlspecialchars($cup['slug'] ?? $cup['id']) ?>"
                                     class="text-lg font-medium hover:text-primary transition-colors flex-1">
                                     <?= htmlspecialchars($cup['name']) ?>
                                 </a>
@@ -128,7 +129,8 @@
         <h2 class="text-xl font-bold text-danger mb-4">Danger Zone</h2>
         <p class="text-text-muted mb-6">Removing this team will not affect past results or standings, but the team will
             no longer appear in lists or be available for new fixtures.</p>
-        <form method="POST" action="<?=$basePath?>/admin/teams/<?= htmlspecialchars($team['slug'] ?? $team['id']) ?>/delete"
+        <form method="POST"
+            action="<?= $basePath ?>/admin/teams/<?= htmlspecialchars($team['slug'] ?? $team['id']) ?>/delete"
             onsubmit="return confirm('Are you sure you want to delete <?= htmlspecialchars(addslashes($team['name'])) ?>? This cannot be undone.');">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(\Core\Auth::csrfToken()) ?>">
             <button type="submit"
