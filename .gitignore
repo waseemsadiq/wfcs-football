@@ -25,3 +25,4 @@ task_plan.md
 generate-icons.js
 
 /.agent
+/data
