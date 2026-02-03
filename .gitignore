@@ -24,7 +24,7 @@ generate-icons.js
 /.agent
 
 # Build/deployment artifacts
-footie-app-v1.0.zip
+*.zip
 footie-install.php
 create-package.php
 
