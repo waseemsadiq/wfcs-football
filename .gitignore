@@ -2,10 +2,6 @@
 .wiki/
 docs/
 sync-wiki.sh
-data/cups/
-data/leagues/
-data/seasons/
-data/teams/
 
 node_modules/
 dist/
@@ -19,10 +15,27 @@ CLAUDE.md
 findings.md
 progress.md
 task_plan.md
+TESTING.md
 
 # Dev tools and artifacts
 .playwright-mcp/
 generate-icons.js
 
 /.agent
-/data
+
+# Build/deployment artifacts
+footie-app-v1.0.zip
+footie-install.php
+create-package.php
+
+# MySQL/Database files
+footie/data/mysql/
+
+# Archive (old JSON data, planning docs)
+footie/archive/
+
+# Debug/utility/dev scripts
+footie/debug_reschedule.php
+footie/clear-cache.php
+footie/scripts/
+footie/docs/
