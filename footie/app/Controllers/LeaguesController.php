@@ -245,9 +245,9 @@ class LeaguesController extends CompetitionController
 
         // Update league metadata
         $leagueModel->update($league['id'], [
-            'startDate' => $startDate,
+            'start_date' => $startDate,
             'frequency' => $frequency,
-            'matchTime' => $matchTime
+            'match_time' => $matchTime
         ]);
 
         // Get updated fixture count

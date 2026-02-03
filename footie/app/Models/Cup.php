@@ -42,8 +42,8 @@ class Cup extends Model
     public function create(array $record): array
     {
         // Extract teams if provided
-        $teamIds = $record['teamIds'] ?? [];
-        unset($record['teamIds']);
+        $teamIds = $record['team_ids'] ?? [];
+        unset($record['team_ids']);
 
         // Auto-generate unique slug if not provided
         if (isset($record['name']) && !isset($record['slug'])) {
@@ -61,9 +61,9 @@ class Cup extends Model
             $this->generateBracket(
                 $cup['id'],
                 $teamIds,
-                $record['startDate'] ?? '',
+                $record['start_date'] ?? '',
                 $record['frequency'] ?? 'weekly',
-                $record['matchTime'] ?? '15:00'
+                $record['match_time'] ?? '15:00'
             );
         }
 

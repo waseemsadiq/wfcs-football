@@ -42,8 +42,8 @@ class League extends Model
     public function create(array $record): array
     {
         // Extract teams if provided
-        $teamIds = $record['teamIds'] ?? [];
-        unset($record['teamIds']);
+        $teamIds = $record['team_ids'] ?? [];
+        unset($record['team_ids']);
 
         // Auto-generate unique slug if not provided
         if (isset($record['name']) && !isset($record['slug'])) {
@@ -171,7 +171,7 @@ class League extends Model
     {
         $stmt = $this->db->prepare("SELECT COUNT(*) FROM league_fixtures WHERE league_id = ?");
         $stmt->execute([$leagueId]);
-        return (int)$stmt->fetchColumn();
+        return (int) $stmt->fetchColumn();
     }
 
     /**
@@ -317,7 +317,7 @@ class League extends Model
             $team = $this->findTeamById($teams, $teamId);
             $standings[$teamId] = [
                 'teamId' => $teamId,
-                'teamSlug' => $team['slug'] ?? (string)$teamId,
+                'teamSlug' => $team['slug'] ?? (string) $teamId,
                 'teamName' => $team['name'] ?? 'Unknown',
                 'teamColour' => $team['colour'] ?? '#000000',
                 'played' => 0,

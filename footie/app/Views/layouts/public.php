@@ -1,27 +1,32 @@
 <?php include __DIR__ . '/../partials/html-start.php'; ?>
-<?php $titleSuffix = ''; include __DIR__ . '/../partials/head.php'; ?>
+<?php $titleSuffix = '';
+include __DIR__ . '/../partials/head.php'; ?>
 
 <body class="bg-background text-text-main font-sans antialiased min-h-screen flex flex-col">
     <!-- Skip to main content link for keyboard users -->
-    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[60] focus:bg-primary focus:text-white focus:px-4 focus:py-2 focus:rounded-sm focus:font-semibold">Skip to main content</a>
+    <a href="#main-content"
+        class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[60] focus:bg-primary focus:text-white focus:px-4 focus:py-2 focus:rounded-sm focus:font-semibold">Skip
+        to main content</a>
 
     <header class="bg-surface/80 backdrop-blur-md border-b border-border py-5 mb-12 sticky top-0 z-50">
         <div class="max-w-[1200px] mx-auto px-4 md:px-6 w-full flex justify-between items-center">
             <a href="<?= $basePath ?>/" class="flex items-center no-underline">
-                <img src="<?= $basePath ?>/images/logo-white.svg" alt="WFCS Football" class="h-20 w-20 hide-light" fetchpriority="high">
-                <img src="<?= $basePath ?>/images/logo-blue.svg" alt="WFCS Football" class="h-20 w-20 hide-dark" fetchpriority="high">
+                <img src="<?= $basePath ?>/images/logo-white.svg" alt="WFCS Football" class="h-20 w-20 hide-light"
+                    fetchpriority="high">
+                <img src="<?= $basePath ?>/images/logo-blue.svg" alt="WFCS Football" class="h-20 w-20 hide-dark"
+                    fetchpriority="high">
             </a>
 
             <!-- Desktop Navigation (hidden on mobile) -->
             <nav class="hidden md:flex items-center space-x-8">
                 <a href="<?= $basePath ?>/"
-                    class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Home</a>
+                    class="<?= ($currentPage ?? '') === 'home' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-base transition-colors uppercase tracking-wider">Home</a>
                 <a href="<?= $basePath ?>/leagues"
-                    class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Leagues</a>
+                    class="<?= ($currentPage ?? '') === 'leagues' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-base transition-colors uppercase tracking-wider">Leagues</a>
                 <a href="<?= $basePath ?>/cups"
-                    class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Cups</a>
+                    class="<?= ($currentPage ?? '') === 'cups' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-base transition-colors uppercase tracking-wider">Cups</a>
                 <a href="<?= $basePath ?>/teams"
-                    class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Teams</a>
+                    class="<?= ($currentPage ?? '') === 'teams' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-base transition-colors uppercase tracking-wider">Teams</a>
                 <?php if (isset($_SESSION['admin_id'])): ?>
                     <a href="<?= $basePath ?>/admin"
                         class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Admin
@@ -85,13 +90,13 @@
             <!-- Sidebar Navigation -->
             <nav class="flex-1 flex flex-col p-6 space-y-4">
                 <a href="<?= $basePath ?>/"
-                    class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Home</a>
+                    class="<?= ($currentPage ?? '') === 'home' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-base transition-colors uppercase tracking-wider">Home</a>
                 <a href="<?= $basePath ?>/leagues"
-                    class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Leagues</a>
+                    class="<?= ($currentPage ?? '') === 'leagues' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-base transition-colors uppercase tracking-wider">Leagues</a>
                 <a href="<?= $basePath ?>/cups"
-                    class="text-text-muted font-sem-bold text-base transition-colors uppercase tracking-wider hover:text-primary">Cups</a>
+                    class="<?= ($currentPage ?? '') === 'cups' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-base transition-colors uppercase tracking-wider">Cups</a>
                 <a href="<?= $basePath ?>/teams"
-                    class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Teams</a>
+                    class="<?= ($currentPage ?? '') === 'teams' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-base transition-colors uppercase tracking-wider">Teams</a>
                 <?php if (isset($_SESSION['admin_id'])): ?>
                     <a href="<?= $basePath ?>/admin"
                         class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Admin

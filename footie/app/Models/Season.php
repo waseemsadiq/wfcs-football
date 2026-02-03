@@ -112,7 +112,7 @@ class Season extends Model
     public function createWithId(array $record): array
     {
         $table = $this->getTableName();
-        $record = $this->toSnakeCase($record);
+
 
         // Auto-generate slug if not provided
         if (isset($record['name']) && !isset($record['slug'])) {

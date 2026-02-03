@@ -40,20 +40,7 @@ abstract class Model
         return $transformed;
     }
 
-    /**
-     * Transform camelCase keys to snake_case database column names.
-     * Used for INPUT (PHP → database).
-     */
-    protected function toSnakeCase(array $data): array
-    {
-        $transformed = [];
-        foreach ($data as $key => $value) {
-            // Convert camelCase to snake_case
-            $snakeKey = strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $key));
-            $transformed[$snakeKey] = $value;
-        }
-        return $transformed;
-    }
+
 
     /**
      * Transform array of records.
@@ -95,8 +82,7 @@ abstract class Model
     {
         $table = $this->getTableName();
 
-        // Transform camelCase keys to snake_case for database
-        $record = $this->toSnakeCase($record);
+
 
         // Add timestamps
         $record['created_at'] = date('Y-m-d H:i:s');
@@ -134,8 +120,7 @@ abstract class Model
             return false;
         }
 
-        // Transform camelCase keys to snake_case for database
-        $updates = $this->toSnakeCase($updates);
+
 
         // Add updated timestamp
         $updates['updated_at'] = date('Y-m-d H:i:s');
@@ -259,7 +244,7 @@ abstract class Model
 
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
-            $count = (int)$stmt->fetchColumn();
+            $count = (int) $stmt->fetchColumn();
 
             if ($count === 0) {
                 return $slug; // Found a unique slug

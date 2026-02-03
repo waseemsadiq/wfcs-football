@@ -39,3 +39,11 @@ footie/debug_reschedule.php
 footie/clear-cache.php
 footie/scripts/
 footie/docs/
+/.mcp.json
+/claude
+/data
+/demos
+/index.php
+/index.sh
+/php.ini
+/wp-install.php

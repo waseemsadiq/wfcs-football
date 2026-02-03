@@ -1,29 +1,34 @@
 <?php include __DIR__ . '/../partials/html-start.php'; ?>
-<?php $titleSuffix = ' Admin'; include __DIR__ . '/../partials/head.php'; ?>
+<?php $titleSuffix = ' Admin';
+include __DIR__ . '/../partials/head.php'; ?>
 
 <body class="bg-background text-text-main font-sans antialiased min-h-screen flex flex-col">
     <!-- Skip to main content link for keyboard users -->
-    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[60] focus:bg-primary focus:text-white focus:px-4 focus:py-2 focus:rounded-sm focus:font-semibold">Skip to main content</a>
+    <a href="#main-content"
+        class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[60] focus:bg-primary focus:text-white focus:px-4 focus:py-2 focus:rounded-sm focus:font-semibold">Skip
+        to main content</a>
 
     <header class="bg-surface/80 backdrop-blur-md border-b border-border py-4 mb-8 sticky top-0 z-50">
         <div class="max-w-[1200px] mx-auto px-4 md:px-6 w-full flex justify-between items-center">
             <a href="<?= $basePath ?>/admin" class="flex items-center no-underline">
-                <img src="<?= $basePath ?>/images/logo-white.svg" alt="WFCS Football" class="h-16 w-16 hide-light" fetchpriority="high">
-                <img src="<?= $basePath ?>/images/logo-blue.svg" alt="WFCS Football" class="h-16 w-16 hide-dark" fetchpriority="high">
+                <img src="<?= $basePath ?>/images/logo-white.svg" alt="WFCS Football" class="h-16 w-16 hide-light"
+                    fetchpriority="high">
+                <img src="<?= $basePath ?>/images/logo-blue.svg" alt="WFCS Football" class="h-16 w-16 hide-dark"
+                    fetchpriority="high">
             </a>
 
             <!-- Desktop Navigation (hidden on mobile) -->
             <nav class="hidden md:flex items-center space-x-6">
                 <a href="<?= $basePath ?>/admin"
-                    class="<?= ($currentPage ?? '') === 'dashboard' ? 'text-primary' : 'text-text-muted' ?> font-semibold text-sm hover:text-primary transition-colors uppercase tracking-wide">Dashboard</a>
+                    class="<?= ($currentPage ?? '') === 'dashboard' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-sm transition-colors uppercase tracking-wide">Dashboard</a>
                 <a href="<?= $basePath ?>/admin/teams"
-                    class="<?= ($currentPage ?? '') === 'teams' ? 'text-primary' : 'text-text-muted' ?> font-semibold text-sm hover:text-primary transition-colors uppercase tracking-wide">Teams</a>
+                    class="<?= ($currentPage ?? '') === 'teams' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-sm transition-colors uppercase tracking-wide">Teams</a>
                 <a href="<?= $basePath ?>/admin/seasons"
-                    class="<?= ($currentPage ?? '') === 'seasons' ? 'text-primary' : 'text-text-muted' ?> font-semibold text-sm hover:text-primary transition-colors uppercase tracking-wide">Seasons</a>
+                    class="<?= ($currentPage ?? '') === 'seasons' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-sm transition-colors uppercase tracking-wide">Seasons</a>
                 <a href="<?= $basePath ?>/admin/leagues"
-                    class="<?= ($currentPage ?? '') === 'leagues' ? 'text-primary' : 'text-text-muted' ?> font-semibold text-sm hover:text-primary transition-colors uppercase tracking-wide">Leagues</a>
+                    class="<?= ($currentPage ?? '') === 'leagues' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-sm transition-colors uppercase tracking-wide">Leagues</a>
                 <a href="<?= $basePath ?>/admin/cups"
-                    class="<?= ($currentPage ?? '') === 'cups' ? 'text-primary' : 'text-text-muted' ?> font-semibold text-sm hover:text-primary transition-colors uppercase tracking-wide">Cups</a>
+                    class="<?= ($currentPage ?? '') === 'cups' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-sm transition-colors uppercase tracking-wide">Cups</a>
 
                 <!-- Theme Toggle -->
                 <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
@@ -41,9 +46,13 @@
 
                 <form method="POST" action="<?= $basePath ?>/logout" class="ml-2">
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(\Core\Auth::csrfToken()) ?>">
-                    <button type="submit" class="text-danger hover:scale-110 hover:opacity-70 transition-transform duration-200 p-2 cursor-pointer" aria-label="Log out">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0M8 13h8a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2v-6a2 2 0 012-2z" />
+                    <button type="submit"
+                        class="text-danger hover:scale-110 hover:opacity-70 transition-transform duration-200 p-2 cursor-pointer"
+                        aria-label="Log out">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 11V7a4 4 0 118 0M8 13h8a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2v-6a2 2 0 012-2z" />
                         </svg>
                     </button>
                 </form>
@@ -84,15 +93,15 @@
             <!-- Sidebar Navigation -->
             <nav class="flex-1 flex flex-col p-6 space-y-4">
                 <a href="<?= $basePath ?>/admin"
-                    class="<?= ($currentPage ?? '') === 'dashboard' ? 'text-primary' : 'text-text-muted' ?> font-semibold text-base hover:text-primary transition-colors uppercase tracking-wide">Dashboard</a>
+                    class="<?= ($currentPage ?? '') === 'dashboard' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-base transition-colors uppercase tracking-wide">Dashboard</a>
                 <a href="<?= $basePath ?>/admin/teams"
-                    class="<?= ($currentPage ?? '') === 'teams' ? 'text-primary' : 'text-text-muted' ?> font-semibold text-base hover:text-primary transition-colors uppercase tracking-wide">Teams</a>
+                    class="<?= ($currentPage ?? '') === 'teams' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-base transition-colors uppercase tracking-wide">Teams</a>
                 <a href="<?= $basePath ?>/admin/seasons"
-                    class="<?= ($currentPage ?? '') === 'seasons' ? 'text-primary' : 'text-text-muted' ?> font-semibold text-base hover:text-primary transition-colors uppercase tracking-wide">Seasons</a>
+                    class="<?= ($currentPage ?? '') === 'seasons' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-base transition-colors uppercase tracking-wide">Seasons</a>
                 <a href="<?= $basePath ?>/admin/leagues"
-                    class="<?= ($currentPage ?? '') === 'leagues' ? 'text-primary' : 'text-text-muted' ?> font-semibold text-base hover:text-primary transition-colors uppercase tracking-wide">Leagues</a>
+                    class="<?= ($currentPage ?? '') === 'leagues' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-base transition-colors uppercase tracking-wide">Leagues</a>
                 <a href="<?= $basePath ?>/admin/cups"
-                    class="<?= ($currentPage ?? '') === 'cups' ? 'text-primary' : 'text-text-muted' ?> font-semibold text-base hover:text-primary transition-colors uppercase tracking-wide">Cups</a>
+                    class="<?= ($currentPage ?? '') === 'cups' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-base transition-colors uppercase tracking-wide">Cups</a>
 
                 <!-- Mobile Theme Toggle -->
                 <button id="theme-toggle-mobile" class="theme-toggle flex items-center gap-2 mt-4"

@@ -59,7 +59,7 @@ class SeasonsController extends Controller
             return;
         }
 
-        $missing = $this->validateRequired(['id', 'name', 'startDate', 'endDate']);
+        $missing = $this->validateRequired(['name', 'startDate', 'endDate']);
         if (!empty($missing)) {
             $this->flash('error', 'Please fill in all required fields: ' . implode(', ', $missing));
             $this->redirect('/admin/seasons/create');
@@ -67,24 +67,10 @@ class SeasonsController extends Controller
         }
 
         // Validate and sanitize inputs
-        $id = $this->sanitizeString($this->post('id'), 50);
         $name = $this->sanitizeString($this->post('name'), 100);
         $startDate = $this->post('startDate');
         $endDate = $this->post('endDate');
         $isActive = $this->post('isActive') === '1';
-
-        // Validate ID format (alphanumeric, hyphens, underscores only)
-        if (!preg_match('/^[a-zA-Z0-9_-]+$/', $id)) {
-            $this->flash('error', 'Season ID can only contain letters, numbers, hyphens, and underscores.');
-            $this->redirect('/admin/seasons/create');
-            return;
-        }
-
-        if (!$this->validateLength($id, 1, 50)) {
-            $this->flash('error', 'Season ID must be between 1 and 50 characters.');
-            $this->redirect('/admin/seasons/create');
-            return;
-        }
 
         if (!$this->validateLength($name, 1, 100)) {
             $this->flash('error', 'Season name must be between 1 and 100 characters.');
@@ -104,13 +90,6 @@ class SeasonsController extends Controller
             return;
         }
 
-        // Check if ID already exists
-        if ($this->season->idExists($id)) {
-            $this->flash('error', 'A season with this ID already exists. Please choose a different ID.');
-            $this->redirect('/admin/seasons/create');
-            return;
-        }
-
         // Validate dates
         if ($startDate >= $endDate) {
             $this->flash('error', 'The end date must be after the start date.');
@@ -120,19 +99,31 @@ class SeasonsController extends Controller
 
         // Create the season with unique slug
         $slug = $this->season->generateUniqueSlug($name);
-        $this->season->createWithId([
-            'id' => $id,
+        $result = $this->season->create([
             'name' => $name,
             'slug' => $slug,
             'start_date' => $startDate,
             'end_date' => $endDate,
-            'is_active' => false,
+            'is_active' => $isActive ? 1 : 0,
         ]);
 
-        // Set as active if requested (this deactivates other seasons)
-        if ($isActive) {
-            $this->season->setActive($id);
+        // Retrieve the new ID to handle activation
+        // Model::create may return the ID or the record array depending on implementation
+        if (is_array($result) && isset($result['id'])) {
+            $createdId = $result['id'];
+        } elseif (is_numeric($result)) {
+            $createdId = $result;
+        } else {
+            // Fallback: find by slug if ID not returned directly
+            $newSeason = $this->season->findWhere('slug', $slug);
+            $createdId = $newSeason['id'] ?? null;
         }
+
+        if ($isActive && $createdId) {
+            $this->season->setActive($createdId);
+        }
+
+
 
         $this->flash('success', 'Season created successfully.');
         $this->redirect('/admin/seasons');
@@ -238,8 +229,8 @@ class SeasonsController extends Controller
 
         $this->season->update($season['id'], [
             'name' => $name,
-            'startDate' => $startDate,
-            'endDate' => $endDate,
+            'start_date' => $startDate,
+            'end_date' => $endDate,
         ]);
 
         $this->flash('success', 'Season updated successfully.');

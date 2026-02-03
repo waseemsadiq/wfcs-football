@@ -42,15 +42,19 @@ include __DIR__ . '/../partials/admin_page_header.php';
                                     <?= htmlspecialchars($season['name']) ?>
                                 </a>
                             </td>
-                            <td class="table-td"><?= htmlspecialchars(date('j M Y', strtotime($season['startDate'] ?? $season['start_date'] ?? ''))) ?></td>
-                            <td class="table-td"><?= htmlspecialchars(date('j M Y', strtotime($season['endDate'] ?? $season['end_date'] ?? ''))) ?></td>
+                            <td class="table-td">
+                                <?= htmlspecialchars(date('j M Y', strtotime($season['startDate'] ?? $season['start_date'] ?? ''))) ?>
+                            </td>
+                            <td class="table-td">
+                                <?= htmlspecialchars(date('j M Y', strtotime($season['endDate'] ?? $season['end_date'] ?? ''))) ?>
+                            </td>
                             <td class="table-td">
                                 <?php if (!empty($season['isActive'] ?? $season['is_active'] ?? false)): ?>
                                     <span
                                         class="inline-block px-2 py-1 rounded-sm text-xs font-bold uppercase tracking-wider bg-blue-500/20 text-blue-400 border border-blue-500/30">Active</span>
                                 <?php else: ?>
                                     <span
-                                        class="inline-block px-2 py-1 rounded-sm text-xs font-bold uppercase tracking-wider bg-slate-700/50 text-slate-400 border border-slate-700">Inactive</span>
+                                        class="inline-block px-2 py-1 rounded-sm text-xs font-bold uppercase tracking-wider bg-surface-hover text-text-muted border border-border">Inactive</span>
                                 <?php endif; ?>
                             </td>
                             <td class="table-td text-center"><?= count($season['leagueIds'] ?? []) ?></td>

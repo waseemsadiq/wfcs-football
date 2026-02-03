@@ -261,9 +261,9 @@ class CupsController extends CompetitionController
 
             // Update cup metadata
             $cupModel->update($cup['id'], [
-                'startDate' => $startDate,
+                'start_date' => $startDate,
                 'frequency' => $frequency,
-                'matchTime' => $matchTime
+                'match_time' => $matchTime
             ]);
 
             // Get updated rounds

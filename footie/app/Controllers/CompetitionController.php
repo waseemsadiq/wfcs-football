@@ -142,11 +142,11 @@ abstract class CompetitionController extends Controller
 
         $record = $this->prepareStoreData([
             'name' => $name,
-            'seasonId' => $seasonId,
-            'startDate' => $startDate,
+            'season_id' => $seasonId,
+            'start_date' => $startDate,
             'frequency' => $frequency,
-            'matchTime' => $matchTime,
-            'teamIds' => $teamIds,
+            'match_time' => $matchTime,
+            'team_ids' => $teamIds,
         ]);
 
         try {
@@ -230,9 +230,9 @@ abstract class CompetitionController extends Controller
 
         $updates = $this->prepareUpdateData([
             'name' => $name,
-            'startDate' => $startDate,
+            'start_date' => $startDate,
             'frequency' => $frequency,
-            'matchTime' => $matchTime,
+            'match_time' => $matchTime,
         ], $entity);
 
         try {

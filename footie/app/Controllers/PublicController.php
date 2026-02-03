@@ -63,6 +63,7 @@ class PublicController extends Controller
             'cups' => $cups,
             'recentResults' => $recentResults,
             'upcomingFixtures' => $upcomingFixtures,
+            'currentPage' => 'home',
         ], 'public');
     }
 
@@ -92,6 +93,7 @@ class PublicController extends Controller
             'league' => $league,
             'standings' => $standings,
             'fixtures' => $fixtures,
+            'currentPage' => 'leagues',
         ], 'public');
     }
 
@@ -133,6 +135,7 @@ class PublicController extends Controller
             'seasonName' => $activeSeason['name'] ?? null,
             'cup' => $cup,
             'rounds' => $rounds,
+            'currentPage' => 'cups',
         ], 'public');
     }
 
@@ -180,6 +183,7 @@ class PublicController extends Controller
             'team' => $team,
             'competitions' => $competitions ?? [],
             'fixtures' => array_values($fixtures),
+            'currentPage' => 'teams',
         ], 'public');
     }
 
@@ -202,6 +206,7 @@ class PublicController extends Controller
             'title' => 'Leagues',
             'seasonName' => $activeSeason['name'] ?? null,
             'leagues' => $leagues,
+            'currentPage' => 'leagues',
         ], 'public');
     }
 
@@ -224,6 +229,7 @@ class PublicController extends Controller
             'title' => 'Cups',
             'seasonName' => $activeSeason['name'] ?? null,
             'cups' => $cups,
+            'currentPage' => 'cups',
         ], 'public');
     }
 
@@ -285,6 +291,7 @@ class PublicController extends Controller
             'title' => 'Teams',
             'seasonName' => $activeSeason['name'] ?? null,
             'teams' => $teams,
+            'currentPage' => 'teams',
         ], 'public');
     }
 
@@ -416,9 +423,11 @@ class PublicController extends Controller
         }
 
         // Sort dates based on whether showing results (descending) or upcoming (ascending)
-        usort($dates, function($a, $b) use ($showResult) {
-            if ($a === 'TBD') return 1;
-            if ($b === 'TBD') return -1;
+        usort($dates, function ($a, $b) use ($showResult) {
+            if ($a === 'TBD')
+                return 1;
+            if ($b === 'TBD')
+                return -1;
 
             $comparison = strtotime($a) - strtotime($b);
 
