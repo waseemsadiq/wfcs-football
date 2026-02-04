@@ -1,6 +1,6 @@
 .worktrees/
 .wiki/
-docs/
+/docs/
 sync-wiki.sh
 
 node_modules/
@@ -35,10 +35,8 @@ footie/data/mysql/
 footie/archive/
 
 # Debug/utility/dev scripts
-footie/debug_reschedule.php
 footie/clear-cache.php
-footie/scripts/
-footie/docs/
+footie/docs/plans/
 /.mcp.json
 /claude
 /data
