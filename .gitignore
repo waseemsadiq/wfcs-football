@@ -19,14 +19,11 @@ TESTING.md
 
 # Dev tools and artifacts
 .playwright-mcp/
-generate-icons.js
 
 /.agent
 
 # Build/deployment artifacts
 *.zip
-footie-install.php
-create-package.php
 
 # MySQL/Database files
 footie/data/mysql/
