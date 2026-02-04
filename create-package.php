@@ -140,7 +140,7 @@ $footieTempDir = $tempDir . '/footie';
 mkdir($footieTempDir, 0755, true);
 
 $excludeDirs = ['archive', 'docs', 'data', 'node_modules'];
-$excludeFiles = ['.DS_Store'];
+$excludeFiles = ['.DS_Store', 'generate-icons.js'];
 
 $iterator = new RecursiveIteratorIterator(
     new RecursiveDirectoryIterator($footieDir, RecursiveDirectoryIterator::SKIP_DOTS),
