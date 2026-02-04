@@ -167,7 +167,7 @@ include __DIR__ . '/../partials/head.php'; ?>
 
     <?php include __DIR__ . '/../partials/footer.php'; ?>
 
-    <script src="<?= $basePath ?>/js/app.js"></script>
+
 </body>
 
 </html>

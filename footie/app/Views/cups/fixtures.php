@@ -221,7 +221,7 @@
 
         <div class="mt-8 pt-6 border-t border-border">
             <button type="button"
-                onclick="document.getElementById('regenerateModal').classList.remove('hidden'); document.getElementById('regenerateModal').classList.add('flex');"
+                onclick="document.getElementById('regenerateModal').showPopover();"
                 class="btn btn-primary bg-yellow-600 hover:bg-yellow-700 border-yellow-600 hover:border-yellow-700 text-white w-full sm:w-auto">
                 Regenerate Fixtures
             </button>

@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./app/Views/**/*.php"],
+  content: ["./footie/app/Views/**/*.php"],
   theme: {
     extend: {
       colors: {

@@ -92,7 +92,8 @@ usort($fixtures, function ($a, $b) {
 
                                 <div class="flex justify-between items-center border-t border-border pt-4">
                                     <div class="flex gap-4 text-text-muted text-sm">
-                                        <span>Time: <input type="time" name="time" value="<?= htmlspecialchars(substr($fixture['time'], 0, 5)) ?>"
+                                        <span>Time: <input type="time" name="time"
+                                                value="<?= htmlspecialchars(substr($fixture['time'], 0, 5)) ?>"
                                                 class="bg-transparent border border-border text-text-main p-1 rounded w-auto focus:border-primary focus:outline-none"></span>
                                         <span>Date: <input type="date" name="date" value="<?= htmlspecialchars($fixture['date']) ?>"
                                                 class="bg-transparent border border-border text-text-main p-1 rounded w-auto focus:border-primary focus:outline-none"></span>
@@ -137,8 +138,7 @@ usort($fixtures, function ($a, $b) {
     <?php endif; ?>
 
     <div class="mt-8 pt-6 border-t border-border">
-        <button type="button"
-            onclick="document.getElementById('regenerateModal').classList.remove('hidden'); document.getElementById('regenerateModal').classList.add('flex');"
+        <button type="button" onclick="document.getElementById('regenerateModal').showPopover();"
             class="btn bg-orange-500 text-black hover:bg-orange-600 font-bold border-none w-full sm:w-auto">
             Regenerate Fixtures
         </button>
