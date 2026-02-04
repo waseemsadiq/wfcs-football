@@ -7,6 +7,15 @@ declare(strict_types=1);
  * All requests are routed through this file.
  */
 
+// Handle static files when using PHP built-in server
+if (php_sapi_name() === 'cli-server') {
+    $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    $file = __DIR__ . $path;
+    if (is_file($file)) {
+        return false;
+    }
+}
+
 // Start output buffering to prevent "headers already sent" issues
 ob_start();
 
