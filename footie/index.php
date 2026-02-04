@@ -7,10 +7,27 @@ declare(strict_types=1);
  * All requests are routed through this file.
  */
 
-// Handle static files when using PHP built-in server
+// Explicitly handle static files that might be routed to index.php
+$requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+$staticFiles = [
+    '/site.webmanifest' => 'application/manifest+json',
+    '/browserconfig.xml' => 'application/xml',
+];
+
+foreach ($staticFiles as $suffix => $contentType) {
+    if (str_ends_with($requestPath, $suffix)) {
+        $file = __DIR__ . $suffix;
+        if (file_exists($file)) {
+            header("Content-Type: $contentType");
+            readfile($file);
+            exit;
+        }
+    }
+}
+
+// Handle other potential static files when using built-in server
 if (php_sapi_name() === 'cli-server') {
-    $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-    $file = __DIR__ . $path;
+    $file = __DIR__ . $requestPath;
     if (is_file($file)) {
         return false;
     }
