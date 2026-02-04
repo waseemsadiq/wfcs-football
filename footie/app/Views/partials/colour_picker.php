@@ -16,107 +16,6 @@ $teamColoursJson = file_get_contents(BASE_PATH . '/css/team-colours.json');
 $teamColours = json_decode($teamColoursJson, true);
 ?>
 
-<style>
-    .team-chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 10px 6px 6px;
-        font-size: 12px;
-        font-weight: 500;
-        color: var(--color-text-muted);
-        background: var(--color-surface-hover);
-        border: 1px solid var(--color-border);
-        border-radius: 20px;
-        cursor: pointer;
-        transition: all 0.15s ease;
-        white-space: nowrap;
-    }
-
-    .team-chip:hover {
-        color: var(--color-text-main);
-        border-color: var(--color-primary);
-        background: rgba(74, 222, 128, 0.1);
-    }
-
-    :root.light .team-chip:hover {
-        background: rgba(69, 162, 218, 0.1);
-    }
-
-    .team-chip.selected {
-        color: var(--color-text-main);
-        border-color: var(--color-primary);
-        background: rgba(74, 222, 128, 0.15);
-        box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.3);
-    }
-
-    :root.light .team-chip.selected {
-        background: rgba(69, 162, 218, 0.15);
-        box-shadow: 0 0 0 2px rgba(69, 162, 218, 0.3);
-    }
-
-    .team-chip .dot {
-        width: 16px;
-        height: 16px;
-        border-radius: 50%;
-        flex-shrink: 0;
-        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
-    }
-
-    .quick-pick-panel {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease, padding 0.3s ease;
-    }
-
-    .quick-pick-panel.open {
-        max-height: 500px;
-        padding-top: 16px;
-    }
-
-    .quick-pick-toggle {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 12px;
-        font-size: 13px;
-        font-weight: 500;
-        color: var(--color-text-muted);
-        background: transparent;
-        border: 1px solid var(--color-border);
-        border-radius: 6px;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .quick-pick-toggle:hover {
-        color: var(--color-primary);
-        border-color: var(--color-primary);
-        background: rgba(74, 222, 128, 0.05);
-    }
-
-    :root.light .quick-pick-toggle:hover {
-        background: rgba(69, 162, 218, 0.05);
-    }
-
-    .quick-pick-toggle .arrow {
-        transition: transform 0.2s;
-    }
-
-    .quick-pick-toggle.open .arrow {
-        transform: rotate(180deg);
-    }
-
-    .league-label {
-        font-size: 11px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: var(--color-text-muted);
-        margin-bottom: 10px;
-    }
-</style>
-
 <div class="mb-6">
     <label for="colour" class="block text-sm font-medium text-text-muted mb-2">Team Colour</label>
 
@@ -130,25 +29,31 @@ $teamColours = json_decode($teamColoursJson, true);
     </div>
 
     <!-- Quick Pick Toggle -->
-    <button type="button" id="quick-pick-toggle" class="quick-pick-toggle">
+    <button type="button" id="quick-pick-toggle"
+        class="group inline-flex items-center gap-2 px-3 py-2 text-[13px] font-medium text-text-muted bg-transparent border border-border rounded-md cursor-pointer transition-all duration-200 hover:text-primary hover:border-primary hover:bg-primary/5">
         Quick Pick Team Colour
-        <svg class="arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
+        <svg class="transition-transform duration-200 group-[.open]:rotate-180" width="12" height="12"
+            viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
             <path d="M2 4l4 4 4-4" />
         </svg>
     </button>
 
     <!-- Quick Pick Panel -->
-    <div id="quick-pick-panel" class="quick-pick-panel">
+    <div id="quick-pick-panel"
+        class="max-h-0 overflow-hidden transition-[max-height,padding] duration-300 ease-out [&.open]:max-h-[500px] [&.open]:pt-4">
         <?php foreach ($teamColours['leagues'] as $league): ?>
             <div class="mb-8">
-                <div class="league-label">
+                <div class="text-[11px] font-semibold uppercase tracking-[0.05em] text-text-muted mb-2.5">
                     <?= htmlspecialchars($league['name']) ?>
                 </div>
                 <div class="flex flex-wrap gap-2">
                     <?php foreach ($league['teams'] as $team): ?>
-                        <button type="button" class="team-chip" data-color="<?= htmlspecialchars($team['colour']) ?>">
-                            <span class="dot" style="background-color: <?= htmlspecialchars($team['colour']) ?>"></span>
+                        <button type="button"
+                            class="team-chip inline-flex items-center gap-1.5 px-1.5 py-1.5 pr-2.5 text-xs font-medium text-text-muted bg-surface-hover border border-border rounded-[20px] cursor-pointer transition-all duration-150 whitespace-nowrap hover:text-text-main hover:border-primary hover:bg-primary/10 [&.selected]:text-text-main [&.selected]:border-primary [&.selected]:bg-primary/15 [&.selected]:ring-2 [&.selected]:ring-primary/30"
+                            data-color="<?= htmlspecialchars($team['colour']) ?>">
+                            <span class="w-4 h-4 rounded-full shrink-0 shadow-inner"
+                                style="background-color: <?= htmlspecialchars($team['colour']) ?>"></span>
                             <?= htmlspecialchars($team['name']) ?>
                         </button>
                     <?php endforeach; ?>
