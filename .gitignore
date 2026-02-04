@@ -20,7 +20,9 @@ TESTING.md
 # Dev tools and artifacts
 .playwright-mcp/
 
-/.agent
+# Agent configuration
+/.agent/*
+!/.agent/skills/
 
 # Build/deployment artifacts
 *.zip
