@@ -1,6 +1,6 @@
 ---
 name: footie-remote-admin
-description: "Remote Admin Tool: Manage the Footie App database on a remote server via SSH. Requires Admin Password."
+description: "Remote Admin Tool: Manage the Footie App database on a remote server via SSH or SFTP/HTTP. Requires Admin Password."
 ---
 
 # Footie Remote Admin Skill
@@ -15,6 +15,7 @@ The administrator should set these values in their copy of `SKILL.md` or provide
 
 - **Default SSH Host**: `{{SSH_HOST}}` (e.g. admin@192.168.1.50)
 - **Default Remote Path**: `{{REMOTE_PATH}}` (e.g. /var/www/footie)
+- **Default Public URL**: `{{PUBLIC_URL}}` (e.g. https://footie.app) - _Required for SFTP/HTTP mode_
 
 ## Workflow
 
@@ -51,10 +52,23 @@ if (!$envHash || !password_verify($providedPass, $envHash)) {
 
 ### 3. Execution (Deployment)
 
-1.  **Upload Bootstrap**: `scp .agent/skills/footie-remote-admin/assets/console-bootstrap.php {SSH_HOST}:{REMOTE_PATH}/bootstrap_{ID}.php`
+> **Note**: `{SKILL_DIR}` refers to the directory containing this SKILL.md file.
+
+#### Mode A: SSH Execution (Preferred)
+
+1.  **Upload Bootstrap**: `scp {SKILL_DIR}/assets/console-bootstrap.php {SSH_HOST}:{REMOTE_PATH}/bootstrap_{ID}.php`
 2.  **Upload Task**: `scp local_temp_task.php {SSH_HOST}:{REMOTE_PATH}/task_{ID}.php`
 3.  **Execute**: `ssh {SSH_HOST} "php {REMOTE_PATH}/task_{ID}.php"`
 4.  **Cleanup**: `ssh {SSH_HOST} "rm {REMOTE_PATH}/bootstrap_{ID}.php {REMOTE_PATH}/task_{ID}.php"`
+
+#### Mode B: SFTP + HTTP Execution (Fallback)
+
+_Use when SSH shell is unavailable._
+
+1.  **Add Self-Destruct**: Ensure the task script deletes itself and the bootstrap file using `register_shutdown_function`.
+2.  **Upload**: Use `scp` (or sftp) to upload `bootstrap_{ID}.php` and `task_{ID}.php` to `{REMOTE_PATH}`.
+3.  **Execute**: `curl -L {PUBLIC_URL}/task_{ID}.php`
+4.  **Verify**: Check response body/headers. Files should be deleted automatically.
 
 ## Reference
 

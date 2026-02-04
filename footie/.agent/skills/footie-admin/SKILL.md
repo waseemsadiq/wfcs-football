@@ -1,6 +1,6 @@
 ---
 name: footie-admin
-description: Administer the Footie App database (CRUD) using ephemeral PHP scripts. Supports Local and Remote (SSH) execution.
+description: Administer the Footie App database (CRUD) using ephemeral PHP scripts. Supports Local, Remote (SSH), and Remote (SFTP/HTTP) execution.
 ---
 
 # Footie Admin Skill
@@ -24,7 +24,8 @@ Use this skill when the user asks to:
 Ask the user (or infer from context) if this action is **Local** or **Remote**.
 
 - **Local**: Run commands directly on the machine.
-- **Remote**: Requires `SSH_HOST` (e.g., `user@ip`) and `REMOTE_PATH` (e.g., `/var/www/html/footie`). If these are not known, ASK the user.
+- **Remote (SSH)**: Requires `SSH_HOST` and `REMOTE_PATH`.
+- **Remote (SFTP/HTTP)**: Requires `SFTP_HOST` (or `SSH_HOST`), `REMOTE_PATH`, and `PUBLIC_URL` (e.g., `https://example.com/footie`). Use this if SSH shell key is unavailable.
 
 ### 2. Generate Unique ID
 
@@ -34,7 +35,8 @@ Generate a short 4-character random string to use as an ID for this run (e.g., `
 
 #### A. Define Paths
 
-- **Asset Source**: `.agent/skills/footie-admin/assets/console-bootstrap.php`
+- **Asset Source**: `{SKILL_DIR}/assets/console-bootstrap.php`
+  - _Note: `{SKILL_DIR}` refers to the directory containing this SKILL.md file._
 - **Bootstrap Target**: `{APP_ROOT}/bootstrap_{ID}.php`
 - **Task Target**: `{APP_ROOT}/task_{ID}.php`
 
@@ -48,11 +50,12 @@ Write a PHP script that performs the user's requested action.
 1.  **Require Bootstrap**: The FIRST line must be: `require __DIR__ . '/bootstrap_{ID}.php';`
 2.  **Use Abstractions**: Assume the Models exist. Do not redefine them.
 3.  **Output Results**: Use `echo` to print what happened (e.g., "Team X created with ID 5").
-4.  **Reference Models**: See `references/models.md` for syntax.
+4.  **Self-Destruct (SFTP Only)**: If running via SFTP/HTTP, the script MUST delete itself and the bootstrap file at the end of execution (use `register_shutdown_function` or `unlink` at the very end).
+5.  **Reference Models**: See `references/models.md` for syntax.
 
 #### C. Execute (Local)
 
-1.  **Copy Bootstrap**: `cp .agent/skills/footie-admin/assets/console-bootstrap.php {APP_ROOT}/bootstrap_{ID}.php`
+1.  **Copy Bootstrap**: `cp {SKILL_DIR}/assets/console-bootstrap.php {APP_ROOT}/bootstrap_{ID}.php`
     - _Do NOT read the file content._
 2.  **Save Task Script**: Write the generated PHP code to `{APP_ROOT}/task_{ID}.php`.
 3.  **Run**: `php {APP_ROOT}/task_{ID}.php`
@@ -60,7 +63,7 @@ Write a PHP script that performs the user's requested action.
 
 #### D. Execute (Remote / SSH)
 
-1.  **Upload Bootstrap**: `scp .agent/skills/footie-admin/assets/console-bootstrap.php {SSH_HOST}:{REMOTE_PATH}/bootstrap_{ID}.php`
+1.  **Upload Bootstrap**: `scp {SKILL_DIR}/assets/console-bootstrap.php {SSH_HOST}:{REMOTE_PATH}/bootstrap_{ID}.php`
     - _Do NOT read the file content._
 2.  **Upload Task Script**:
     - Save generated code to a local temp file `temp_{ID}.php`.
@@ -68,6 +71,24 @@ Write a PHP script that performs the user's requested action.
     - `rm temp_{ID}.php` (local cleanup)
 3.  **Run**: `ssh {SSH_HOST} "php {REMOTE_PATH}/task_{ID}.php"`
 4.  **Cleanup**: `ssh {SSH_HOST} "rm {REMOTE_PATH}/bootstrap_{ID}.php {REMOTE_PATH}/task_{ID}.php"`
+
+#### E. Execute (Remote / SFTP + HTTP)
+
+_Use this when SSH shell access is restricted._
+
+1.  **Preparation**: Ensure the task script includes **Self-Destruct** code:
+    ```php
+    register_shutdown_function(function() use ($bootstrapFile) {
+        unlink(__FILE__);
+        if (file_exists($bootstrapFile)) unlink($bootstrapFile);
+    });
+    ```
+2.  **Upload**:
+    - `scp {SKILL_DIR}/assets/console-bootstrap.php {SSH_HOST}:{REMOTE_PATH}/bootstrap_{ID}.php`
+    - `scp temp_{ID}.php {SSH_HOST}:{REMOTE_PATH}/task_{ID}.php`
+3.  **Execute**:
+    - `curl -L {PUBLIC_URL}/task_{ID}.php`
+4.  **Verify**: Ensure 200 OK and expected output. The files should be gone.
 
 ## Important Notes
 
