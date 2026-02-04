@@ -7,9 +7,9 @@ declare(strict_types=1);
  */
 return [
     // Database connection details
-    'database' => 'wfcs',
-    'username' => 'root',
-    'password' => '',
+    'database' => getenv('DB_NAME') ?: 'wfcs',
+    'username' => getenv('DB_USER') ?: 'root',
+    'password' => getenv('DB_PASS') ?: '',
 
     // Unix socket path for Galvani's embedded MySQL
     // Goes up 1 level from app root to reach the distribution root where data/ is located
