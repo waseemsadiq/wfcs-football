@@ -54,7 +54,7 @@ CREATE TABLE `cup_fixtures` (
   CONSTRAINT `cup_fixtures_ibfk_2` FOREIGN KEY (`round_id`) REFERENCES `cup_rounds` (`id`) ON DELETE CASCADE,
   CONSTRAINT `cup_fixtures_ibfk_3` FOREIGN KEY (`home_team_id`) REFERENCES `teams` (`id`),
   CONSTRAINT `cup_fixtures_ibfk_4` FOREIGN KEY (`away_team_id`) REFERENCES `teams` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -72,12 +72,12 @@ INSERT INTO `cup_fixtures` VALUES
 (18,3,8,18,19,'2026-02-13','15:00:00',NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,0,NULL,NULL,NULL,'2026-02-02 21:44:23'),
 (19,3,8,24,23,'2026-02-13','15:00:00',NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,0,NULL,NULL,NULL,'2026-02-02 21:44:23'),
 (20,3,9,NULL,NULL,'2026-02-20','15:00:00',NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,0,NULL,NULL,NULL,'2026-02-02 21:44:23'),
-(35,6,18,25,23,'2026-02-14','15:00:00',NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,0,NULL,NULL,NULL,'2026-02-03 18:35:57'),
-(36,6,18,24,22,'2026-02-14','15:00:00',NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,0,NULL,NULL,NULL,'2026-02-03 18:35:57'),
-(37,6,19,NULL,NULL,'2026-02-28','15:00:00',NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,0,NULL,NULL,NULL,'2026-02-03 18:35:57'),
 (38,10,20,19,20,'2026-02-03','19:00:00',1,0,'\"\"','\"\"','\"\"','\"\"',0,0,0,0,0,0,'home','2026-02-03 18:37:14'),
 (39,10,20,18,21,'2026-02-03','19:00:00',2,1,'\"\"','\"\"','\"\"','\"\"',0,0,0,0,0,0,'home','2026-02-03 18:37:14'),
-(40,10,21,19,18,'2026-02-10','19:00:00',NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,0,NULL,NULL,NULL,'2026-02-03 18:37:14');
+(40,10,21,19,18,'2026-02-10','19:00:00',NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,0,NULL,NULL,NULL,'2026-02-03 18:37:14'),
+(44,11,24,24,25,'2026-02-07','15:00:00',NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,0,NULL,NULL,NULL,'2026-02-04 01:53:59'),
+(45,11,24,22,23,'2026-02-07','15:00:00',NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,0,NULL,NULL,NULL,'2026-02-04 01:53:59'),
+(46,11,25,NULL,NULL,'2026-02-14','15:00:00',NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,0,NULL,NULL,NULL,'2026-02-04 01:53:59');
 /*!40000 ALTER TABLE `cup_fixtures` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -97,7 +97,7 @@ CREATE TABLE `cup_rounds` (
   PRIMARY KEY (`id`),
   KEY `cup_id` (`cup_id`),
   CONSTRAINT `cup_rounds_ibfk_1` FOREIGN KEY (`cup_id`) REFERENCES `cups` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -111,10 +111,10 @@ INSERT INTO `cup_rounds` VALUES
 (7,3,'Quarter-Final',0),
 (8,3,'Semi-Final',1),
 (9,3,'Final',2),
-(18,6,'Semi-Final',0),
-(19,6,'Final',1),
 (20,10,'Semi-Final',0),
-(21,10,'Final',1);
+(21,10,'Final',1),
+(24,11,'Semi-Final',0),
+(25,11,'Final',1);
 /*!40000 ALTER TABLE `cup_rounds` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -152,14 +152,14 @@ INSERT INTO `cup_teams` VALUES
 (3,23),
 (3,24),
 (3,25),
-(6,22),
-(6,23),
-(6,24),
-(6,25),
 (10,18),
 (10,19),
 (10,20),
-(10,21);
+(10,21),
+(11,22),
+(11,23),
+(11,24),
+(11,25);
 /*!40000 ALTER TABLE `cup_teams` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -185,7 +185,7 @@ CREATE TABLE `cups` (
   UNIQUE KEY `slug` (`slug`),
   KEY `season_id` (`season_id`),
   CONSTRAINT `cups_ibfk_1` FOREIGN KEY (`season_id`) REFERENCES `seasons` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -197,8 +197,8 @@ LOCK TABLES `cups` WRITE;
 set autocommit=0;
 INSERT INTO `cups` VALUES
 (3,5,'WFCS Cup','wfcs-cup','2026-02-06','weekly','15:00:00','2026-02-02 21:44:23','2026-02-03 18:43:29'),
-(6,5,'Junior Cup','junior-cup','2026-02-14','fortnightly','15:00:00','2026-02-03 16:47:39','2026-02-03 18:35:57'),
-(10,5,'Senior Cup','senior-cup','2026-02-03','weekly','19:00:00','2026-02-03 18:37:14','2026-02-03 18:37:14');
+(10,5,'Senior Cup','senior-cup','2026-02-03','weekly','19:00:00','2026-02-03 18:37:14','2026-02-03 18:37:14'),
+(11,5,'Junior Cup','junior-cup','2026-02-07','weekly','15:00:00','2026-02-04 01:53:59','2026-02-04 01:53:59');
 /*!40000 ALTER TABLE `cups` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -231,7 +231,7 @@ CREATE TABLE `league_fixtures` (
   CONSTRAINT `league_fixtures_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `leagues` (`id`) ON DELETE CASCADE,
   CONSTRAINT `league_fixtures_ibfk_2` FOREIGN KEY (`home_team_id`) REFERENCES `teams` (`id`),
   CONSTRAINT `league_fixtures_ibfk_3` FOREIGN KEY (`away_team_id`) REFERENCES `teams` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=134 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -331,7 +331,7 @@ CREATE TABLE `leagues` (
   UNIQUE KEY `slug` (`slug`),
   KEY `season_id` (`season_id`),
   CONSTRAINT `leagues_ibfk_1` FOREIGN KEY (`season_id`) REFERENCES `seasons` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -362,7 +362,7 @@ CREATE TABLE `players` (
   PRIMARY KEY (`id`),
   KEY `team_id` (`team_id`),
   CONSTRAINT `players_ibfk_1` FOREIGN KEY (`team_id`) REFERENCES `teams` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=124 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -412,7 +412,7 @@ CREATE TABLE `seasons` (
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `slug` (`slug`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -448,7 +448,7 @@ CREATE TABLE `teams` (
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `slug` (`slug`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -480,4 +480,4 @@ commit;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-02-03 23:58:43
+-- Dump completed on 2026-02-04  2:14:46

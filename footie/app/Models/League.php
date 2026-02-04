@@ -56,6 +56,15 @@ class League extends Model
         // Add teams if provided
         if (!empty($teamIds)) {
             $this->setTeams($league['id'], $teamIds);
+
+            // Generate initial fixtures
+            $this->generateFixtures(
+                $league['id'],
+                $teamIds,
+                $record['start_date'] ?? date('Y-m-d'),
+                $record['frequency'] ?? 'weekly',
+                $record['match_time'] ?? '15:00'
+            );
         }
 
         return $league;
