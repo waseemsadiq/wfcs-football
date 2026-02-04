@@ -1,0 +1,45 @@
+{
+    "leagues": [
+        {
+            "name": "Scottish Premiership",
+            "teams": [
+                { "name": "Celtic", "colour": "#1a5f2a" },
+                { "name": "Rangers", "colour": "#003f87" },
+                { "name": "Aberdeen", "colour": "#dc143c" },
+                { "name": "Hearts", "colour": "#800020" },
+                { "name": "Hibernian", "colour": "#006400" },
+                { "name": "Dundee", "colour": "#000080" },
+                { "name": "Dundee Utd", "colour": "#ff6600" },
+                { "name": "Motherwell", "colour": "#ffc20e" },
+                { "name": "St Mirren", "colour": "#000000" },
+                { "name": "Kilmarnock", "colour": "#0033a0" },
+                { "name": "St Johnstone", "colour": "#003f87" }
+            ]
+        },
+        {
+            "name": "English Premier League",
+            "teams": [
+                { "name": "Arsenal", "colour": "#ef0107" },
+                { "name": "Aston Villa", "colour": "#670e36" },
+                { "name": "Bournemouth", "colour": "#da291c" },
+                { "name": "Brentford", "colour": "#e30613" },
+                { "name": "Brighton", "colour": "#0057b8" },
+                { "name": "Chelsea", "colour": "#034694" },
+                { "name": "Crystal Palace", "colour": "#1b458f" },
+                { "name": "Everton", "colour": "#003399" },
+                { "name": "Fulham", "colour": "#000000" },
+                { "name": "Ipswich", "colour": "#0033a0" },
+                { "name": "Leicester", "colour": "#003090" },
+                { "name": "Liverpool", "colour": "#c8102e" },
+                { "name": "Man City", "colour": "#6cabdd" },
+                { "name": "Man United", "colour": "#da291c" },
+                { "name": "Newcastle", "colour": "#241f20" },
+                { "name": "Nott'm Forest", "colour": "#dd0000" },
+                { "name": "Southampton", "colour": "#d71920" },
+                { "name": "Tottenham", "colour": "#132257" },
+                { "name": "West Ham", "colour": "#7a263a" },
+                { "name": "Wolves", "colour": "#fdb913" }
+            ]
+        }
+    ]
+}

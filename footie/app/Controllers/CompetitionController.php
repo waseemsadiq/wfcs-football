@@ -1,0 +1,292 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controllers;
+
+use Core\Controller;
+use Core\Model;
+use App\Models\Team;
+use App\Models\Season;
+
+/**
+ * CompetitionController - Abstract base for League and Cup controllers.
+ *
+ * Provides shared CRUD operations, validation, and fixture management
+ * for competition-based entities (leagues, cups).
+ */
+abstract class CompetitionController extends Controller
+{
+    protected Model $competition;
+    protected Team $team;
+    protected Season $season;
+
+    /**
+     * Get the entity type name (singular, lowercase).
+     * E.g., 'league', 'cup'
+     */
+    abstract protected function getEntityType(): string;
+
+    /**
+     * Get the entity type name (plural, lowercase).
+     * E.g., 'leagues', 'cups'
+     */
+    abstract protected function getEntityTypePlural(): string;
+
+    /**
+     * Get the view path prefix.
+     * E.g., 'leagues', 'cups'
+     */
+    abstract protected function getViewPrefix(): string;
+
+    /**
+     * Get additional data for index view.
+     * Override in child classes to add entity-specific data.
+     */
+    protected function getIndexAdditionalData(array $items): array
+    {
+        return [];
+    }
+
+    /**
+     * Get additional data for create view.
+     * Override in child classes to add entity-specific data.
+     */
+    protected function getCreateAdditionalData(): array
+    {
+        return [];
+    }
+
+    /**
+     * Get additional data for edit view.
+     * Override in child classes to add entity-specific data.
+     */
+    protected function getEditAdditionalData(array $entity): array
+    {
+        return [];
+    }
+
+    /**
+     * List all competitions.
+     */
+    public function index(): void
+    {
+        $items = $this->competition->all();
+
+        // Add season names
+        foreach ($items as &$item) {
+            $season = $this->season->find($item['seasonId'] ?? '');
+            $item['seasonName'] = $season['name'] ?? 'Unknown';
+        }
+
+        $plural = $this->getEntityTypePlural();
+
+        $this->render($this->getViewPrefix() . '/index', array_merge([
+            'title' => ucfirst($plural),
+            'currentPage' => $plural,
+            $plural => $items,
+        ], $this->getIndexAdditionalData($items)));
+    }
+
+    /**
+     * Show create form.
+     */
+    public function create(): void
+    {
+        $seasons = $this->season->all();
+        $teams = $this->team->all();
+
+        $plural = $this->getEntityTypePlural();
+
+        $this->render($this->getViewPrefix() . '/create', array_merge([
+            'title' => 'Create ' . ucfirst($this->getEntityType()),
+            'currentPage' => $plural,
+            'seasons' => $seasons,
+            'teams' => $teams,
+            'csrfToken' => $this->csrfToken(),
+        ], $this->getCreateAdditionalData()));
+    }
+
+    /**
+     * Store a new competition.
+     */
+    public function store(): void
+    {
+        $entityType = $this->getEntityType();
+        $plural = $this->getEntityTypePlural();
+        $redirectPath = "/admin/{$plural}";
+
+        if (!$this->validateCsrf()) {
+            $this->flash('error', 'Invalid form submission. Please try again.');
+            $this->redirect($redirectPath . '/create');
+            return;
+        }
+
+        $missing = $this->validateRequired(['name', 'seasonId']);
+        if (!empty($missing)) {
+            $this->flash('error', 'Please fill in all required fields: ' . implode(', ', $missing));
+            $this->redirect($redirectPath . '/create');
+            return;
+        }
+
+        $name = $this->sanitizeString($this->post('name'));
+        $seasonId = $this->post('seasonId');
+        $startDate = $this->post('startDate', date('Y-m-d'));
+        $frequency = $this->normalizeFrequency($this->post('frequency', 'weekly'));
+        $matchTime = $this->normalizeTime($this->post('matchTime', '15:00'));
+        $teamIds = $this->post('teamIds', []);
+
+        if (!is_array($teamIds)) {
+            $teamIds = [];
+        }
+
+        $record = $this->prepareStoreData([
+            'name' => $name,
+            'season_id' => $seasonId,
+            'start_date' => $startDate,
+            'frequency' => $frequency,
+            'match_time' => $matchTime,
+            'team_ids' => $teamIds,
+        ]);
+
+        try {
+            $entity = $this->competition->create($record);
+            $this->flash('success', ucfirst($entityType) . ' created successfully.');
+            $this->redirect($redirectPath . '/' . ($entity['slug'] ?? $entity['id']));
+        } catch (\Exception $e) {
+            $this->flash('error', 'Failed to create ' . $entityType . ': ' . $e->getMessage());
+            $this->redirect($redirectPath . '/create');
+        }
+    }
+
+    /**
+     * Prepare data before storing.
+     * Override in child classes for entity-specific processing.
+     */
+    protected function prepareStoreData(array $data): array
+    {
+        return $data;
+    }
+
+    /**
+     * Show edit form.
+     */
+    public function edit(string $slug): void
+    {
+        $entity = $this->competition->findWhere('slug', $slug);
+
+        if (!$entity) {
+            $this->flash('error', ucfirst($this->getEntityType()) . ' not found.');
+            $this->redirect('/admin/' . $this->getEntityTypePlural());
+            return;
+        }
+
+        $seasons = $this->season->all();
+        $plural = $this->getEntityTypePlural();
+
+        $this->render($this->getViewPrefix() . '/edit', array_merge([
+            'title' => 'Edit ' . ucfirst($this->getEntityType()),
+            'currentPage' => $plural,
+            $this->getEntityType() => $entity,
+            'seasons' => $seasons,
+            'csrfToken' => $this->csrfToken(),
+            'basePath' => $this->basePath,
+        ], $this->getEditAdditionalData($entity)));
+    }
+
+    /**
+     * Update a competition.
+     */
+    public function update(string $slug): void
+    {
+        $entityType = $this->getEntityType();
+        $plural = $this->getEntityTypePlural();
+
+        if (!$this->validateCsrf()) {
+            $this->flash('error', 'Invalid form submission. Please try again.');
+            $this->redirect("/admin/{$plural}/{$slug}/edit");
+            return;
+        }
+
+        $entity = $this->competition->findWhere('slug', $slug);
+
+        if (!$entity) {
+            $this->flash('error', ucfirst($entityType) . ' not found.');
+            $this->redirect("/admin/{$plural}");
+            return;
+        }
+
+        $missing = $this->validateRequired(['name']);
+        if (!empty($missing)) {
+            $this->flash('error', 'Please fill in all required fields: ' . implode(', ', $missing));
+            $this->redirect("/admin/{$plural}/{$slug}/edit");
+            return;
+        }
+
+        $name = $this->sanitizeString($this->post('name'));
+        $startDate = $this->post('startDate');
+        $frequency = $this->normalizeFrequency($this->post('frequency', 'weekly'));
+        $matchTime = $this->normalizeTime($this->post('matchTime', '15:00'));
+
+        $updates = $this->prepareUpdateData([
+            'name' => $name,
+            'start_date' => $startDate,
+            'frequency' => $frequency,
+            'match_time' => $matchTime,
+        ], $entity);
+
+        try {
+            $this->competition->update($entity['id'], $updates);
+            $newSlug = $this->competition->find($entity['id'])['slug'] ?? $slug;
+            $this->flash('success', ucfirst($entityType) . ' updated successfully.');
+            $this->redirect("/admin/{$plural}/{$newSlug}");
+        } catch (\Exception $e) {
+            $this->flash('error', 'Failed to update ' . $entityType . ': ' . $e->getMessage());
+            $this->redirect("/admin/{$plural}/{$slug}/edit");
+        }
+    }
+
+    /**
+     * Prepare data before updating.
+     * Override in child classes for entity-specific processing.
+     */
+    protected function prepareUpdateData(array $data, array $currentEntity): array
+    {
+        return $data;
+    }
+
+    /**
+     * Delete a competition.
+     */
+    public function delete(string $slug): void
+    {
+        $entityType = $this->getEntityType();
+        $plural = $this->getEntityTypePlural();
+
+        if (!$this->validateCsrf()) {
+            $this->flash('error', 'Invalid form submission. Please try again.');
+            $this->redirect("/admin/{$plural}");
+            return;
+        }
+
+        $entity = $this->competition->findWhere('slug', $slug);
+
+        if ($entity) {
+            $seasonId = $entity['seasonId'];
+            $this->competition->delete($entity['id']);
+
+            // Remove from season (no-op in current implementation but kept for consistency)
+            if ($entityType === 'league') {
+                $this->season->removeLeague($seasonId, $entity['id']);
+            } elseif ($entityType === 'cup') {
+                $this->season->removeCup($seasonId, $entity['id']);
+            }
+
+            $this->flash('success', ucfirst($entityType) . ' deleted successfully.');
+        } else {
+            $this->flash('error', ucfirst($entityType) . ' not found.');
+        }
+
+        $this->redirect("/admin/{$plural}");
+    }
+}
