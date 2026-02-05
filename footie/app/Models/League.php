@@ -133,6 +133,9 @@ class League extends Model
                 away_team_id as awayTeamId,
                 match_date as date,
                 match_time as time,
+                pitch,
+                referee,
+                is_live as isLive,
                 home_score,
                 away_score,
                 home_scorers,
@@ -153,10 +156,10 @@ class League extends Model
                 $fixture['result'] = [
                     'homeScore' => $fixture['home_score'],
                     'awayScore' => $fixture['away_score'],
-                    'homeScorers' => $fixture['home_scorers'] ? json_decode($fixture['home_scorers'], true) : [],
-                    'awayScorers' => $fixture['away_scorers'] ? json_decode($fixture['away_scorers'], true) : [],
-                    'homeCards' => $fixture['home_cards'] ? json_decode($fixture['home_cards'], true) : [],
-                    'awayCards' => $fixture['away_cards'] ? json_decode($fixture['away_cards'], true) : [],
+                    'homeScorers' => $this->decodeLegacyField($fixture['home_scorers']),
+                    'awayScorers' => $this->decodeLegacyField($fixture['away_scorers']),
+                    'homeCards' => $this->decodeLegacyField($fixture['home_cards']),
+                    'awayCards' => $this->decodeLegacyField($fixture['away_cards']),
                 ];
             } else {
                 $fixture['result'] = null;
@@ -171,6 +174,28 @@ class League extends Model
         }
 
         return $fixtures;
+    }
+
+    /**
+     * Decode JSON field with backward compatibility.
+     */
+    private function decodeLegacyField($json): mixed
+    {
+        if (!$json) {
+            return [];
+        }
+
+        $decoded = json_decode($json, true);
+
+        // Handle legacy raw string values (wrapped in extra quotes sometimes)
+        if (is_string($decoded)) {
+            // For scorers, we might want to return it as a simple array item or just as is?
+            // The plan says "Views will check the format".
+            // So returning the string is fine if the view handles it.
+            return $decoded;
+        }
+
+        return $decoded ?: [];
     }
 
     /**
@@ -458,6 +483,28 @@ class League extends Model
             json_encode($result['awayScorers'] ?? ''),
             json_encode($result['homeCards'] ?? ''),
             json_encode($result['awayCards'] ?? ''),
+            $leagueId,
+            $fixtureId
+        ]);
+    }
+
+    /**
+     * Update fixture scheduling details.
+     */
+    public function updateFixtureDetails(int|string $leagueId, int|string $fixtureId, array $details): bool
+    {
+        $stmt = $this->db->prepare("
+            UPDATE league_fixtures
+            SET pitch = ?,
+                referee = ?,
+                is_live = ?
+            WHERE league_id = ? AND id = ?
+        ");
+
+        return $stmt->execute([
+            $details['pitch'] ?? null,
+            $details['referee'] ?? null,
+            (int) ($details['isLive'] ?? 0),
             $leagueId,
             $fixtureId
         ]);

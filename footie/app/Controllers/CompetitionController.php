@@ -17,6 +17,9 @@ use App\Models\Season;
  */
 abstract class CompetitionController extends Controller
 {
+    /**
+     * @var Model|\App\Models\League|\App\Models\Cup
+     */
     protected Model $competition;
     protected Team $team;
     protected Season $season;
@@ -351,5 +354,62 @@ abstract class CompetitionController extends Controller
         }
 
         $this->redirect("/admin/{$plural}");
+    }
+    /**
+     * Parse structured scorer inputs.
+     */
+    protected function parseScorersInput(array $post, string $prefix): array
+    {
+        $input = $post[$prefix] ?? [];
+        if (!is_array($input)) {
+            return [];
+        }
+
+        $scorers = [];
+        foreach ($input as $row) {
+            $player = isset($row['player']) ? trim($row['player']) : '';
+            $minute = isset($row['minute']) ? trim($row['minute']) : '';
+            $ownGoal = isset($row['ownGoal']);
+
+            if (!empty($player)) {
+                $item = ['player' => $player, 'minute' => $minute];
+                if ($ownGoal) {
+                    $item['ownGoal'] = true;
+                }
+                $scorers[] = $item;
+            }
+        }
+        return $scorers;
+    }
+
+    /**
+     * Parse structured card inputs.
+     */
+    protected function parseCardsInput(array $post, string $prefix): array
+    {
+        $input = $post[$prefix . 'CardsCombined'] ?? [];
+        $cards = [
+            'sinBins' => [],
+            'blue' => [],
+            'yellow' => [],
+            'red' => []
+        ];
+
+        if (is_array($input)) {
+            foreach ($input as $row) {
+                $type = $row['type'] ?? '';
+                $player = isset($row['player']) ? trim($row['player']) : '';
+                $minute = isset($row['minute']) ? trim($row['minute']) : '';
+
+                if (!empty($player) && isset($cards[$type])) {
+                    $cards[$type][] = [
+                        'player' => $player,
+                        'minute' => $minute
+                    ];
+                }
+            }
+        }
+
+        return $cards;
     }
 }

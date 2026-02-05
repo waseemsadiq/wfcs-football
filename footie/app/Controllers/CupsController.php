@@ -132,6 +132,17 @@ class CupsController extends CompetitionController
             $time = $this->normalizeTime($time);
         }
 
+        // Handle scheduling details (pitch, referee, isLive)
+        $pitch = $this->sanitizeString($this->post('pitch', ''), 50);
+        $referee = $this->sanitizeString($this->post('referee', ''), 100);
+        $isLive = $this->post('isLive') ? 1 : 0;
+
+        $cupModel->updateFixtureDetails($cup['id'], $fixtureId, [
+            'pitch' => $pitch,
+            'referee' => $referee,
+            'isLive' => $isLive,
+        ]);
+
         // Update date/time if provided
         if ($date && $time) {
             $cupModel->updateFixtureDateTime($cup['id'], $fixtureId, $date, $time);
@@ -154,10 +165,10 @@ class CupsController extends CompetitionController
                 $result = [
                     'homeScore' => (int) $homeScore,
                     'awayScore' => (int) $awayScore,
-                    'homeScorers' => $this->sanitizeString($this->post('homeScorers', ''), 500),
-                    'awayScorers' => $this->sanitizeString($this->post('awayScorers', ''), 500),
-                    'homeCards' => $this->sanitizeString($this->post('homeCards', ''), 500),
-                    'awayCards' => $this->sanitizeString($this->post('awayCards', ''), 500),
+                    'homeScorers' => $this->parseScorersInput($_POST, 'homeScorers'),
+                    'awayScorers' => $this->parseScorersInput($_POST, 'awayScorers'),
+                    'homeCards' => $this->parseCardsInput($_POST, 'home'),
+                    'awayCards' => $this->parseCardsInput($_POST, 'away'),
                     'extraTime' => $this->post('extraTime') === '1',
                     'homeScoreET' => $this->post('homeScoreET') !== '' ? (int) $this->post('homeScoreET') : null,
                     'awayScoreET' => $this->post('awayScoreET') !== '' ? (int) $this->post('awayScoreET') : null,
@@ -170,10 +181,10 @@ class CupsController extends CompetitionController
                 $result = [
                     'homeScore' => null,
                     'awayScore' => null,
-                    'homeScorers' => '',
-                    'awayScorers' => '',
-                    'homeCards' => '',
-                    'awayCards' => '',
+                    'homeScorers' => [],
+                    'awayScorers' => [],
+                    'homeCards' => [],
+                    'awayCards' => [],
                     'extraTime' => false,
                     'homeScoreET' => null,
                     'awayScoreET' => null,

@@ -137,6 +137,9 @@ class Cup extends Model
                     away_team_id as awayTeamId,
                     match_date as date,
                     match_time as time,
+                    pitch,
+                    referee,
+                    is_live as isLive,
                     home_score,
                     away_score,
                     home_scorers,
@@ -163,10 +166,10 @@ class Cup extends Model
                     $fixture['result'] = [
                         'homeScore' => $fixture['home_score'],
                         'awayScore' => $fixture['away_score'],
-                        'homeScorers' => $fixture['home_scorers'] ? json_decode($fixture['home_scorers'], true) : [],
-                        'awayScorers' => $fixture['away_scorers'] ? json_decode($fixture['away_scorers'], true) : [],
-                        'homeCards' => $fixture['home_cards'] ? json_decode($fixture['home_cards'], true) : [],
-                        'awayCards' => $fixture['away_cards'] ? json_decode($fixture['away_cards'], true) : [],
+                        'homeScorers' => $this->decodeLegacyField($fixture['home_scorers']),
+                        'awayScorers' => $this->decodeLegacyField($fixture['away_scorers']),
+                        'homeCards' => $this->decodeLegacyField($fixture['home_cards']),
+                        'awayCards' => $this->decodeLegacyField($fixture['away_cards']),
                         'extraTime' => (bool) $fixture['extra_time'],
                         'homeScoreET' => $fixture['home_score_et'],
                         'awayScoreET' => $fixture['away_score_et'],
@@ -206,6 +209,25 @@ class Cup extends Model
         }
 
         return $rounds;
+    }
+
+    /**
+     * Decode JSON field with backward compatibility.
+     */
+    private function decodeLegacyField($json): mixed
+    {
+        if (!$json) {
+            return [];
+        }
+
+        $decoded = json_decode($json, true);
+
+        // Handle legacy raw string values
+        if (is_string($decoded)) {
+            return $decoded;
+        }
+
+        return $decoded ?: [];
     }
 
     /**
@@ -546,6 +568,28 @@ class Cup extends Model
         $field = $isHome ? 'home_team_id' : 'away_team_id';
         $stmt = $this->db->prepare("UPDATE cup_fixtures SET {$field} = ? WHERE id = ?");
         $stmt->execute([$winnerId, $nextFixtureId]);
+    }
+
+    /**
+     * Update fixture scheduling details.
+     */
+    public function updateFixtureDetails(int|string $cupId, int|string $fixtureId, array $details): bool
+    {
+        $stmt = $this->db->prepare("
+            UPDATE cup_fixtures
+            SET pitch = ?,
+                referee = ?,
+                is_live = ?
+            WHERE cup_id = ? AND id = ?
+        ");
+
+        return $stmt->execute([
+            $details['pitch'] ?? null,
+            $details['referee'] ?? null,
+            (int) ($details['isLive'] ?? 0),
+            $cupId,
+            $fixtureId
+        ]);
     }
 
     /**

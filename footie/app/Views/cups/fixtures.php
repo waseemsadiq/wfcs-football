@@ -41,7 +41,7 @@
                                         <div class="lg:col-span-3 flex items-center justify-end gap-3 text-right order-1 lg:order-1">
                                             <strong
                                                 class="text-sm md:text-base"><?= htmlspecialchars($fixture['homeTeamName'] ?? 'TBD') ?></strong>
-                                            <span class="inline-block w-4 h-4 rounded-full flex-shrink-0 shadow-sm"
+                                            <span class="inline-block w-4 h-4 rounded-full shrink-0 shadow-sm"
                                                 style="background-color: <?= htmlspecialchars($fixture['homeTeamColour'] ?? '#000') ?>;"></span>
                                         </div>
 
@@ -60,38 +60,28 @@
 
                                         <!-- Away Team -->
                                         <div class="lg:col-span-3 flex items-center justify-start gap-3 order-3 lg:order-3">
-                                            <span class="inline-block w-4 h-4 rounded-full flex-shrink-0 shadow-sm"
+                                            <span class="inline-block w-4 h-4 rounded-full shrink-0 shadow-sm"
                                                 style="background-color: <?= htmlspecialchars($fixture['awayTeamColour'] ?? '#000') ?>;"></span>
                                             <strong
                                                 class="text-sm md:text-base"><?= htmlspecialchars($fixture['awayTeamName'] ?? 'TBD') ?></strong>
                                         </div>
 
-                                        <!-- Actions/Date -->
-                                        <div
-                                            class="lg:col-span-3 flex flex-col sm:flex-row items-center justify-end gap-2 order-4 lg:order-4">
-                                            <div class="flex gap-1 w-full sm:w-auto">
-                                                <input type="date" name="date" class="form-input py-1 px-2 text-xs"
-                                                    style="width: 100px;" value="<?= htmlspecialchars($fixture['date']) ?>">
-                                                <input type="time" name="time" class="form-input py-1 px-2 text-xs" style="width: 80px;"
-                                                    value="<?= htmlspecialchars(substr($fixture['time'], 0, 5)) ?>">
-                                            </div>
-                                            <button type="submit" class="btn btn-sm btn-primary w-full sm:w-auto">Save</button>
-                                        </div>
                                     </div>
 
-                                    <div class="border-t border-border/50 pt-3 mt-3">
-                                        <!-- Extra Time / Penalties -->
-                                        <details class="group mb-2" <?= ($fixture['result'] !== null && (($fixture['result']['extraTime'] ?? false) || ($fixture['result']['penalties'] ?? false))) ? 'open' : '' ?>>
-                                            <summary
-                                                class="cursor-pointer text-xs font-medium text-text-muted hover:text-primary transition-colors select-none flex items-center gap-1 w-max">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    class="h-4 w-4 transition-transform group-open:rotate-90" fill="none"
-                                                    viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M9 5l7 7-7 7" />
-                                                </svg>
-                                                Extra Time / Penalties
-                                            </summary>
+                                    <div class="flex justify-between items-start border-t border-border/50 pt-3 mt-3">
+                                        <div class="flex flex-col gap-2 flex-1">
+                                            <!-- Extra Time / Penalties -->
+                                            <details class="group" <?= ($fixture['result'] !== null && (($fixture['result']['extraTime'] ?? false) || ($fixture['result']['penalties'] ?? false))) ? 'open' : '' ?>>
+                                                <summary
+                                                    class="cursor-pointer text-xs font-medium text-text-muted hover:text-primary transition-colors select-none flex items-center gap-1 w-max">
+                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                        class="h-4 w-4 transition-transform group-open:rotate-90" fill="none"
+                                                        viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M9 5l7 7-7 7" />
+                                                    </svg>
+                                                    Extra Time / Penalties
+                                                </summary>
                                             <div
                                                 class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3 bg-surface-hover/30 p-4 rounded text-sm">
                                                 <?php
@@ -176,34 +166,125 @@
                                                 </svg>
                                                 Match Details (Scorers, Cards)
                                             </summary>
-                                            <div
-                                                class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3 bg-surface-hover/30 p-4 rounded text-sm">
-                                                <div>
-                                                    <label class="block text-xs text-text-muted mb-1">Home Scorers</label>
-                                                    <input type="text" name="homeScorers" class="form-input py-1 px-2 text-xs w-full"
-                                                        placeholder="e.g. Smith 23', Jones 67'"
-                                                        value="<?= $fixture['result'] !== null ? htmlspecialchars($fixture['result']['homeScorers'] ?? '') : '' ?>">
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3 bg-surface-hover/30 p-4 rounded text-sm">
+                                                <?php foreach (['home', 'away'] as $side): ?>
+                                                    <div>
+                                                        <label class="block mb-2 text-xs uppercase tracking-wide font-semibold text-text-muted border-b border-border/50 pb-1">
+                                                            <?= ucfirst($side) ?> Details
+                                                        </label>
+                                                        
+                                                        <!-- Scorers -->
+                                                        <div class="mb-4">
+                                                            <div class="flex justify-between items-center mb-1">
+                                                                <span class="text-xs font-bold">Scorers</span>
+                                                                <button type="button" class="text-xs text-primary hover:underline" onclick="addScorerRow(this, '<?= $side ?>Scorers')">+ Add</button>
+                                                            </div>
+                                                            <div class="scorers-list space-y-1">
+                                                                <?php 
+                                                                if (!is_array($scorers)) $scorers = [];
+                                                                foreach ($scorers as $index => $scorer): ?>
+                                                                    <div class="flex gap-1 items-center">
+                                                                        <input type="text" name="<?= $side ?>Scorers[<?= $index ?>][player]" value="<?= htmlspecialchars($scorer['player'] ?? '') ?>" class="form-input py-1 px-2 text-xs flex-1" placeholder="Player">
+                                                                        <input type="text" name="<?= $side ?>Scorers[<?= $index ?>][minute]" value="<?= htmlspecialchars((string)($scorer['minute'] ?? '')) ?>" class="form-input py-1 px-1 text-xs w-10 text-center" placeholder="Min">
+                                                                        <label class="flex items-center gap-1 text-[10px] text-text-muted cursor-pointer whitespace-nowrap">
+                                                                            <input type="checkbox" name="<?= $side ?>Scorers[<?= $index ?>][ownGoal]" value="1" <?= ($scorer['ownGoal'] ?? false) ? 'checked' : '' ?>> OG
+                                                                        </label>
+                                                                        <button type="button" class="text-red-500 hover:text-red-400 text-xs px-1" onclick="this.parentElement.remove()">×</button>
+                                                                    </div>
+                                                                <?php endforeach; ?>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="space-y-2">
+                                                            <div class="flex justify-between items-center mb-1">
+                                                                <span class="text-xs font-bold">Cards</span>
+                                                                <button type="button" class="text-xs text-primary hover:underline"
+                                                                    onclick="addCardRow(this, '<?= $side ?>CardsCombined')">+ Add</button>
+                                                            </div>
+                                                            <div class="cards-list space-y-1">
+                                                                <?php 
+                                                                $cards = $fixture['result'][$side . 'Cards'] ?? [];
+                                                                if (!is_array($cards)) $cards = [];
+                                                                $cardTypes = [
+                                                                    'sinBins' => 'Sin Bin',
+                                                                    'blue' => 'Blue',
+                                                                    'yellow' => 'Yellow',
+                                                                    'red' => 'Red'
+                                                                ];
+                                                                $allCards = [];
+                                                                foreach ($cards as $typeKey => $typeCards) {
+                                                                    if (!is_array($typeCards)) continue;
+                                                                    foreach ($typeCards as $card) {
+                                                                        $card['type'] = $typeKey;
+                                                                        $allCards[] = $card;
+                                                                    }
+                                                                }
+                                                                foreach ($allCards as $idx => $card): ?>
+                                                                    <div class="flex gap-1 items-center">
+                                                                        <select name="<?= $side ?>CardsCombined[<?= $idx ?>][type]" class="form-input py-1 px-1 text-[10px] w-20">
+                                                                            <?php foreach ($cardTypes as $val => $lbl): ?>
+                                                                                <option value="<?= $val ?>" <?= ($card['type'] ?? '') === $val ? 'selected' : '' ?>><?= $lbl ?></option>
+                                                                            <?php endforeach; ?>
+                                                                        </select>
+                                                                        <input type="text" name="<?= $side ?>CardsCombined[<?= $idx ?>][player]" value="<?= htmlspecialchars($card['player'] ?? '') ?>" class="form-input py-1 px-2 text-xs flex-1" placeholder="Player">
+                                                                        <input type="text" name="<?= $side ?>CardsCombined[<?= $idx ?>][minute]" value="<?= htmlspecialchars($card['minute'] ?? '') ?>" class="form-input py-1 px-1 text-xs w-10 text-center" placeholder="Min">
+                                                                        <button type="button" class="text-red-500 hover:text-red-400 text-xs px-1" onclick="this.parentElement.remove()">×</button>
+                                                                    </div>
+                                                                <?php endforeach; ?>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                <?php endforeach; ?>
+
+                                                <div class="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 border-t border-border/50 pt-4 mt-2">
+                                                    <!-- Row 1: Date | Referee -->
+                                                <div class="flex flex-col">
+                                                    <label class="text-[10px] text-text-muted uppercase mb-1">Date</label>
+                                                        <input type="date" name="date" value="<?= htmlspecialchars($fixture['date']) ?>" class="form-input py-1 px-2 text-xs">
+                                                    </div>
+                                                    <div class="flex flex-col">
+                                                        <label class="text-[10px] text-text-muted uppercase mb-1">Referee</label>
+                                                        <input type="text" name="referee" value="<?= htmlspecialchars($fixture['referee'] ?? '') ?>" class="form-input py-1 px-2 text-xs" placeholder="Ref">
+                                                    </div>
+
+                                                    <!-- Row 2: Time | Pitch -->
+                                                    <div class="flex flex-col">
+                                                        <label class="text-[10px] text-text-muted uppercase mb-1">Time</label>
+                                                        <input type="time" name="time" value="<?= htmlspecialchars(substr($fixture['time'], 0, 5)) ?>" class="form-input py-1 px-2 text-xs">
+                                                    </div>
+                                                    <div class="flex flex-col">
+                                                        <label class="text-[10px] text-text-muted uppercase mb-1">Pitch</label>
+                                                        <input type="text" name="pitch" value="<?= htmlspecialchars($fixture['pitch'] ?? '') ?>" class="form-input py-1 px-2 text-xs" placeholder="Pitch">
+                                                    </div>
+
+                                                    <!-- Row 3: Week | Live -->
+                                                    <div class="flex items-center justify-between bg-surface-hover/20 p-2 rounded">
+                                                        <span class="text-[10px] text-text-muted uppercase font-bold">Match Week</span>
+                                                        <?php
+                                                        // Simple auto-calculation based on round order in cups
+                                                        static $cupWeeks = [];
+                                                        $roundKey = $round['id'] ?? $round['name'];
+                                                        if (!in_array($roundKey, $cupWeeks)) {
+                                                            $cupWeeks[] = $roundKey;
+                                                        }
+                                                        $weekNum = array_search($roundKey, $cupWeeks) + 1;
+                                                        ?>
+                                                        <span class="text-xs font-bold text-primary">#<?= $weekNum ?></span>
+                                                    </div>
+                                                    <div class="flex items-center justify-between bg-surface-hover/20 p-2 rounded">
+                                                        <span class="text-[10px] text-text-muted uppercase font-bold">Live Match</span>
+                                                        <label class="relative inline-block w-10 h-5 cursor-pointer">
+                                                            <input type="checkbox" name="isLive" value="1" <?= ($fixture['isLive'] ?? 0) ? 'checked' : '' ?> class="sr-only peer">
+                                                            <div class="w-10 h-5 bg-gray-600 rounded-full peer-checked:bg-primary transition-colors"></div>
+                                                            <div class="absolute left-1 top-1 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
+                                                        </label>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <label class="block text-xs text-text-muted mb-1">Away Scorers</label>
-                                                    <input type="text" name="awayScorers" class="form-input py-1 px-2 text-xs w-full"
-                                                        placeholder="e.g. Brown 45'"
-                                                        value="<?= $fixture['result'] !== null ? htmlspecialchars($fixture['result']['awayScorers'] ?? '') : '' ?>">
-                                                </div>
-                                                <div>
-                                                    <label class="block text-xs text-text-muted mb-1">Home Cards</label>
-                                                    <input type="text" name="homeCards" class="form-input py-1 px-2 text-xs w-full"
-                                                        placeholder="e.g. Wilson (Y)"
-                                                        value="<?= $fixture['result'] !== null ? htmlspecialchars($fixture['result']['homeCards'] ?? '') : '' ?>">
-                                                </div>
-                                                <div>
-                                                    <label class="block text-xs text-text-muted mb-1">Away Cards</label>
-                                                    <input type="text" name="awayCards" class="form-input py-1 px-2 text-xs w-full"
-                                                        placeholder="e.g. Taylor (R)"
-                                                        value="<?= $fixture['result'] !== null ? htmlspecialchars($fixture['result']['awayCards'] ?? '') : '' ?>">
-                                                </div>
-                                            </div>
-                                        </details>
+                                            </details>
+                                        </div>
+                                        <div class="pt-0.5">
+                                            <button type="submit" class="btn btn-sm btn-primary px-8">Update</button>
+                                        </div>
                                     </div>
                                 </form>
                             </div>
@@ -268,4 +349,41 @@ include __DIR__ . '/../partials/regenerate_modal.php';
             });
         });
     });
+
+    function addScorerRow(btn, fieldName) {
+        const container = btn.parentElement.nextElementSibling;
+        const index = container.children.length + Math.floor(Math.random() * 1000);
+        
+        const div = document.createElement('div');
+        div.className = 'flex gap-1 items-center';
+        div.innerHTML = `
+            <input type="text" name="${fieldName}[${index}][player]" class="form-input py-1 px-2 text-xs flex-1" placeholder="Player">
+            <input type="text" name="${fieldName}[${index}][minute]" class="form-input py-1 px-1 text-xs w-10 text-center" placeholder="Min">
+            <label class="flex items-center gap-1 text-[10px] text-text-muted cursor-pointer whitespace-nowrap">
+                <input type="checkbox" name="${fieldName}[${index}][ownGoal]" value="1"> OG
+            </label>
+            <button type="button" class="text-red-500 hover:text-red-400 text-xs px-1" onclick="this.parentElement.remove()">×</button>
+        `;
+        container.appendChild(div);
+    }
+
+    function addCardRow(btn, fieldName) {
+        const container = btn.parentElement.nextElementSibling;
+        const index = container.children.length + Math.floor(Math.random() * 1000);
+        
+        const div = document.createElement('div');
+        div.className = 'flex gap-1 items-center';
+        div.innerHTML = `
+            <select name="${fieldName}[${index}][type]" class="form-input py-1 px-1 text-[10px] w-20">
+                <option value="sinBins">Sin Bin</option>
+                <option value="blue">Blue</option>
+                <option value="yellow" selected>Yellow</option>
+                <option value="red">Red</option>
+            </select>
+            <input type="text" name="${fieldName}[${index}][player]" class="form-input py-1 px-2 text-xs flex-1" placeholder="Player">
+            <input type="text" name="${fieldName}[${index}][minute]" class="form-input py-1 px-1 text-xs w-10 text-center" placeholder="Min">
+            <button type="button" class="text-red-500 hover:text-red-400 text-xs px-1" onclick="this.parentElement.remove()">×</button>
+        `;
+        container.appendChild(div);
+    }
 </script>

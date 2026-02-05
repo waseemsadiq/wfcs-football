@@ -137,6 +137,18 @@ class LeaguesController extends CompetitionController
             $time = $this->normalizeTime($time);
         }
 
+        // Handle scheduling details (pitch, referee, isLive)
+        $pitch = $this->sanitizeString($this->post('pitch', ''), 50);
+        $referee = $this->sanitizeString($this->post('referee', ''), 100);
+        // Checkboxes often not sent if unchecked, default to 0
+        $isLive = $this->post('isLive') ? 1 : 0;
+
+        $leagueModel->updateFixtureDetails($league['id'], $fixtureId, [
+            'pitch' => $pitch,
+            'referee' => $referee,
+            'isLive' => $isLive,
+        ]);
+
         // Update date/time if provided
         if ($date && $time) {
             $leagueModel->updateFixtureDateTime($league['id'], $fixtureId, $date, $time);
@@ -159,20 +171,20 @@ class LeaguesController extends CompetitionController
                 $result = [
                     'homeScore' => (int) $homeScore,
                     'awayScore' => (int) $awayScore,
-                    'homeScorers' => $this->sanitizeString($this->post('homeScorers', ''), 500),
-                    'awayScorers' => $this->sanitizeString($this->post('awayScorers', ''), 500),
-                    'homeCards' => $this->sanitizeString($this->post('homeCards', ''), 500),
-                    'awayCards' => $this->sanitizeString($this->post('awayCards', ''), 500),
+                    'homeScorers' => $this->parseScorersInput($_POST, 'homeScorers'),
+                    'awayScorers' => $this->parseScorersInput($_POST, 'awayScorers'),
+                    'homeCards' => $this->parseCardsInput($_POST, 'home'),
+                    'awayCards' => $this->parseCardsInput($_POST, 'away'),
                 ];
             } else {
                 // Clear result
                 $result = [
                     'homeScore' => null,
                     'awayScore' => null,
-                    'homeScorers' => '',
-                    'awayScorers' => '',
-                    'homeCards' => '',
-                    'awayCards' => '',
+                    'homeScorers' => [],
+                    'awayScorers' => [],
+                    'homeCards' => [],
+                    'awayCards' => [],
                 ];
             }
             $leagueModel->updateFixtureResult($league['id'], $fixtureId, $result);
