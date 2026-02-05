@@ -44,3 +44,8 @@ footie/docs/plans/
 /index.sh
 /php.ini
 /wp-install.php
+
+# Shared Hosting Local Configuration (Secrets)
+footie/config/*-shared.php
+!footie/config/database-shared.example.php
+!footie/config/app-shared.example.php
