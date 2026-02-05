@@ -182,6 +182,7 @@ abstract class CompetitionController extends Controller
         }
 
         $seasons = $this->season->all();
+        $teams = $this->team->all();
         $plural = $this->getEntityTypePlural();
 
         $this->render($this->getViewPrefix() . '/edit', array_merge([
@@ -189,6 +190,8 @@ abstract class CompetitionController extends Controller
             'currentPage' => $plural,
             $this->getEntityType() => $entity,
             'seasons' => $seasons,
+            'teams' => $teams,
+            'selectedTeamIds' => $entity['teamIds'] ?? [],
             'csrfToken' => $this->csrfToken(),
             'basePath' => $this->basePath,
         ], $this->getEditAdditionalData($entity)));
@@ -223,6 +226,26 @@ abstract class CompetitionController extends Controller
             return;
         }
 
+        // Handle team changes
+        $teamIds = $this->post('teamIds', []);
+        if (!is_array($teamIds)) {
+            $teamIds = [];
+        }
+
+        // Validate minimum 2 teams
+        if (count($teamIds) < 2) {
+            $this->flash('error', 'A competition must have at least 2 teams.');
+            $this->redirect("/admin/{$plural}/{$slug}/edit");
+            return;
+        }
+
+        // Check if teams changed
+        $currentTeamIds = $entity['teamIds'] ?? [];
+        sort($currentTeamIds);
+        $newTeamIds = $teamIds;
+        sort($newTeamIds);
+        $teamsChanged = $currentTeamIds !== $newTeamIds;
+
         $name = $this->sanitizeString($this->post('name'));
         $startDate = $this->post('startDate');
         $frequency = $this->normalizeFrequency($this->post('frequency', 'weekly'));
@@ -236,6 +259,14 @@ abstract class CompetitionController extends Controller
         ], $entity);
 
         try {
+            // Update team associations
+            $this->competition->setTeams($entity['id'], $teamIds);
+
+            // Auto-regenerate unplayed fixtures if teams changed
+            if ($teamsChanged) {
+                $this->regenerateUnplayedFixtures($entity, $teamIds);
+            }
+
             $this->competition->update($entity['id'], $updates);
             $newSlug = $this->competition->find($entity['id'])['slug'] ?? $slug;
             $this->flash('success', ucfirst($entityType) . ' updated successfully.');
@@ -253,6 +284,38 @@ abstract class CompetitionController extends Controller
     protected function prepareUpdateData(array $data, array $currentEntity): array
     {
         return $data;
+    }
+
+    /**
+     * Regenerate unplayed fixtures when teams change.
+     * For leagues: deletes unplayed fixtures and regenerates with new team list.
+     * For cups: reschedules unplayed fixtures or regenerates bracket if needed.
+     */
+    protected function regenerateUnplayedFixtures(array $entity, array $teamIds): void
+    {
+        $entityType = $this->getEntityType();
+
+        if ($entityType === 'league') {
+            // For leagues: delete unplayed, regenerate all fixtures
+            $this->competition->deleteUnplayedFixtures($entity['id']);
+            $this->competition->generateFixtures(
+                $entity['id'],
+                $teamIds,
+                $entity['startDate'] ?? date('Y-m-d'),
+                $entity['frequency'] ?? 'weekly',
+                $entity['matchTime'] ?? '15:00',
+                false  // Don't delete existing (already deleted unplayed only)
+            );
+        } elseif ($entityType === 'cup') {
+            // For cups: regenerate the entire bracket (preserves played matches in generateBracket)
+            $this->competition->generateBracket(
+                $entity['id'],
+                $teamIds,
+                $entity['startDate'] ?? date('Y-m-d'),
+                $entity['frequency'] ?? 'weekly',
+                $entity['matchTime'] ?? '15:00'
+            );
+        }
     }
 
     /**

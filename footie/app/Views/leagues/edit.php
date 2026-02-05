@@ -47,6 +47,29 @@
             </div>
         </div>
 
+        <!-- Team Management Section -->
+        <div class="pt-6 border-t border-border">
+            <div class="mb-4">
+                <h3 class="text-lg font-bold text-text-main">Teams</h3>
+                <p class="text-sm text-text-muted">Add or remove teams from this league.</p>
+            </div>
+
+            <div class="bg-warning/10 text-warning p-4 rounded-sm border border-warning/20 mb-6">
+                <p class="text-sm">
+                    <strong>⚠️ Warning:</strong> Adding or removing teams will regenerate all unplayed fixtures.
+                    Fixtures with recorded results will be preserved.
+                </p>
+            </div>
+
+            <?php
+            $label = 'League Teams';
+            $required = false;
+            $showCount = true;
+            $showGrouped = true;  // NEW: Show current teams separate from available teams
+            include __DIR__ . '/../partials/team_selector.php';
+            ?>
+        </div>
+
         <div class="flex gap-4 mt-8 border-t border-border pt-8">
             <button type="submit" class="btn btn-primary">Save Changes</button>
             <a href="<?=$basePath?>/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>"
@@ -54,6 +77,27 @@
         </div>
     </form>
 </div>
+
+<!-- JavaScript: Track team changes and confirm on save -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const checkboxes = document.querySelectorAll('.team-checkbox');
+    const originalTeams = new Set([...checkboxes].filter(cb => cb.checked).map(cb => cb.value));
+
+    form.addEventListener('submit', function(e) {
+        const currentTeams = new Set([...checkboxes].filter(cb => cb.checked).map(cb => cb.value));
+        const teamsChanged = originalTeams.size !== currentTeams.size ||
+            [...originalTeams].some(id => !currentTeams.has(id));
+
+        if (teamsChanged) {
+            if (!confirm('You have changed the teams in this league. This will regenerate all unplayed fixtures. Continue?')) {
+                e.preventDefault();
+            }
+        }
+    });
+});
+</script>
 
 <?php
 $entityType = 'league';
