@@ -372,6 +372,9 @@ class PublicController extends Controller
         // Get fixtures
         $fixtures = $this->enrichFixtures($league['fixtures'] ?? [], $teamsById, $league['name'], 'league');
 
+        // Render standings using shared partial
+        $standingsHtml = $this->renderStandingsHtml($standings);
+
         // Recent results: last 3 fixture dates
         $recentResults = $this->getRecentResultsByDates($fixtures, 3);
         $recentResultsHtml = $this->renderFixturesHtml($recentResults, true);
@@ -385,8 +388,7 @@ class PublicController extends Controller
                 'name' => $league['name'],
                 'slug' => $league['slug'],
             ],
-            'standings' => $standings,
-            'fixtures' => $fixtures,
+            'standingsHtml' => $standingsHtml,
             'recentResultsHtml' => $recentResultsHtml,
             'upcomingFixturesHtml' => $upcomingFixturesHtml,
         ]);
@@ -453,6 +455,26 @@ class PublicController extends Controller
             echo '</ul>';
         }
         echo '</div>';
+
+        return ob_get_clean();
+    }
+
+    /**
+     * Render standings to HTML using the shared partial.
+     */
+    private function renderStandingsHtml(array $standings): string
+    {
+        // Calculate base path for subfolder installations
+        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+        $basePath = rtrim(dirname($scriptName), '/\\');
+        $basePath = str_replace('\\', '/', $basePath); // Windows compat
+        $basePath = ($basePath !== '' && $basePath !== '/') ? $basePath : '';
+
+        ob_start();
+
+        // Set context for the partial
+        $context = 'public';
+        include BASE_PATH . '/app/Views/partials/standings_table.php';
 
         return ob_get_clean();
     }

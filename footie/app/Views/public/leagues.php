@@ -127,8 +127,12 @@
 
                 const data = await response.json();
 
-                // Render standings
-                renderStandings(data.standings);
+                // Render standings (server-rendered HTML from shared partial)
+                if (data.standingsHtml) {
+                    standingsContent.innerHTML = data.standingsHtml;
+                } else {
+                    standingsContent.innerHTML = '<div class="text-center py-12 text-text-muted"><p>No standings available</p></div>';
+                }
 
                 // Render recent results
                 if (data.recentResultsHtml) {
@@ -159,91 +163,6 @@
                 errorState.classList.remove('hidden');
                 errorMessage.textContent = error.message || 'Unable to load league data. Please try again.';
             }
-        }
-
-        // Render standings table (NOTE: innerHTML used with properly escaped data)
-        function renderStandings(standings) {
-            if (!standings || standings.length === 0) {
-                standingsContent.innerHTML = '<div class="text-center py-12 text-text-muted"><p>No standings available</p></div>';
-                return;
-            }
-
-            let html = '<div class="overflow-x-auto"><table class="w-full border-collapse">';
-
-            // Header
-            html += `
-                <thead>
-                    <tr>
-                        <th class="uppercase text-xs font-bold text-text-muted tracking-wider p-4 border-b border-border text-center w-12">Pos</th>
-                        <th class="uppercase text-xs font-bold text-text-muted tracking-wider p-4 border-b border-border text-left">Team</th>
-                        <th class="uppercase text-xs font-bold text-text-muted tracking-wider p-4 border-b border-border text-center w-12" title="Played">P</th>
-                        <th class="uppercase text-xs font-bold text-text-muted tracking-wider p-4 border-b border-border text-center w-12 hidden sm:table-cell" title="Won">W</th>
-                        <th class="uppercase text-xs font-bold text-text-muted tracking-wider p-4 border-b border-border text-center w-12 hidden sm:table-cell" title="Drawn">D</th>
-                        <th class="uppercase text-xs font-bold text-text-muted tracking-wider p-4 border-b border-border text-center w-12 hidden sm:table-cell" title="Lost">L</th>
-                        <th class="uppercase text-xs font-bold text-text-muted tracking-wider p-4 border-b border-border text-center w-12 hidden md:table-cell" title="Goals For">GF</th>
-                        <th class="uppercase text-xs font-bold text-text-muted tracking-wider p-4 border-b border-border text-center w-12 hidden md:table-cell" title="Goals Against">GA</th>
-                        <th class="uppercase text-xs font-bold text-text-muted tracking-wider p-4 border-b border-border text-center w-12" title="Goal Difference">GD</th>
-                        <th class="uppercase text-xs font-bold text-text-muted tracking-wider p-4 border-b border-border text-center w-16">Pts</th>
-                        <th class="uppercase text-xs font-bold text-text-muted tracking-wider p-4 border-b border-border text-left hidden md:table-cell">Last 5</th>
-                    </tr>
-                </thead>
-            `;
-
-            // Body
-            html += '<tbody>';
-            standings.forEach((row, index) => {
-                const pos = index + 1;
-                const gdClass = row.goalDifference > 0 ? 'text-primary' : (row.goalDifference < 0 ? 'text-danger' : 'text-text-muted');
-                const gdDisplay = row.goalDifference > 0 ? '+' + row.goalDifference : row.goalDifference;
-
-                // Form Guide
-                const formHtml = (row.form || []).map(r => {
-                    let bg, lbl;
-                    if (r === 'W') { bg = '#008744'; lbl = 'W'; }
-                    else if (r === 'L') { bg = '#D61A21'; lbl = 'L'; }
-                    else { bg = '#666666'; lbl = 'D'; }
-                    return `<span class="inline-flex items-center justify-center w-8 h-8 rounded-sm text-white text-xs font-bold shadow-sm transform transition-transform hover:scale-110" style="background-color: ${bg}" title="${lbl}">${lbl}</span>`;
-                }).join('');
-
-                html += `
-                    <tr class="border-b border-border hover:bg-surface-hover/50 transition-colors last:border-0">
-                        <td class="p-4 text-center font-medium text-text-muted">${pos}</td>
-                        <td class="p-4">
-                            <div class="flex items-center gap-3">
-                                <span class="inline-block w-3 h-3 rounded-full shadow-sm flex-shrink-0" style="background-color: ${escapeHtml(row.teamColour)}"></span>
-                                <span class="font-semibold text-text-main">
-                                    <a href="<?= $basePath ?>/team/${escapeHtml(row.teamSlug || row.teamId)}" class="hover:text-primary transition-colors">
-                                        ${escapeHtml(row.teamName)}
-                                    </a>
-                                </span>
-                            </div>
-                        </td>
-                        <td class="p-4 text-center text-text-muted">${row.played}</td>
-                        <td class="p-4 text-center text-text-muted hidden sm:table-cell">${row.won}</td>
-                        <td class="p-4 text-center text-text-muted hidden sm:table-cell">${row.drawn}</td>
-                        <td class="p-4 text-center text-text-muted hidden sm:table-cell">${row.lost}</td>
-                        <td class="p-4 text-center text-text-muted hidden md:table-cell">${row.goalsFor}</td>
-                        <td class="p-4 text-center text-text-muted hidden md:table-cell">${row.goalsAgainst}</td>
-                        <td class="p-4 text-center font-medium ${gdClass}">${gdDisplay}</td>
-                        <td class="p-4 text-center font-bold text-lg text-text-main">${row.points}</td>
-                        <td class="p-4 hidden md:table-cell">
-                            <div class="flex items-center justify-start gap-1">
-                                ${formHtml}
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            });
-            html += '</tbody></table></div>';
-
-            standingsContent.innerHTML = html;
-        }
-
-        // Escape HTML to prevent XSS
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
         }
 
         // Event listener for league selection
