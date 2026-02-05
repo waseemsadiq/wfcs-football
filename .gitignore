@@ -49,3 +49,5 @@ footie/docs/plans/
 footie/config/*-shared.php
 !footie/config/database-shared.example.php
 !footie/config/app-shared.example.php
+/.claude
+/CLAUDE-G.md
