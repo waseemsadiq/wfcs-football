@@ -81,7 +81,7 @@
 
                                     <div class="border-t border-border/50 pt-3 mt-3">
                                         <!-- Extra Time / Penalties -->
-                                        <details class="group mb-2" <?= ($fixture['result']['extraTime'] ?? false) || ($fixture['result']['penalties'] ?? false) ? 'open' : '' ?>>
+                                        <details class="group mb-2" <?= ($fixture['result'] !== null && (($fixture['result']['extraTime'] ?? false) || ($fixture['result']['penalties'] ?? false))) ? 'open' : '' ?>>
                                             <summary
                                                 class="cursor-pointer text-xs font-medium text-text-muted hover:text-primary transition-colors select-none flex items-center gap-1 w-max">
                                                 <svg xmlns="http://www.w3.org/2000/svg"
@@ -182,25 +182,25 @@
                                                     <label class="block text-xs text-text-muted mb-1">Home Scorers</label>
                                                     <input type="text" name="homeScorers" class="form-input py-1 px-2 text-xs w-full"
                                                         placeholder="e.g. Smith 23', Jones 67'"
-                                                        value="<?= htmlspecialchars($fixture['result']['homeScorers'] ?? '') ?>">
+                                                        value="<?= $fixture['result'] !== null ? htmlspecialchars($fixture['result']['homeScorers'] ?? '') : '' ?>">
                                                 </div>
                                                 <div>
                                                     <label class="block text-xs text-text-muted mb-1">Away Scorers</label>
                                                     <input type="text" name="awayScorers" class="form-input py-1 px-2 text-xs w-full"
                                                         placeholder="e.g. Brown 45'"
-                                                        value="<?= htmlspecialchars($fixture['result']['awayScorers'] ?? '') ?>">
+                                                        value="<?= $fixture['result'] !== null ? htmlspecialchars($fixture['result']['awayScorers'] ?? '') : '' ?>">
                                                 </div>
                                                 <div>
                                                     <label class="block text-xs text-text-muted mb-1">Home Cards</label>
                                                     <input type="text" name="homeCards" class="form-input py-1 px-2 text-xs w-full"
                                                         placeholder="e.g. Wilson (Y)"
-                                                        value="<?= htmlspecialchars($fixture['result']['homeCards'] ?? '') ?>">
+                                                        value="<?= $fixture['result'] !== null ? htmlspecialchars($fixture['result']['homeCards'] ?? '') : '' ?>">
                                                 </div>
                                                 <div>
                                                     <label class="block text-xs text-text-muted mb-1">Away Cards</label>
                                                     <input type="text" name="awayCards" class="form-input py-1 px-2 text-xs w-full"
                                                         placeholder="e.g. Taylor (R)"
-                                                        value="<?= htmlspecialchars($fixture['result']['awayCards'] ?? '') ?>">
+                                                        value="<?= $fixture['result'] !== null ? htmlspecialchars($fixture['result']['awayCards'] ?? '') : '' ?>">
                                                 </div>
                                             </div>
                                         </details>

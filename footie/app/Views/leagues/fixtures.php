@@ -110,10 +110,10 @@ usort($fixtures, function ($a, $b) {
                                                 class="block mb-2 text-xs uppercase tracking-wide font-semibold text-text-muted">Home
                                                 Details</label>
                                             <input type="text" name="homeScorers" placeholder="Scorers (e.g. Smith 23')"
-                                                value="<?= htmlspecialchars($fixture['result']['homeScorers'] ?? '') ?>"
+                                                value="<?= $fixture['result'] !== null ? htmlspecialchars($fixture['result']['homeScorers'] ?? '') : '' ?>"
                                                 class="form-input mb-2 text-sm py-2">
                                             <input type="text" name="homeCards" placeholder="Cards (e.g. Wilson (Y))"
-                                                value="<?= htmlspecialchars($fixture['result']['homeCards'] ?? '') ?>"
+                                                value="<?= $fixture['result'] !== null ? htmlspecialchars($fixture['result']['homeCards'] ?? '') : '' ?>"
                                                 class="form-input text-sm py-2">
                                         </div>
                                         <div>
@@ -121,10 +121,10 @@ usort($fixtures, function ($a, $b) {
                                                 class="block mb-2 text-xs uppercase tracking-wide font-semibold text-text-muted">Away
                                                 Details</label>
                                             <input type="text" name="awayScorers" placeholder="Scorers (e.g. Brown 45')"
-                                                value="<?= htmlspecialchars($fixture['result']['awayScorers'] ?? '') ?>"
+                                                value="<?= $fixture['result'] !== null ? htmlspecialchars($fixture['result']['awayScorers'] ?? '') : '' ?>"
                                                 class="form-input mb-2 text-sm py-2">
                                             <input type="text" name="awayCards" placeholder="Cards (e.g. Taylor (R))"
-                                                value="<?= htmlspecialchars($fixture['result']['awayCards'] ?? '') ?>"
+                                                value="<?= $fixture['result'] !== null ? htmlspecialchars($fixture['result']['awayCards'] ?? '') : '' ?>"
                                                 class="form-input text-sm py-2">
                                         </div>
                                     </div>

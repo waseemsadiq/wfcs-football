@@ -438,9 +438,6 @@ class League extends Model
         return null;
     }
 
-    /**
-     * Update a fixture result.
-     */
     public function updateFixtureResult(int|string $leagueId, int|string $fixtureId, array $result): bool
     {
         $stmt = $this->db->prepare("
@@ -457,10 +454,10 @@ class League extends Model
         return $stmt->execute([
             $result['homeScore'] ?? null,
             $result['awayScore'] ?? null,
-            $result['homeScorers'] ?? '',
-            $result['awayScorers'] ?? '',
-            $result['homeCards'] ?? '',
-            $result['awayCards'] ?? '',
+            json_encode($result['homeScorers'] ?? ''),
+            json_encode($result['awayScorers'] ?? ''),
+            json_encode($result['homeCards'] ?? ''),
+            json_encode($result['awayCards'] ?? ''),
             $leagueId,
             $fixtureId
         ]);

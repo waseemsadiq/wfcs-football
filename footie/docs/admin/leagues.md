@@ -37,6 +37,7 @@ WFCS Football automatically generates all fixtures in a round-robin format when 
 Enter a name for your league competition.
 
 Examples:
+
 - "Premier Division"
 - "Division One"
 - "Sunday Morning League"
@@ -111,28 +112,21 @@ The algorithm ensures no team plays multiple matches on the same date.
 3. Update the league details
 4. Click **Save Changes**
 
-### What You Can Edit
+### Managing Teams
 
-**League Name**
+You can add or remove teams from an active league:
 
-Change the league's name. The slug updates automatically if you change the name.
+1.  Scroll to the **Teams** section
+2.  Tick or untick teams as needed
+3.  Click **Save Changes**
 
-**Scheduling Defaults**
-
-You can update:
-
-- **First Fixture Date**: Changes the reference date (does not automatically regenerate fixtures)
-- **Match Frequency**: Updates the default frequency (does not automatically regenerate fixtures)
-- **Typical Match Time**: Changes the default time (does not automatically regenerate fixtures)
-
-**Important**: Editing these fields updates the league's default settings but does not change existing fixtures. To reschedule all fixtures based on new settings, use the **Regenerate Fixtures** feature.
+**Important**: Changing the team lineup will **regenerate the schedule for all unplayed fixtures**. Matches that have already been played (with results) are preserved. A warning will appear to confirm this action.
 
 ### What You Cannot Edit
 
 You cannot change:
 
 - The season (leagues are permanently assigned to a season)
-- The teams (use regenerate fixtures to change team selection)
 
 ## League Detail View
 

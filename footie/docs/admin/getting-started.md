@@ -50,12 +50,12 @@ Click any competition name to view its details and standings.
 The main navigation menu appears at the top of every admin page:
 
 - **Dashboard**: Return to the main dashboard
-- **Seasons**: Manage your football seasons
 - **Teams**: Add and edit teams
+- **Seasons**: Manage your football seasons
 - **Leagues**: Create and manage league competitions
 - **Cups**: Create and manage cup tournaments
-- **View Site**: Preview the public-facing website
-- **Log out**: Sign out of the admin area
+- **Theme Toggle**: Switch between light and dark modes
+- **Log out**: Sign out of the admin area (open lock icon)
 
 ## Your First Season
 
@@ -119,5 +119,17 @@ After creating your first competition:
 - Record match results as games are played
 - Check league standings or cup bracket progress
 - Add more teams or competitions as needed
+
+## Troubleshooting
+
+### Restoring Access
+
+If you forget your admin password, you cannot reset it from the login screen. You must reset it on the server:
+
+1.  Access the server files
+2.  Open the `.env` file in the project root
+3.  Update the `ADMIN_PASSWORD_HASH` value with a new Bcrypt hash
+
+You can use the included `generate_password.php` utility to create a new hash.
 
 Return to the [admin guide index](index.md).

@@ -142,28 +142,44 @@ class LeaguesController extends CompetitionController
             $leagueModel->updateFixtureDateTime($league['id'], $fixtureId, $date, $time);
         }
 
-        // Update result if scores provided
-        if ($homeScore !== null && $homeScore !== '' && $awayScore !== null && $awayScore !== '') {
-            // Validate scores are non-negative integers
-            if (!is_numeric($homeScore) || !is_numeric($awayScore) || (int) $homeScore < 0 || (int) $awayScore < 0) {
-                if ($this->isAjaxRequest()) {
-                    $this->json(['success' => false, 'error' => 'Scores must be non-negative numbers.']);
+        // Update result if scores provided or cleared
+        if ($fixtureId && (($homeScore !== '' && $awayScore !== '') || ($homeScore === '' && $awayScore === ''))) {
+            if ($homeScore !== '') {
+                // Validate scores are non-negative integers
+                if (!is_numeric($homeScore) || !is_numeric($awayScore) || (int) $homeScore < 0 || (int) $awayScore < 0) {
+                    if ($this->isAjaxRequest()) {
+                        $this->json(['success' => false, 'error' => 'Scores must be non-negative numbers.']);
+                        return;
+                    }
+                    $this->flash('error', 'Scores must be non-negative numbers.');
+                    $this->redirect('/admin/leagues/' . $slug . '/fixtures');
                     return;
                 }
-                $this->flash('error', 'Scores must be non-negative numbers.');
-                $this->redirect('/admin/leagues/' . $slug . '/fixtures');
-                return;
-            }
 
-            $result = [
-                'homeScore' => (int) $homeScore,
-                'awayScore' => (int) $awayScore,
-                'homeScorers' => $this->sanitizeString($this->post('homeScorers', ''), 500),
-                'awayScorers' => $this->sanitizeString($this->post('awayScorers', ''), 500),
-                'homeCards' => $this->sanitizeString($this->post('homeCards', ''), 500),
-                'awayCards' => $this->sanitizeString($this->post('awayCards', ''), 500),
-            ];
+                $result = [
+                    'homeScore' => (int) $homeScore,
+                    'awayScore' => (int) $awayScore,
+                    'homeScorers' => $this->sanitizeString($this->post('homeScorers', ''), 500),
+                    'awayScorers' => $this->sanitizeString($this->post('awayScorers', ''), 500),
+                    'homeCards' => $this->sanitizeString($this->post('homeCards', ''), 500),
+                    'awayCards' => $this->sanitizeString($this->post('awayCards', ''), 500),
+                ];
+            } else {
+                // Clear result
+                $result = [
+                    'homeScore' => null,
+                    'awayScore' => null,
+                    'homeScorers' => '',
+                    'awayScorers' => '',
+                    'homeCards' => '',
+                    'awayCards' => '',
+                ];
+            }
             $leagueModel->updateFixtureResult($league['id'], $fixtureId, $result);
+        } elseif ($fixtureId && ($homeScore === '' || $awayScore === '')) {
+            $this->flash('error', 'Both scores must be provided to save a result.');
+            $this->redirect('/admin/leagues/' . $slug . '/fixtures');
+            return;
         }
 
         if ($this->isAjaxRequest()) {

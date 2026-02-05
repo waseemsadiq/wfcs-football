@@ -66,7 +66,7 @@ class CupsController extends CompetitionController
      */
     public function fixtures(string $slug): void
     {
-        /** @var Cup $cup */
+        /** @var array $cup */
         $cup = $this->competition->findWhere('slug', $slug);
 
         if (!$cup) {
@@ -100,6 +100,7 @@ class CupsController extends CompetitionController
 
         /** @var Cup $cupModel */
         $cupModel = $this->competition;
+        /** @var array $cup */
         $cup = $cupModel->findWhere('slug', $slug);
 
         if (!$cup) {
@@ -136,44 +137,56 @@ class CupsController extends CompetitionController
             $cupModel->updateFixtureDateTime($cup['id'], $fixtureId, $date, $time);
         }
 
-        // Update result if scores provided
-        if ($homeScore !== null && $homeScore !== '' && $awayScore !== null && $awayScore !== '') {
-            // Validate scores are non-negative integers
-            if (!is_numeric($homeScore) || !is_numeric($awayScore) || (int) $homeScore < 0 || (int) $awayScore < 0) {
-                if ($this->isAjaxRequest()) {
-                    $this->json(['success' => false, 'error' => 'Scores must be non-negative numbers.']);
+        // Update result if scores provided or cleared
+        if ($fixtureId && (($homeScore !== '' && $awayScore !== '') || ($homeScore === '' && $awayScore === ''))) {
+            if ($homeScore !== '') {
+                // Validate scores are non-negative integers
+                if (!is_numeric($homeScore) || !is_numeric($awayScore) || (int) $homeScore < 0 || (int) $awayScore < 0) {
+                    if ($this->isAjaxRequest()) {
+                        $this->json(['success' => false, 'error' => 'Scores must be non-negative numbers.']);
+                        return;
+                    }
+                    $this->flash('error', 'Scores must be non-negative numbers.');
+                    $this->redirect('/admin/cups/' . $slug . '/fixtures');
                     return;
                 }
-                $this->flash('error', 'Scores must be non-negative numbers.');
-                $this->redirect('/admin/cups/' . $slug . '/fixtures');
-                return;
+
+                $result = [
+                    'homeScore' => (int) $homeScore,
+                    'awayScore' => (int) $awayScore,
+                    'homeScorers' => $this->sanitizeString($this->post('homeScorers', ''), 500),
+                    'awayScorers' => $this->sanitizeString($this->post('awayScorers', ''), 500),
+                    'homeCards' => $this->sanitizeString($this->post('homeCards', ''), 500),
+                    'awayCards' => $this->sanitizeString($this->post('awayCards', ''), 500),
+                    'extraTime' => $this->post('extraTime') === '1',
+                    'homeScoreET' => $this->post('homeScoreET') !== '' ? (int) $this->post('homeScoreET') : null,
+                    'awayScoreET' => $this->post('awayScoreET') !== '' ? (int) $this->post('awayScoreET') : null,
+                    'penalties' => $this->post('penalties') === '1',
+                    'homePens' => $this->post('homePens') !== '' ? (int) $this->post('homePens') : null,
+                    'awayPens' => $this->post('awayPens') !== '' ? (int) $this->post('awayPens') : null,
+                ];
+            } else {
+                // Clear result
+                $result = [
+                    'homeScore' => null,
+                    'awayScore' => null,
+                    'homeScorers' => '',
+                    'awayScorers' => '',
+                    'homeCards' => '',
+                    'awayCards' => '',
+                    'extraTime' => false,
+                    'homeScoreET' => null,
+                    'awayScoreET' => null,
+                    'penalties' => false,
+                    'homePens' => null,
+                    'awayPens' => null,
+                ];
             }
-
-            $result = [
-                'homeScore' => (int) $homeScore,
-                'awayScore' => (int) $awayScore,
-                'homeScorers' => $this->sanitizeString($this->post('homeScorers', ''), 500),
-                'awayScorers' => $this->sanitizeString($this->post('awayScorers', ''), 500),
-                'homeCards' => $this->sanitizeString($this->post('homeCards', ''), 500),
-                'awayCards' => $this->sanitizeString($this->post('awayCards', ''), 500),
-                'extraTime' => $this->post('extraTime') === '1',
-                'homeScoreET' => $this->post('homeScoreET') !== '' ? (int) $this->post('homeScoreET') : null,
-                'awayScoreET' => $this->post('awayScoreET') !== '' ? (int) $this->post('awayScoreET') : null,
-                'penalties' => $this->post('penalties') === '1',
-                'homePens' => $this->post('homePens') !== '' ? (int) $this->post('homePens') : null,
-                'awayPens' => $this->post('awayPens') !== '' ? (int) $this->post('awayPens') : null,
-            ];
-
             $cupModel->updateFixtureResult($cup['id'], $fixtureId, $result);
-
-            // Auto-advance winner if match is complete
-            // Auto-advance is handled within updateFixtureResult
-            /*
-            $winnerId = ((int) $homeScore > (int) $awayScore) ? $this->post('homeTeamId') : $this->post('awayTeamId');
-            if ($winnerId) {
-                // $cupModel->advanceWinner($cup['id'], $fixtureId, $winnerId);
-            }
-            */
+        } elseif ($fixtureId && ($homeScore === '' || $awayScore === '')) {
+            $this->flash('error', 'Both scores must be provided to save a result.');
+            $this->redirect('/admin/cups/' . $slug . '/fixtures');
+            return;
         }
 
         if ($this->isAjaxRequest()) {

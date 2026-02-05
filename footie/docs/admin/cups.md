@@ -37,6 +37,7 @@ WFCS Football automatically generates a knockout bracket and schedules the first
 Enter a name for your cup competition.
 
 Examples:
+
 - "FA Cup"
 - "League Cup"
 - "Challenge Trophy"
@@ -148,12 +149,21 @@ You can update:
 
 These settings are used when you regenerate remaining fixtures. They do not automatically reschedule existing fixtures.
 
+### Managing Teams
+
+You can add or remove teams from an active cup:
+
+1. Scroll to the **Teams** section
+2. Tick or untick teams as needed
+3. Click **Save Changes**
+
+**Important**: Changing the team lineup will **regenerate the bracket for all unplayed matches**. Matches that have already been played (with results) are preserved. A warning will appear to confirm this action.
+
 ### What You Cannot Edit
 
 You cannot change:
 
 - The season (cups are permanently assigned to a season)
-- The teams or bracket draw (use regenerate or delete/recreate)
 
 ## Cup Detail View (Bracket)
 
