@@ -42,11 +42,20 @@ class Database
     {
         $config = require dirname(__DIR__) . '/config/database.php';
 
-        $dsn = sprintf(
-            'mysql:unix_socket=%s;dbname=%s;charset=utf8mb4',
-            $config['socket'],
-            $config['database']
-        );
+        if (!empty($config['host'])) {
+            $dsn = sprintf(
+                'mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4',
+                $config['host'],
+                $config['port'],
+                $config['database']
+            );
+        } else {
+            $dsn = sprintf(
+                'mysql:unix_socket=%s;dbname=%s;charset=utf8mb4',
+                $config['socket'],
+                $config['database']
+            );
+        }
 
         try {
             self::$instance = new PDO(

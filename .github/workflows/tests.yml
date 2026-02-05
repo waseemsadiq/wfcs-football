@@ -2,29 +2,46 @@ name: CI Tests
 
 on:
   push:
-    branches: [ master, main, develop ]
+    branches: [master, main, develop]
   pull_request:
-    branches: [ master, main, develop ]
+    branches: [master, main, develop]
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wfcs_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     strategy:
       matrix:
-        php-version: ['8.1', '8.2', '8.3']
+        php-version: ["8.1", "8.2", "8.3"]
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: ${{ matrix.php-version }}
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: mysqli, pdo, pdo_mysql
 
-    - name: Run tests
-      run: npm test
+      - name: Import Database Schema
+        run: mysql -h 127.0.0.1 -u root -proot wfcs_test < sample-content.sql
 
-    - name: Check test exit code
-      if: failure()
-      run: exit 1
+      - name: Run tests
+        working-directory: footie
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_NAME: wfcs_test
+          DB_USER: root
+          DB_PASS: root
+        run: php tests/run_tests.php
