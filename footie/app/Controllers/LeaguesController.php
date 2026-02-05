@@ -52,19 +52,10 @@ class LeaguesController extends CompetitionController
         $teams = $this->team->all();
         $fixtures = $this->enrichFixturesWithTeamData($league['fixtures'] ?? [], $teams);
 
-        // Calculate standings
-        $standings = $this->calculateStandings($fixtures, $league['teamIds'] ?? []);
-
-        // Enrich standings with team details
-        foreach ($standings as &$standing) {
-            foreach ($teams as $team) {
-                if ($team['id'] == $standing['teamId']) {
-                    $standing['teamName'] = $team['name'];
-                    $standing['teamColour'] = $team['colour'] ?? '#1a5f2a';
-                    break;
-                }
-            }
-        }
+        // Calculate standings using model method (includes form data)
+        /** @var League $leagueModel */
+        $leagueModel = $this->competition;
+        $standings = $leagueModel->calculateStandings($league['id'], $teams);
 
         $this->render('leagues/show', [
             'title' => $league['name'],
@@ -267,82 +258,6 @@ class LeaguesController extends CompetitionController
 
         $this->flash('success', 'Fixtures regenerated successfully.');
         $this->redirect('/admin/leagues/' . $slug . '/fixtures');
-    }
-
-    /**
-     * Calculate league standings from fixtures.
-     */
-    protected function calculateStandings(array $fixtures, array $teamIds): array
-    {
-        $standings = [];
-
-        foreach ($teamIds as $teamId) {
-            $standings[$teamId] = [
-                'teamId' => $teamId,
-                'played' => 0,
-                'won' => 0,
-                'drawn' => 0,
-                'lost' => 0,
-                'goalsFor' => 0,
-                'goalsAgainst' => 0,
-                'goalDifference' => 0,
-                'points' => 0,
-            ];
-        }
-
-        foreach ($fixtures as $fixture) {
-            if (!isset($fixture['result'])) {
-                continue;
-            }
-
-            $result = $fixture['result'];
-            $homeId = $fixture['homeTeamId'];
-            $awayId = $fixture['awayTeamId'];
-            $homeScore = $result['homeScore'] ?? 0;
-            $awayScore = $result['awayScore'] ?? 0;
-
-            if (!isset($standings[$homeId]) || !isset($standings[$awayId])) {
-                continue;
-            }
-
-            $standings[$homeId]['played']++;
-            $standings[$awayId]['played']++;
-            $standings[$homeId]['goalsFor'] += $homeScore;
-            $standings[$homeId]['goalsAgainst'] += $awayScore;
-            $standings[$awayId]['goalsFor'] += $awayScore;
-            $standings[$awayId]['goalsAgainst'] += $homeScore;
-
-            if ($homeScore > $awayScore) {
-                $standings[$homeId]['won']++;
-                $standings[$homeId]['points'] += 3;
-                $standings[$awayId]['lost']++;
-            } elseif ($homeScore < $awayScore) {
-                $standings[$awayId]['won']++;
-                $standings[$awayId]['points'] += 3;
-                $standings[$homeId]['lost']++;
-            } else {
-                $standings[$homeId]['drawn']++;
-                $standings[$awayId]['drawn']++;
-                $standings[$homeId]['points']++;
-                $standings[$awayId]['points']++;
-            }
-        }
-
-        foreach ($standings as &$standing) {
-            $standing['goalDifference'] = $standing['goalsFor'] - $standing['goalsAgainst'];
-        }
-
-        usort($standings, function ($a, $b) {
-            if ($a['points'] !== $b['points']) {
-                return $b['points'] - $a['points'];
-            }
-            if ($a['goalDifference'] !== $b['goalDifference']) {
-                return $b['goalDifference'] - $a['goalDifference'];
-            }
-            return $b['goalsFor'] - $a['goalsFor'];
-        });
-
-        return array_values($standings);
     }
 
     /**
