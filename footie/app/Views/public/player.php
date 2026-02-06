@@ -67,79 +67,57 @@
     </div>
 
     <!-- Player Statistics -->
-    <div class="mb-12">
-        <h2 class="text-2xl font-bold text-text-main mb-6">Season Statistics</h2>
-        <div class="grid grid-cols-3 gap-4">
-            <!-- Goals -->
-            <div class="card text-center">
-                <div class="p-6">
-                    <div class="text-4xl font-extrabold text-primary mb-2">
-                        <?= $stats['totalGoals'] ?? 0 ?>
-                    </div>
-                    <div class="text-sm font-semibold text-text-muted uppercase tracking-wide">
-                        Goals
-                    </div>
+    <div class="card mb-12">
+        <h2 class="text-xl font-bold mb-6 pb-4 border-b border-border">Statistics</h2>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-6">
+            <div class="text-center">
+                <div class="text-3xl font-bold text-primary mb-2">
+                    <?= htmlspecialchars($stats['totalGoals'] ?? 0) ?>
                 </div>
+                <div class="text-sm text-text-muted">Goals</div>
             </div>
 
-            <!-- Assists -->
-            <div class="card text-center">
-                <div class="p-6">
-                    <div class="text-4xl font-extrabold text-blue-500 mb-2">
-                        <?= $stats['totalAssists'] ?? 0 ?>
-                    </div>
-                    <div class="text-sm font-semibold text-text-muted uppercase tracking-wide">
-                        Assists
-                    </div>
+            <div class="text-center">
+                <div class="text-3xl font-bold text-primary mb-2">
+                    <?= htmlspecialchars($stats['totalAssists'] ?? 0) ?>
                 </div>
+                <div class="text-sm text-text-muted">Assists</div>
             </div>
 
-            <!-- Sin Bins -->
-            <div class="card text-center">
-                <div class="p-6">
-                    <div class="text-4xl font-extrabold text-purple-500 mb-2">
-                        <?= $stats['sinBins'] ?? 0 ?>
-                    </div>
-                    <div class="text-sm font-semibold text-text-muted uppercase tracking-wide">
-                        Sin Bins
-                    </div>
+            <div class="text-center">
+                <div class="text-3xl font-bold text-yellow-400 mb-2">
+                    <?= htmlspecialchars($stats['yellowCards'] ?? 0) ?>
                 </div>
+                <div class="text-sm text-text-muted">Yellow Cards</div>
             </div>
 
-            <!-- Blue Cards -->
-            <div class="card text-center">
-                <div class="p-6">
-                    <div class="text-4xl font-extrabold text-blue-400 mb-2">
-                        <?= $stats['blueCards'] ?? 0 ?>
-                    </div>
-                    <div class="text-sm font-semibold text-text-muted uppercase tracking-wide">
-                        Blue Cards
-                    </div>
+            <div class="text-center">
+                <div class="text-3xl font-bold text-red-400 mb-2">
+                    <?= htmlspecialchars($stats['redCards'] ?? 0) ?>
                 </div>
+                <div class="text-sm text-text-muted">Red Cards</div>
             </div>
 
-            <!-- Yellow Cards -->
-            <div class="card text-center">
-                <div class="p-6">
-                    <div class="text-4xl font-extrabold text-yellow-500 mb-2">
-                        <?= $stats['yellowCards'] ?? 0 ?>
-                    </div>
-                    <div class="text-sm font-semibold text-text-muted uppercase tracking-wide">
-                        Yellow Cards
-                    </div>
+            <div class="text-center">
+                <div class="text-3xl font-bold text-blue-400 mb-2">
+                    <?= htmlspecialchars($stats['blueCards'] ?? 0) ?>
                 </div>
+                <div class="text-sm text-text-muted">Blue Cards</div>
             </div>
 
-            <!-- Red Cards -->
-            <div class="card text-center">
-                <div class="p-6">
-                    <div class="text-4xl font-extrabold text-red-500 mb-2">
-                        <?= $stats['redCards'] ?? 0 ?>
-                    </div>
-                    <div class="text-sm font-semibold text-text-muted uppercase tracking-wide">
-                        Red Cards
-                    </div>
+            <div class="text-center">
+                <div class="text-3xl font-bold text-orange-400 mb-2">
+                    <?= htmlspecialchars($stats['sinBins'] ?? 0) ?>
                 </div>
+                <div class="text-sm text-text-muted">Sin Bins</div>
+            </div>
+
+            <div class="text-center">
+                <div class="text-3xl font-bold text-primary mb-2">
+                    <?= htmlspecialchars($stats['matchesPlayed'] ?? 0) ?>
+                </div>
+                <div class="text-sm text-text-muted">Matches</div>
             </div>
         </div>
     </div>
