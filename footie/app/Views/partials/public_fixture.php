@@ -40,6 +40,10 @@ if (!empty($fixture['roundName'])) {
     $competition .= ' - ' . htmlspecialchars($fixture['roundName']);
 }
 
+// Get team slugs for fixture URL
+$homeSlug = htmlspecialchars($homeTeam['slug'] ?? $homeId);
+$awaySlug = htmlspecialchars($awayTeam['slug'] ?? $awayId);
+
 $scoreHtml = '';
 // Check if result exists and we should show it
 if ($showResult && $result !== null) {
@@ -97,9 +101,6 @@ if ($showResult && $result !== null) {
         $scoreHtml = '<div class="text-base text-text-muted bg-transparent font-medium">' . htmlspecialchars($time) . '</div>';
     }
 }
-
-$homeSlug = htmlspecialchars($homeTeam['slug'] ?? $homeId);
-$awaySlug = htmlspecialchars($awayTeam['slug'] ?? $awayId);
 
 $homeLink = $homeId ? "<a href=\"{$basePath}/team/{$homeSlug}\" class=\"hover:text-primary transition-colors\">{$homeName}</a>" : $homeName;
 $awayLink = $awayId ? "<a href=\"{$basePath}/team/{$awaySlug}\" class=\"hover:text-primary transition-colors\">{$awayName}</a>" : $awayName;
