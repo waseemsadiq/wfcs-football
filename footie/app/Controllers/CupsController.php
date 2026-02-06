@@ -391,17 +391,21 @@ class CupsController extends CompetitionController
 
                 if ($homeId && isset($teamMap[$homeId])) {
                     $fixture['homeTeamName'] = $teamMap[$homeId]['name'];
+                    $fixture['homeTeamSlug'] = $teamMap[$homeId]['slug'] ?? (string)$homeId;
                     $fixture['homeTeamColour'] = $teamMap[$homeId]['colour'] ?? '#1a5f2a';
                 } else {
                     $fixture['homeTeamName'] = 'TBD';
+                    $fixture['homeTeamSlug'] = 'tbd';
                     $fixture['homeTeamColour'] = '#666666';
                 }
 
                 if ($awayId && isset($teamMap[$awayId])) {
                     $fixture['awayTeamName'] = $teamMap[$awayId]['name'];
+                    $fixture['awayTeamSlug'] = $teamMap[$awayId]['slug'] ?? (string)$awayId;
                     $fixture['awayTeamColour'] = $teamMap[$awayId]['colour'] ?? '#1a5f2a';
                 } else {
                     $fixture['awayTeamName'] = 'TBD';
+                    $fixture['awayTeamSlug'] = 'tbd';
                     $fixture['awayTeamColour'] = '#666666';
                 }
             }
