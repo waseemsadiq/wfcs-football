@@ -426,7 +426,7 @@
                     Team Squads
                 </h2>
 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <!-- Home Squad -->
                     <div>
                         <h3 class="text-xl font-bold text-text-main mb-4 pb-2 border-b border-border">
