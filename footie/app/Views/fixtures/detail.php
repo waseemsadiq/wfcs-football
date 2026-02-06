@@ -212,30 +212,23 @@
 
             <!-- Existing Photos -->
             <?php if (!empty($photos)): ?>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-6">
                     <?php foreach ($photos as $photo): ?>
-                        <div class="relative group">
-                            <img src="<?= $basePath ?>/uploads/fixtures/<?= htmlspecialchars($photo['filePath']) ?>"
-                                 alt="<?= htmlspecialchars($photo['caption'] ?? 'Match photo') ?>"
-                                 class="w-full aspect-video object-cover rounded-lg border border-border transition-opacity"
+                        <div class="bg-surface-hover border border-border rounded-lg p-3">
+                            <!-- Thumbnail -->
+                            <img src="<?= $basePath ?>/uploads/<?= htmlspecialchars($photo['filePath']) ?>"
+                                 alt="Match photo"
+                                 class="w-full h-32 object-cover rounded mb-2"
                                  id="photo-<?= $photo['id'] ?>">
-                            <?php if ($photo['caption']): ?>
-                                <div class="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/90 to-transparent p-3 rounded-b-lg">
-                                    <p class="text-sm text-white font-medium"><?= htmlspecialchars($photo['caption']) ?></p>
-                                </div>
-                            <?php endif; ?>
+
                             <!-- Delete Button -->
                             <form method="POST"
                                   action="<?= $basePath ?>/admin/fixture/<?= $fixtureType ?>/<?= $competition['slug'] ?>/<?= $fixtureSlug ?>/photos/<?= $photo['id'] ?>/delete"
-                                  class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
                                   onsubmit="return confirm('Delete this photo?');">
                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                 <button type="submit"
-                                        class="bg-red-500 hover:bg-red-600 text-white rounded-full p-2 shadow-lg transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-                                </button>
+                                        class="w-full bg-danger hover:bg-danger-hover text-white py-1 px-2 rounded text-sm font-medium transition-colors"
+                                        title="Delete photo">Delete</button>
                             </form>
                         </div>
                     <?php endforeach; ?>
@@ -253,61 +246,134 @@
                     <label class="block text-sm font-bold text-text-muted uppercase tracking-wider mb-3">
                         Upload Photos
                     </label>
-                    <input type="file"
-                           name="photos[]"
-                           multiple
-                           accept="image/jpeg,image/png,image/webp"
-                           class="w-full text-text-main file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary-hover file:cursor-pointer">
-                    <p class="text-sm text-text-muted mt-2">
-                        Select one or more photos (JPG, PNG, or WebP, max 5MB each)
-                    </p>
+                    <div id="drop-zone" class="border-2 border-dashed border-border rounded-lg p-8 text-center bg-surface-hover/50 hover:border-primary transition-colors cursor-pointer">
+                        <input type="file"
+                               id="file-input"
+                               name="photos[]"
+                               multiple
+                               accept="image/jpeg,image/png,image/webp"
+                               class="hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-3 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        </svg>
+                        <p class="text-lg font-semibold text-text-main mb-1">Drop photos here or click to browse</p>
+                        <p class="text-sm text-text-muted">
+                            JPG, PNG, or WebP (max 5MB each)
+                        </p>
+                    </div>
                 </div>
 
-                <div id="caption-inputs" class="space-y-2 mb-4 hidden">
-                    <!-- Caption inputs will be added here dynamically -->
-                </div>
-
-                <button type="submit" class="btn btn-primary">
-                    Upload Photos
-                </button>
             </form>
         </div>
     </div>
 </div>
 
 <script>
-    // Handle photo file selection and generate caption inputs
-    document.querySelector('input[name="photos[]"]').addEventListener('change', function(e) {
-        const captionInputs = document.getElementById('caption-inputs');
-        const files = e.target.files;
+    // Prevent drag/drop from opening files in browser, but allow our drop zone to work
+    const dropZoneId = 'drop-zone';
 
-        // Clear existing caption inputs
-        captionInputs.innerHTML = '';
+    ['dragover', 'drop'].forEach(function(event) {
+        window.addEventListener(event, function(e) {
+            // Only prevent default if NOT dropping on our drop zone
+            if (e.target.id !== dropZoneId && !document.getElementById(dropZoneId).contains(e.target)) {
+                e.preventDefault();
+            }
+        }, true);
+    });
 
-        if (files.length > 0) {
-            captionInputs.classList.remove('hidden');
+    // NOW set up drop zone functionality
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
 
-            // Create caption input for each file
-            Array.from(files).forEach((file, index) => {
-                const div = document.createElement('div');
-                div.className = 'flex items-center gap-2';
+    // Click to browse
+    dropZone.addEventListener('click', function(e) {
+        fileInput.click();
+    });
 
-                const fileNameSpan = document.createElement('span');
-                fileNameSpan.className = 'text-sm text-text-muted font-medium w-40 truncate';
-                fileNameSpan.textContent = file.name;
+    // Allow drag events on the drop zone specifically
+    dropZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('border-primary', 'bg-primary/10');
+    });
 
-                const captionInput = document.createElement('input');
-                captionInput.type = 'text';
-                captionInput.name = 'captions[]';
-                captionInput.placeholder = 'Caption (optional)';
-                captionInput.className = 'flex-1 bg-surface border border-border text-text-main rounded-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary';
+    dropZone.addEventListener('dragenter', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('border-primary', 'bg-primary/10');
+    });
 
-                div.appendChild(fileNameSpan);
-                div.appendChild(captionInput);
-                captionInputs.appendChild(div);
-            });
-        } else {
-            captionInputs.classList.add('hidden');
+    dropZone.addEventListener('dragleave', function(e) {
+        dropZone.classList.remove('border-primary', 'bg-primary/10');
+    });
+
+    // Handle dropped files on the drop zone
+    dropZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        dropZone.classList.remove('border-primary', 'bg-primary/10');
+
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            // Store the dropped files
+            handleFiles(e.dataTransfer.files);
         }
     });
+
+    // Handle photo file selection and auto-upload
+    fileInput.addEventListener('change', function(e) {
+        handleFiles(e.target.files);
+    });
+
+    function uploadFiles(files) {
+        const uploadForm = document.querySelector('form[enctype="multipart/form-data"]');
+        const dropZone = document.getElementById('drop-zone');
+
+        // Show uploading state
+        dropZone.innerHTML = '<p class="text-lg font-semibold text-primary">Uploading ' + files.length + ' photo(s)...</p>';
+
+        // Create FormData and add files manually
+        const formData = new FormData();
+        formData.append('csrf_token', document.querySelector('input[name="csrf_token"]').value);
+
+        // Add files
+        Array.from(files).forEach((file) => {
+            formData.append('photos[]', file);
+        });
+
+        // Add empty captions for now
+        Array.from(files).forEach(() => {
+            formData.append('captions[]', '');
+        });
+
+        // Submit via fetch
+        fetch(uploadForm.action, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            // Success if ok (200-299) or redirect (302)
+            if (response.ok || response.redirected || response.status === 302) {
+                window.location.reload();
+            } else {
+                return response.text().then(text => {
+                    console.error('Upload failed with status:', response.status);
+                    console.error('Response:', text);
+                    dropZone.innerHTML = '<p class="text-lg font-semibold text-red-500">Upload failed (status ' + response.status + '). Check console for details.</p>';
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Upload error:', error);
+            dropZone.innerHTML = '<p class="text-lg font-semibold text-red-500">Upload failed: ' + error.message + '</p>';
+        });
+    }
+
+    function handleFiles(files) {
+        if (files.length > 0) {
+            // Auto-upload immediately
+            uploadFiles(files);
+        }
+    }
+
 </script>

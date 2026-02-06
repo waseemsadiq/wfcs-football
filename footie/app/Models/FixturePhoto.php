@@ -36,14 +36,32 @@ class FixturePhoto extends Model
 
     /**
      * Create a new fixture photo record.
+     * Override to handle tables without updated_at column.
      */
     public function create(array $record): array
     {
-        if (!isset($record['created_at'])) {
-            $record['created_at'] = date('Y-m-d H:i:s');
-        }
+        $table = $this->getTableName();
 
-        return parent::create($record);
+        // Add created_at timestamp
+        $record['created_at'] = date('Y-m-d H:i:s');
+
+        // Build INSERT query (fixture_photos table doesn't have updated_at)
+        $fields = array_keys($record);
+        $placeholders = array_fill(0, count($fields), '?');
+
+        $sql = sprintf(
+            "INSERT INTO `%s` (%s) VALUES (%s)",
+            $table,
+            implode(', ', array_map(fn($f) => "`{$f}`", $fields)),
+            implode(', ', $placeholders)
+        );
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(array_values($record));
+
+        // Get the inserted record
+        $id = $this->db->lastInsertId();
+        return $this->find($id);
     }
 
     /**

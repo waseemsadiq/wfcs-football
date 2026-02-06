@@ -334,7 +334,7 @@
                     <?php foreach ($fixture['photos'] as $photo): ?>
                         <div class="group relative overflow-hidden rounded-lg bg-surface-hover shadow-lg hover:shadow-xl transition-shadow"
                             style="aspect-ratio: 16 / 9;">
-                            <img src="<?= $basePath ?>/uploads/fixtures/<?= htmlspecialchars($photo['filePath']) ?>"
+                            <img src="<?= $basePath ?>/uploads/<?= htmlspecialchars($photo['filePath']) ?>"
                                 alt="<?= htmlspecialchars($photo['caption'] ?? 'Match photo') ?>"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                             <?php if ($photo['caption']): ?>
