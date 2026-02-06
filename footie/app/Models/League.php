@@ -632,4 +632,91 @@ class League extends Model
 
         return $league;
     }
+
+    /**
+     * Get fixture by ID with full details including photos.
+     */
+    public function getFixtureById(int $fixtureId): ?array
+    {
+        $stmt = $this->db->prepare("
+            SELECT
+                lf.*,
+                ht.name as home_team_name,
+                ht.slug as home_team_slug,
+                ht.colour as home_team_colour,
+                at.name as away_team_name,
+                at.slug as away_team_slug,
+                at.colour as away_team_colour
+            FROM league_fixtures lf
+            INNER JOIN teams ht ON lf.home_team_id = ht.id
+            INNER JOIN teams at ON lf.away_team_id = at.id
+            WHERE lf.id = ?
+        ");
+        $stmt->execute([$fixtureId]);
+        $fixture = $stmt->fetch();
+
+        if (!$fixture) {
+            return null;
+        }
+
+        // Load match events
+        if ($fixture['home_score'] !== null) {
+            $events = $this->getMatchEventsForFixture($fixtureId);
+            $fixture['result'] = [
+                'homeScore' => $fixture['home_score'],
+                'awayScore' => $fixture['away_score'],
+                'homeScorers' => $events['homeScorers'],
+                'awayScorers' => $events['awayScorers'],
+                'homeCards' => $events['homeCards'],
+                'awayCards' => $events['awayCards'],
+            ];
+        }
+
+        // Load photos
+        $photoModel = new \App\Models\FixturePhoto();
+        $fixture['photos'] = $photoModel->getByFixture('league', $fixtureId);
+
+        return $this->transformKeys($fixture);
+    }
+
+    /**
+     * Update fixture rich content (report, media URLs, status).
+     */
+    public function updateFixtureDetails(int $fixtureId, array $details): bool
+    {
+        $updateData = [];
+
+        if (isset($details['status'])) {
+            $updateData['status'] = $details['status'];
+        }
+        if (isset($details['matchReport'])) {
+            $updateData['match_report'] = $details['matchReport'];
+        }
+        if (isset($details['liveStreamUrl'])) {
+            $updateData['live_stream_url'] = $details['liveStreamUrl'];
+        }
+        if (isset($details['fullMatchUrl'])) {
+            $updateData['full_match_url'] = $details['fullMatchUrl'];
+        }
+        if (isset($details['highlightsUrl'])) {
+            $updateData['highlights_url'] = $details['highlightsUrl'];
+        }
+
+        if (empty($updateData)) {
+            return true;
+        }
+
+        $fields = [];
+        $values = [];
+        foreach ($updateData as $field => $value) {
+            $fields[] = "$field = ?";
+            $values[] = $value;
+        }
+        $values[] = $fixtureId;
+
+        $sql = "UPDATE league_fixtures SET " . implode(', ', $fields) . " WHERE id = ?";
+        $stmt = $this->db->prepare($sql);
+
+        return $stmt->execute($values);
+    }
 }

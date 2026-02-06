@@ -32,6 +32,7 @@ $router->get('/league/{slug}', 'PublicController', 'league', false);
 $router->get('/cup/{slug}', 'PublicController', 'cup', false);
 $router->get('/team/{slug}', 'PublicController', 'team', false);
 $router->get('/player/{slug}', 'PublicController', 'player', false);
+$router->get('/fixture/{type}/{competitionSlug}/{fixtureSlug}', 'PublicController', 'fixture', false);
 
 // ===================
 // AUTHENTICATION ROUTES (no auth required)
@@ -119,5 +120,9 @@ $router->post('/admin/cups/{slug}/fixtures', 'CupsController', 'updateFixtures')
 $router->get('/admin/cups/ajax/scorer-row', 'CupsController', 'renderScorerRow');
 $router->get('/admin/cups/ajax/card-row', 'CupsController', 'renderCardRow');
 $router->post('/admin/cups/{slug}/regenerate-fixtures', 'CupsController', 'regenerateFixtures');
+
+// Fixture Details (admin)
+$router->get('/admin/fixture/{type}/{competitionSlug}/{fixtureSlug}', 'FixturesController', 'fixtureDetail');
+$router->post('/admin/fixture/{type}/{competitionSlug}/{fixtureSlug}', 'FixturesController', 'updateFixtureDetail');
 
 return $router;

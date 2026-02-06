@@ -942,4 +942,118 @@ class PublicController extends Controller
             'count' => count($scorers),
         ]);
     }
+
+    /**
+     * Display public fixture detail page.
+     */
+    public function fixture(string $type, string $competitionSlug, string $fixtureSlug): void
+    {
+        // Validate fixture type
+        if (!in_array($type, ['league', 'cup'])) {
+            $this->redirect('/');
+            return;
+        }
+
+        // Parse fixture slug (format: "home-team-slug-vs-away-team-slug")
+        if (!preg_match('/^(.+)-vs-(.+)$/', $fixtureSlug, $matches)) {
+            $this->redirect($type === 'league' ? '/leagues' : '/cups');
+            return;
+        }
+
+        $homeTeamSlug = $matches[1];
+        $awayTeamSlug = $matches[2];
+
+        // Load competition and fixtures
+        if ($type === 'league') {
+            $leagueModel = new \App\Models\League();
+            $competition = $leagueModel->findWhere('slug', $competitionSlug);
+
+            if (!$competition) {
+                $this->redirect('/leagues');
+                return;
+            }
+
+            // Find fixture by team slugs
+            $fixture = $this->findFixtureByTeamSlugs(
+                $competition['fixtures'],
+                $homeTeamSlug,
+                $awayTeamSlug
+            );
+
+            if ($fixture) {
+                $fixtureDetail = $leagueModel->getFixtureById($fixture['id']);
+            }
+        } else {
+            $cupModel = new \App\Models\Cup();
+            $competition = $cupModel->findWhere('slug', $competitionSlug);
+
+            if (!$competition) {
+                $this->redirect('/cups');
+                return;
+            }
+
+            // Find fixture in rounds
+            $fixture = $this->findFixtureInRounds(
+                $competition['rounds'],
+                $homeTeamSlug,
+                $awayTeamSlug
+            );
+
+            if ($fixture) {
+                $fixtureDetail = $cupModel->getFixtureById($fixture['id']);
+            }
+        }
+
+        if (!isset($fixtureDetail) || !$fixtureDetail) {
+            $this->redirect($type === 'league' ? '/leagues' : '/cups');
+            return;
+        }
+
+        // Get match events timeline
+        $matchEventModel = new \App\Models\MatchEvent();
+        $events = $matchEventModel->getByFixture($type, $fixtureDetail['id']);
+
+        $this->render('public/fixture', [
+            'title' => $fixtureDetail['homeTeamName'] . ' vs ' . $fixtureDetail['awayTeamName'],
+            'currentPage' => $type . 's',
+            'fixtureType' => $type,
+            'competition' => $competition,
+            'fixture' => $fixtureDetail,
+            'events' => $events,
+        ], 'public');
+    }
+
+    /**
+     * Find fixture by team slugs in a fixture list.
+     */
+    private function findFixtureByTeamSlugs(array $fixtures, string $homeSlug, string $awaySlug): ?array
+    {
+        foreach ($fixtures as $fixture) {
+            if (isset($fixture['homeTeam']['slug'], $fixture['awayTeam']['slug'])) {
+                if ($fixture['homeTeam']['slug'] === $homeSlug &&
+                    $fixture['awayTeam']['slug'] === $awaySlug) {
+                    return $fixture;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Find fixture by team slugs in cup rounds.
+     */
+    private function findFixtureInRounds(array $rounds, string $homeSlug, string $awaySlug): ?array
+    {
+        foreach ($rounds as $round) {
+            foreach ($round['fixtures'] as $fixture) {
+                if (isset($fixture['homeTeam']['slug'], $fixture['awayTeam']['slug'])) {
+                    if ($fixture['homeTeam']['slug'] === $homeSlug &&
+                        $fixture['awayTeam']['slug'] === $awaySlug) {
+                        return $fixture;
+                    }
+                }
+            }
+        }
+        return null;
+    }
 }
