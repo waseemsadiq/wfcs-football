@@ -199,14 +199,17 @@
 
             <?php
             $videos = [];
+            // If match is live, prioritize live stream above everything else
             if ($fixture['status'] === 'in_progress' && $fixture['liveStreamUrl']) {
                 $videos['Live Stream'] = $fixture['liveStreamUrl'];
-            }
-            if ($fixture['fullMatchUrl']) {
-                $videos['Full Match Replay'] = $fixture['fullMatchUrl'];
-            }
-            if ($fixture['highlightsUrl']) {
-                $videos['Match Highlights'] = $fixture['highlightsUrl'];
+            } else {
+                // Otherwise show match replays/highlights
+                if ($fixture['fullMatchUrl']) {
+                    $videos['Full Match Replay'] = $fixture['fullMatchUrl'];
+                }
+                if ($fixture['highlightsUrl']) {
+                    $videos['Match Highlights'] = $fixture['highlightsUrl'];
+                }
             }
             ?>
 
