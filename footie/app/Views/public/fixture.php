@@ -198,7 +198,7 @@
             </h2>
 
             <?php if ($fixture['liveStreamUrl'] || $fixture['fullMatchUrl'] || $fixture['highlightsUrl']): ?>
-                <div class="aspect-video bg-surface-hover rounded-lg overflow-hidden shadow-xl">
+                <div class="relative w-full overflow-hidden rounded-lg shadow-xl bg-surface-hover" style="padding-bottom: 56.25%; height: 0;">
                     <?php
                     $videoUrl = null;
                     if ($fixture['status'] === 'in_progress' && $fixture['liveStreamUrl']) {
@@ -211,7 +211,8 @@
 
                     if ($videoUrl):
                         ?>
-                        <iframe src="<?= htmlspecialchars(\Core\View::formatVideoEmbedUrl($videoUrl)) ?>" class="w-full h-full"
+                        <iframe src="<?= htmlspecialchars(\Core\View::formatVideoEmbedUrl($videoUrl)) ?>" 
+                            class="absolute inset-0 w-full h-full"
                             frameborder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowfullscreen>
@@ -244,7 +245,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <?php foreach ($fixture['photos'] as $photo): ?>
                         <div
-                            class="group relative aspect-video overflow-hidden rounded-lg bg-surface-hover shadow-lg hover:shadow-xl transition-shadow">
+                            class="group relative overflow-hidden rounded-lg bg-surface-hover shadow-lg hover:shadow-xl transition-shadow" style="aspect-ratio: 16 / 9;">
                             <img src="<?= $basePath ?>/uploads/fixtures/<?= htmlspecialchars($photo['filePath']) ?>"
                                 alt="<?= htmlspecialchars($photo['caption'] ?? 'Match photo') ?>"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
