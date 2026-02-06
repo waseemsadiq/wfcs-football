@@ -14,7 +14,7 @@
             </a>
             <span>›</span>
             <a href="<?= $basePath ?>/<?= $fixtureType ?>/<?= $competition['slug'] ?>"
-               class="hover:text-primary transition-colors">
+                class="hover:text-primary transition-colors">
                 <?= htmlspecialchars($competition['name']) ?>
             </a>
             <span>›</span>
@@ -38,12 +38,16 @@
                 $config = $statusConfig[$fixture['status']] ?? $statusConfig['scheduled'];
                 ?>
                 <div class="flex justify-center mb-6">
-                    <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full border <?= $config['color'] ?> text-sm font-bold uppercase tracking-wider">
-                        <span><?= $config['icon'] ?></span>
+                    <span
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-full border <?= $config['color'] ?> text-sm font-bold uppercase tracking-wider">
+                        <span>
+                            <?= $config['icon'] ?>
+                        </span>
                         <?= htmlspecialchars(str_replace('_', ' ', $fixture['status'])) ?>
                         <?php if ($fixture['isLive'] ?? false): ?>
                             <span class="relative flex h-2 w-2">
-                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                <span
+                                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                                 <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                             </span>
                         <?php endif; ?>
@@ -56,15 +60,16 @@
                 <!-- Home Team -->
                 <div class="flex-1 w-full sm:w-auto text-center sm:text-right">
                     <a href="<?= $basePath ?>/team/<?= htmlspecialchars($fixture['homeTeamSlug']) ?>"
-                       class="group inline-block">
+                        class="group inline-block">
                         <div class="flex flex-col sm:flex-row items-center sm:justify-end gap-3 sm:gap-4">
                             <div class="order-2 sm:order-1">
-                                <div class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-text-main group-hover:text-primary transition-colors">
+                                <div
+                                    class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-text-main group-hover:text-primary transition-colors">
                                     <?= htmlspecialchars($fixture['homeTeamName']) ?>
                                 </div>
                             </div>
                             <div class="order-1 sm:order-2 w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-full shadow-lg"
-                                 style="background-color: <?= htmlspecialchars($fixture['homeTeamColour'] ?? '#1a5f2a') ?>">
+                                style="background-color: <?= htmlspecialchars($fixture['homeTeamColour'] ?? '#1a5f2a') ?>">
                             </div>
                         </div>
                     </a>
@@ -74,18 +79,23 @@
                 <div class="text-center min-w-[140px] sm:min-w-[160px]">
                     <?php if ($fixture['result']): ?>
                         <div class="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-primary leading-none mb-2">
-                            <?= $fixture['result']['homeScore'] ?> <span class="text-text-muted">-</span> <?= $fixture['result']['awayScore'] ?>
+                            <?= $fixture['result']['homeScore'] ?> <span class="text-text-muted">-</span>
+                            <?= $fixture['result']['awayScore'] ?>
                         </div>
 
                         <?php if ($fixtureType === 'cup'): ?>
                             <?php if (!empty($fixture['result']['extraTime'])): ?>
                                 <div class="text-sm sm:text-base text-text-muted font-semibold mt-2">
-                                    After Extra Time: <?= $fixture['result']['homeScoreEt'] ?? $fixture['result']['homeScore'] ?> - <?= $fixture['result']['awayScoreEt'] ?? $fixture['result']['awayScore'] ?>
+                                    After Extra Time:
+                                    <?= $fixture['result']['homeScoreEt'] ?? $fixture['result']['homeScore'] ?> -
+                                    <?= $fixture['result']['awayScoreEt'] ?? $fixture['result']['awayScore'] ?>
                                 </div>
                             <?php endif; ?>
                             <?php if (!empty($fixture['result']['penalties'])): ?>
                                 <div class="text-sm sm:text-base text-text-muted font-semibold mt-1">
-                                    Penalties: <?= $fixture['result']['homePens'] ?? 0 ?> - <?= $fixture['result']['awayPens'] ?? 0 ?>
+                                    Penalties:
+                                    <?= $fixture['result']['homePens'] ?? 0 ?> -
+                                    <?= $fixture['result']['awayPens'] ?? 0 ?>
                                 </div>
                             <?php endif; ?>
                         <?php endif; ?>
@@ -97,13 +107,14 @@
                 <!-- Away Team -->
                 <div class="flex-1 w-full sm:w-auto text-center sm:text-left">
                     <a href="<?= $basePath ?>/team/<?= htmlspecialchars($fixture['awayTeamSlug']) ?>"
-                       class="group inline-block">
+                        class="group inline-block">
                         <div class="flex flex-col sm:flex-row items-center sm:justify-start gap-3 sm:gap-4">
                             <div class="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-full shadow-lg"
-                                 style="background-color: <?= htmlspecialchars($fixture['awayTeamColour'] ?? '#1a5f2a') ?>">
+                                style="background-color: <?= htmlspecialchars($fixture['awayTeamColour'] ?? '#1a5f2a') ?>">
                             </div>
                             <div>
-                                <div class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-text-main group-hover:text-primary transition-colors">
+                                <div
+                                    class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-text-main group-hover:text-primary transition-colors">
                                     <?= htmlspecialchars($fixture['awayTeamName']) ?>
                                 </div>
                             </div>
@@ -113,41 +124,59 @@
             </div>
 
             <!-- Match Details -->
-            <div class="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-text-muted text-sm sm:text-base border-t border-border pt-6">
+            <div
+                class="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-text-muted text-sm sm:text-base border-t border-border pt-6">
                 <?php if ($fixture['date']): ?>
                     <div class="flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
-                        <span class="font-medium"><?= date('l, j F Y', strtotime($fixture['date'])) ?></span>
+                        <span class="font-medium">
+                            <?= date('l, j F Y', strtotime($fixture['date'])) ?>
+                        </span>
                     </div>
                 <?php endif; ?>
 
                 <?php if ($fixture['time']): ?>
                     <div class="flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <span class="font-medium"><?= date('g:i A', strtotime($fixture['time'])) ?></span>
+                        <span class="font-medium">
+                            <?= date('g:i A', strtotime($fixture['time'])) ?>
+                        </span>
                     </div>
                 <?php endif; ?>
 
                 <?php if ($fixture['pitch']): ?>
                     <div class="flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
-                        <span class="font-medium">Pitch <?= htmlspecialchars($fixture['pitch']) ?></span>
+                        <span class="font-medium">Pitch
+                            <?= htmlspecialchars($fixture['pitch']) ?>
+                        </span>
                     </div>
                 <?php endif; ?>
 
                 <?php if ($fixture['referee']): ?>
                     <div class="flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                         </svg>
-                        <span class="font-medium">Referee: <?= htmlspecialchars($fixture['referee']) ?></span>
+                        <span class="font-medium">Referee:
+                            <?= htmlspecialchars($fixture['referee']) ?>
+                        </span>
                     </div>
                 <?php endif; ?>
             </div>
@@ -158,9 +187,12 @@
     <div class="card mb-6">
         <div class="p-6 sm:p-8">
             <h2 class="text-2xl sm:text-3xl font-bold text-text-main mb-6 flex items-center gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 flex-shrink-0 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 text-primary" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 Video
             </h2>
@@ -178,12 +210,11 @@
                     }
 
                     if ($videoUrl):
-                    ?>
-                        <iframe src="<?= htmlspecialchars($videoUrl) ?>"
-                                class="w-full h-full"
-                                frameborder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowfullscreen>
+                        ?>
+                        <iframe src="<?= htmlspecialchars(\Core\View::formatVideoEmbedUrl($videoUrl)) ?>" class="w-full h-full"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen>
                         </iframe>
                     <?php endif; ?>
                 </div>
@@ -201,8 +232,10 @@
     <div class="card mb-6">
         <div class="p-6 sm:p-8">
             <h2 class="text-2xl sm:text-3xl font-bold text-text-main mb-6 flex items-center gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 flex-shrink-0 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 text-primary" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 Match Gallery
             </h2>
@@ -210,13 +243,16 @@
             <?php if (!empty($fixture['photos'])): ?>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <?php foreach ($fixture['photos'] as $photo): ?>
-                        <div class="group relative aspect-video overflow-hidden rounded-lg bg-surface-hover shadow-lg hover:shadow-xl transition-shadow">
+                        <div
+                            class="group relative aspect-video overflow-hidden rounded-lg bg-surface-hover shadow-lg hover:shadow-xl transition-shadow">
                             <img src="<?= $basePath ?>/uploads/fixtures/<?= htmlspecialchars($photo['filePath']) ?>"
-                                 alt="<?= htmlspecialchars($photo['caption'] ?? 'Match photo') ?>"
-                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                alt="<?= htmlspecialchars($photo['caption'] ?? 'Match photo') ?>"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                             <?php if ($photo['caption']): ?>
-                                <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-4">
-                                    <p class="text-sm text-white font-medium"><?= htmlspecialchars($photo['caption']) ?></p>
+                                <div class="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/90 to-transparent p-4">
+                                    <p class="text-sm text-white font-medium">
+                                        <?= htmlspecialchars($photo['caption']) ?>
+                                    </p>
                                 </div>
                             <?php endif; ?>
                         </div>
@@ -237,64 +273,69 @@
         <div class="card mb-6">
             <div class="p-6 sm:p-8">
                 <h2 class="text-2xl sm:text-3xl font-bold text-text-main mb-6 flex items-center gap-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 flex-shrink-0 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 text-primary" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     Match Events
                 </h2>
                 <div class="space-y-3">
-                    <?php foreach ($events as $event): ?>
-                        <div class="flex items-start gap-4 p-4 rounded-lg bg-surface-hover/50 hover:bg-surface-hover transition-colors border-l-4 border-primary">
-                            <!-- Minute -->
-                            <div class="flex-shrink-0 w-14 sm:w-16 text-center">
-                                <span class="inline-block px-3 py-1 rounded-full bg-primary/20 font-mono font-bold text-primary text-sm sm:text-base">
-                                    <?= $event['minute'] ?>'
-                                </span>
-                            </div>
+                    <?php if (is_array($events)):
+                        foreach ($events as $event): ?>
+                            <div
+                                class="flex items-start gap-4 p-4 rounded-lg bg-surface-hover/50 hover:bg-surface-hover transition-colors border-l-4 border-primary">
+                                <div class="shrink-0 w-14 sm:w-16 text-center">
+                                    <span
+                                        class="inline-block px-3 py-1 rounded-full bg-primary/20 font-mono font-bold text-primary text-sm sm:text-base">
+                                        <?= $event['minute'] ?>'
+                                    </span>
+                                </div>
 
-                            <!-- Event Icon & Details -->
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center gap-3 mb-1">
-                                    <?php if ($event['eventType'] === 'goal'): ?>
-                                        <span class="text-3xl">⚽</span>
-                                        <div>
+                                <!-- Event Icon & Details -->
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-3 mb-1">
+                                        <?php if ($event['eventType'] === 'goal'): ?>
+                                            <span class="text-3xl">⚽</span>
+                                            <div>
+                                                <span class="font-bold text-text-main text-lg">
+                                                    <?= htmlspecialchars($event['playerName'] ?? 'Unknown') ?>
+                                                </span>
+                                                <?php if ($event['isOwnGoal'] ?? false): ?>
+                                                    <span class="text-red-400 font-semibold ml-2">(Own Goal)</span>
+                                                <?php endif; ?>
+                                            </div>
+                                        <?php elseif ($event['eventType'] === 'yellow_card'): ?>
+                                            <div class="w-6 h-8 bg-yellow-400 rounded-sm shadow-md"></div>
                                             <span class="font-bold text-text-main text-lg">
                                                 <?= htmlspecialchars($event['playerName'] ?? 'Unknown') ?>
                                             </span>
-                                            <?php if ($event['isOwnGoal'] ?? false): ?>
-                                                <span class="text-red-400 font-semibold ml-2">(Own Goal)</span>
-                                            <?php endif; ?>
+                                        <?php elseif ($event['eventType'] === 'red_card'): ?>
+                                            <div class="w-6 h-8 bg-red-500 rounded-sm shadow-md"></div>
+                                            <span class="font-bold text-text-main text-lg">
+                                                <?= htmlspecialchars($event['playerName'] ?? 'Unknown') ?>
+                                            </span>
+                                        <?php elseif ($event['eventType'] === 'blue_card'): ?>
+                                            <div class="w-6 h-8 bg-blue-400 rounded-sm shadow-md"></div>
+                                            <span class="font-bold text-text-main text-lg">
+                                                <?= htmlspecialchars($event['playerName'] ?? 'Unknown') ?>
+                                            </span>
+                                        <?php elseif ($event['eventType'] === 'sin_bin'): ?>
+                                            <span class="text-3xl">⏱️</span>
+                                            <span class="font-bold text-text-main text-lg">
+                                                <?= htmlspecialchars($event['playerName'] ?? 'Unknown') ?> <span
+                                                    class="text-text-muted">(Sin Bin)</span>
+                                            </span>
+                                        <?php endif; ?>
+                                    </div>
+                                    <?php if ($event['teamName']): ?>
+                                        <div class="text-sm text-text-muted ml-11">
+                                            <?= htmlspecialchars($event['teamName']) ?>
                                         </div>
-                                    <?php elseif ($event['eventType'] === 'yellow_card'): ?>
-                                        <div class="w-6 h-8 bg-yellow-400 rounded-sm shadow-md"></div>
-                                        <span class="font-bold text-text-main text-lg">
-                                            <?= htmlspecialchars($event['playerName'] ?? 'Unknown') ?>
-                                        </span>
-                                    <?php elseif ($event['eventType'] === 'red_card'): ?>
-                                        <div class="w-6 h-8 bg-red-500 rounded-sm shadow-md"></div>
-                                        <span class="font-bold text-text-main text-lg">
-                                            <?= htmlspecialchars($event['playerName'] ?? 'Unknown') ?>
-                                        </span>
-                                    <?php elseif ($event['eventType'] === 'blue_card'): ?>
-                                        <div class="w-6 h-8 bg-blue-400 rounded-sm shadow-md"></div>
-                                        <span class="font-bold text-text-main text-lg">
-                                            <?= htmlspecialchars($event['playerName'] ?? 'Unknown') ?>
-                                        </span>
-                                    <?php elseif ($event['eventType'] === 'sin_bin'): ?>
-                                        <span class="text-3xl">⏱️</span>
-                                        <span class="font-bold text-text-main text-lg">
-                                            <?= htmlspecialchars($event['playerName'] ?? 'Unknown') ?> <span class="text-text-muted">(Sin Bin)</span>
-                                        </span>
                                     <?php endif; ?>
                                 </div>
-                                <?php if ($event['teamName']): ?>
-                                    <div class="text-sm text-text-muted ml-11">
-                                        <?= htmlspecialchars($event['teamName']) ?>
-                                    </div>
-                                <?php endif; ?>
                             </div>
-                        </div>
-                    <?php endforeach; ?>
+                        <?php endforeach; endif; ?>
                 </div>
             </div>
         </div>
@@ -305,8 +346,10 @@
         <div class="card mb-6">
             <div class="p-6 sm:p-8">
                 <h2 class="text-2xl sm:text-3xl font-bold text-text-main mb-6 flex items-center gap-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 flex-shrink-0 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 text-primary" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                     Team Squads
                 </h2>
@@ -322,26 +365,29 @@
                                 <?php
                                 // Create map of player IDs who have events in this match
                                 $homePlayerEvents = [];
-                                foreach ($events as $event) {
-                                    if ($event['teamId'] == $fixture['homeTeamId']) {
-                                        $playerId = $event['playerId'];
-                                        if (!isset($homePlayerEvents[$playerId])) {
-                                            $homePlayerEvents[$playerId] = [];
+                                if (is_array($events)) {
+                                    foreach ($events as $event) {
+                                        if ($event['teamId'] == $fixture['homeTeamId']) {
+                                            $playerId = $event['playerId'];
+                                            if (!isset($homePlayerEvents[$playerId])) {
+                                                $homePlayerEvents[$playerId] = [];
+                                            }
+                                            $homePlayerEvents[$playerId][] = $event['eventType'];
                                         }
-                                        $homePlayerEvents[$playerId][] = $event['eventType'];
                                     }
                                 }
                                 ?>
                                 <?php foreach ($homeSquad as $player): ?>
-                                    <div class="flex items-center gap-3 p-3 rounded-lg bg-surface-hover/30 hover:bg-surface-hover/50 transition-colors <?= isset($homePlayerEvents[$player['id']]) ? 'border-l-4 border-primary' : '' ?>">
-                                        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                                    <div
+                                        class="flex items-center gap-3 p-3 rounded-lg bg-surface-hover/30 hover:bg-surface-hover/50 transition-colors <?= isset($homePlayerEvents[$player['id']]) ? 'border-l-4 border-primary' : '' ?>">
+                                        <div class="shrink-0 w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
                                             <span class="font-bold text-primary text-sm">
                                                 <?= $player['squadNumber'] ? htmlspecialchars($player['squadNumber']) : '—' ?>
                                             </span>
                                         </div>
                                         <div class="flex-1 min-w-0">
                                             <a href="<?= $basePath ?>/player/<?= htmlspecialchars($player['slug']) ?>"
-                                               class="font-semibold text-text-main hover:text-primary transition-colors">
+                                                class="font-semibold text-text-main hover:text-primary transition-colors">
                                                 <?= htmlspecialchars($player['name']) ?>
                                             </a>
                                             <div class="text-xs text-text-muted">
@@ -349,7 +395,7 @@
                                             </div>
                                         </div>
                                         <?php if (isset($homePlayerEvents[$player['id']])): ?>
-                                            <div class="flex gap-1 flex-shrink-0">
+                                            <div class="flex gap-1 shrink-0">
                                                 <?php foreach ($homePlayerEvents[$player['id']] as $eventType): ?>
                                                     <?php if ($eventType === 'goal'): ?>
                                                         <span class="text-lg">⚽</span>
@@ -385,26 +431,29 @@
                                 <?php
                                 // Create map of player IDs who have events in this match
                                 $awayPlayerEvents = [];
-                                foreach ($events as $event) {
-                                    if ($event['teamId'] == $fixture['awayTeamId']) {
-                                        $playerId = $event['playerId'];
-                                        if (!isset($awayPlayerEvents[$playerId])) {
-                                            $awayPlayerEvents[$playerId] = [];
+                                if (is_array($events)) {
+                                    foreach ($events as $event) {
+                                        if ($event['teamId'] == $fixture['awayTeamId']) {
+                                            $playerId = $event['playerId'];
+                                            if (!isset($awayPlayerEvents[$playerId])) {
+                                                $awayPlayerEvents[$playerId] = [];
+                                            }
+                                            $awayPlayerEvents[$playerId][] = $event['eventType'];
                                         }
-                                        $awayPlayerEvents[$playerId][] = $event['eventType'];
                                     }
                                 }
                                 ?>
                                 <?php foreach ($awaySquad as $player): ?>
-                                    <div class="flex items-center gap-3 p-3 rounded-lg bg-surface-hover/30 hover:bg-surface-hover/50 transition-colors <?= isset($awayPlayerEvents[$player['id']]) ? 'border-l-4 border-primary' : '' ?>">
-                                        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                                    <div
+                                        class="flex items-center gap-3 p-3 rounded-lg bg-surface-hover/30 hover:bg-surface-hover/50 transition-colors <?= isset($awayPlayerEvents[$player['id']]) ? 'border-l-4 border-primary' : '' ?>">
+                                        <div class="shrink-0 w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
                                             <span class="font-bold text-primary text-sm">
                                                 <?= $player['squadNumber'] ? htmlspecialchars($player['squadNumber']) : '—' ?>
                                             </span>
                                         </div>
                                         <div class="flex-1 min-w-0">
                                             <a href="<?= $basePath ?>/player/<?= htmlspecialchars($player['slug']) ?>"
-                                               class="font-semibold text-text-main hover:text-primary transition-colors">
+                                                class="font-semibold text-text-main hover:text-primary transition-colors">
                                                 <?= htmlspecialchars($player['name']) ?>
                                             </a>
                                             <div class="text-xs text-text-muted">
@@ -412,7 +461,7 @@
                                             </div>
                                         </div>
                                         <?php if (isset($awayPlayerEvents[$player['id']])): ?>
-                                            <div class="flex gap-1 flex-shrink-0">
+                                            <div class="flex gap-1 shrink-0">
                                                 <?php foreach ($awayPlayerEvents[$player['id']] as $eventType): ?>
                                                     <?php if ($eventType === 'goal'): ?>
                                                         <span class="text-lg">⚽</span>
@@ -447,8 +496,10 @@
         <div class="card mb-6">
             <div class="p-6 sm:p-8">
                 <h2 class="text-2xl sm:text-3xl font-bold text-text-main mb-6 flex items-center gap-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 flex-shrink-0 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 text-primary" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                     Match Report
                 </h2>

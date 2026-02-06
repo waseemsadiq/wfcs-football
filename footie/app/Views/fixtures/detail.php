@@ -153,9 +153,9 @@
                     <input type="url" name="live_stream_url" id="live_stream_url"
                            value="<?= htmlspecialchars($fixture['liveStreamUrl'] ?? '') ?>"
                            class="w-full bg-surface border border-border text-text-main rounded-sm px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                           placeholder="https://stream.cloudflare.com/...">
+                           placeholder="https://youtu.be/...">
                     <p class="text-sm text-text-muted mt-2">
-                        Cloudflare Stream, YouTube, or Vimeo embed URL (shown when status is "In Progress")
+                        Cloudflare Stream, YouTube, or Vimeo URL (shown when status is "In Progress"). Supports shortened and browser URLs.
                     </p>
                 </div>
 
@@ -167,9 +167,9 @@
                     <input type="url" name="full_match_url" id="full_match_url"
                            value="<?= htmlspecialchars($fixture['fullMatchUrl'] ?? '') ?>"
                            class="w-full bg-surface border border-border text-text-main rounded-sm px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                           placeholder="https://www.youtube.com/embed/...">
+                           placeholder="https://www.youtube.com/watch?v=...">
                     <p class="text-sm text-text-muted mt-2">
-                        Full match replay embed URL (takes priority over highlights when available)
+                        Full match replay URL (takes priority over highlights when available). Supports all major video platforms.
                     </p>
                 </div>
 
@@ -181,9 +181,9 @@
                     <input type="url" name="highlights_url" id="highlights_url"
                            value="<?= htmlspecialchars($fixture['highlightsUrl'] ?? '') ?>"
                            class="w-full bg-surface border border-border text-text-main rounded-sm px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                           placeholder="https://www.youtube.com/embed/...">
+                           placeholder="https://vimeo.com/...">
                     <p class="text-sm text-text-muted mt-2">
-                        Match highlights embed URL (shown when full match URL is not set)
+                        Match highlights URL (shown when full match URL is not set).
                     </p>
                 </div>
             </div>
