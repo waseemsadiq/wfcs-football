@@ -396,6 +396,11 @@
             const homeSlug = escapeHtml(homeTeam.slug || homeId);
             const awaySlug = escapeHtml(awayTeam.slug || awayId);
 
+            // Generate fixture detail link
+            const fixtureSlug = `${homeSlug}-vs-${awaySlug}`;
+            const competitionSlug = fixture.competitionSlug || '';
+            const fixtureDetailUrl = competitionSlug ? `<?= $basePath ?>/fixture/cup/${competitionSlug}/${fixtureSlug}` : '';
+
             let scoreHtml = '';
             if (result) {
                 const homeScore = parseInt(result.homeScore || 0);
@@ -420,16 +425,31 @@
                     extraInfoHtml = `<div class="text-[10px] text-text-muted font-normal mt-1 text-center">(${parts.join(', ')})</div>`;
                 }
 
-                scoreHtml = `
-                    <div class="flex flex-col items-center">
-                        <div class="font-bold text-xl text-primary bg-surface-hover px-3 py-1 rounded-sm">
-                            ${homeScore} - ${awayScore}
+                if (fixtureDetailUrl) {
+                    scoreHtml = `
+                        <div class="flex flex-col items-center">
+                            <a href="${fixtureDetailUrl}" class="font-bold text-xl text-text-main bg-surface-hover px-3 py-1 rounded-sm leading-none hover:bg-primary hover:text-white transition-colors">
+                                ${homeScore} - ${awayScore}
+                            </a>
+                            ${extraInfoHtml}
                         </div>
-                        ${extraInfoHtml}
-                    </div>
-                `;
+                    `;
+                } else {
+                    scoreHtml = `
+                        <div class="flex flex-col items-center">
+                            <div class="font-bold text-xl text-text-main bg-surface-hover px-3 py-1 rounded-sm leading-none">
+                                ${homeScore} - ${awayScore}
+                            </div>
+                            ${extraInfoHtml}
+                        </div>
+                    `;
+                }
             } else {
-                scoreHtml = `<div class="text-base text-text-muted bg-transparent font-medium">${escapeHtml(time)}</div>`;
+                if (fixtureDetailUrl) {
+                    scoreHtml = `<a href="${fixtureDetailUrl}" class="text-base text-text-muted bg-transparent font-medium hover:text-primary transition-colors">${escapeHtml(time)}</a>`;
+                } else {
+                    scoreHtml = `<div class="text-base text-text-muted bg-transparent font-medium">${escapeHtml(time)}</div>`;
+                }
             }
 
             const homeLink = homeId ? `<a href="<?= $basePath ?>/team/${homeSlug}" class="hover:text-primary transition-colors">${homeName}</a>` : homeName;

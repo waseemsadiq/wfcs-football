@@ -1036,6 +1036,11 @@ class PublicController extends Controller
         $matchEventModel = new \App\Models\MatchEvent();
         $events = $matchEventModel->getByFixture($type, $fixtureDetail['id']);
 
+        // Get squad data for both teams
+        $playerModel = new \App\Models\Player();
+        $homeSquad = $playerModel->getByTeam($homeTeam['id']);
+        $awaySquad = $playerModel->getByTeam($awayTeam['id']);
+
         $this->render('public/fixture', [
             'title' => $fixtureDetail['homeTeamName'] . ' vs ' . $fixtureDetail['awayTeamName'],
             'currentPage' => $type . 's',
@@ -1043,6 +1048,8 @@ class PublicController extends Controller
             'competition' => $competition,
             'fixture' => $fixtureDetail,
             'events' => $events,
+            'homeSquad' => $homeSquad,
+            'awaySquad' => $awaySquad,
         ], 'public');
     }
 

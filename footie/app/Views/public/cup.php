@@ -35,7 +35,11 @@
                         <?php else: ?>
                             <ul class="divide-y divide-border">
                                 <?php foreach ($round['fixtures'] as $fixture): ?>
-                                    <?php include __DIR__ . '/../partials/public_fixture.php'; ?>
+                                    <?php
+                                    $showDate = false;
+                                    $showCompetition = false;
+                                    include __DIR__ . '/../partials/public_fixture.php';
+                                    ?>
                                 <?php endforeach; ?>
                             </ul>
                         <?php endif; ?>
