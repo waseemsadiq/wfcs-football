@@ -199,11 +199,9 @@
 
             <?php
             $videos = [];
-            // If match is live, prioritize live stream above everything else
             if ($fixture['status'] === 'in_progress' && $fixture['liveStreamUrl']) {
                 $videos['Live Stream'] = $fixture['liveStreamUrl'];
             } else {
-                // Otherwise show match replays/highlights
                 if ($fixture['fullMatchUrl']) {
                     $videos['Full Match Replay'] = $fixture['fullMatchUrl'];
                 }
@@ -214,28 +212,68 @@
             ?>
 
             <?php if (!empty($videos)): ?>
-                <div class="space-y-10">
-                    <?php foreach ($videos as $title => $url): ?>
-                        <div class="video-container">
-                            <?php if (count($videos) > 1): ?>
-                                <h3
-                                    class="text-sm font-bold text-text-muted uppercase tracking-widest mb-4 flex items-center gap-2">
-                                    <span class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(74,222,128,0.5)]"></span>
+                <?php if (count($videos) > 1): ?>
+                    <!-- Tabbed Interface -->
+                    <div class="mb-6">
+                        <div class="flex gap-2 p-1 bg-surface-hover rounded-lg inline-flex border border-border/50">
+                            <?php $i = 0;
+                            foreach ($videos as $title => $url): ?>
+                                <button onclick="switchVideoTab(<?= $i ?>)" id="video-tab-<?= $i ?>"
+                                    class="video-tab-btn px-4 py-2 rounded-md text-sm font-bold uppercase tracking-wider transition-all duration-200 <?= $i === 0 ? 'bg-primary text-primary-text shadow-glow' : 'text-text-muted hover:text-text-main' ?>">
                                     <?= $title ?>
-                                </h3>
-                            <?php endif; ?>
+                                </button>
+                                <?php $i++; endforeach; ?>
+                        </div>
+                    </div>
 
-                            <div class="relative w-full overflow-hidden rounded-lg shadow-2xl bg-surface-hover border border-border/50"
-                                style="padding-bottom: 56.25%; height: 0;">
-                                <iframe src="<?= htmlspecialchars(\Core\View::formatVideoEmbedUrl($url)) ?>"
-                                    class="absolute inset-0 w-full h-full" frameborder="0"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                    allowfullscreen>
-                                </iframe>
+                    <div class="space-y-0">
+                        <?php $i = 0;
+                        foreach ($videos as $title => $url): ?>
+                            <div id="video-container-<?= $i ?>" class="video-content <?= $i === 0 ? '' : 'hidden' ?>">
+                                <div class="relative w-full overflow-hidden rounded-lg shadow-2xl bg-surface-hover border border-border/50"
+                                    style="padding-bottom: 56.25%; height: 0;">
+                                    <iframe src="<?= htmlspecialchars(\Core\View::formatVideoEmbedUrl($url)) ?>"
+                                        class="absolute inset-0 w-full h-full" frameborder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowfullscreen>
+                                    </iframe>
+                                </div>
                             </div>
+                            <?php $i++; endforeach; ?>
+                    </div>
+
+                    <script>
+                        function switchVideoTab(index) {
+                            // Hide all video containers
+                            document.querySelectorAll('.video-content').forEach(el => el.classList.add('hidden'));
+                            // Show selected container
+                            document.getElementById('video-container-' + index).classList.remove('hidden');
+
+                            // Reset all tab buttons
+                            document.querySelectorAll('.video-tab-btn').forEach(btn => {
+                                btn.classList.remove('bg-primary', 'text-primary-text', 'shadow-glow');
+                                btn.classList.add('text-text-muted', 'hover:text-text-main');
+                            });
+
+                            // Style active button
+                            const activeBtn = document.getElementById('video-tab-' + index);
+                            activeBtn.classList.remove('text-text-muted', 'hover:text-text-main');
+                            activeBtn.classList.add('bg-primary', 'text-primary-text', 'shadow-glow');
+                        }
+                    </script>
+                <?php else: ?>
+                    <!-- Single Video Display -->
+                    <?php foreach ($videos as $url): ?>
+                        <div class="relative w-full overflow-hidden rounded-lg shadow-2xl bg-surface-hover border border-border/50"
+                            style="padding-bottom: 56.25%; height: 0;">
+                            <iframe src="<?= htmlspecialchars(\Core\View::formatVideoEmbedUrl($url)) ?>"
+                                class="absolute inset-0 w-full h-full" frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen>
+                            </iframe>
                         </div>
                     <?php endforeach; ?>
-                </div>
+                <?php endif; ?>
             <?php else: ?>
                 <?php
                 $message = 'No videos available for this match yet';
