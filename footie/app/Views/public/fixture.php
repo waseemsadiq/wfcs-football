@@ -197,27 +197,41 @@
                 Video
             </h2>
 
-            <?php if ($fixture['liveStreamUrl'] || $fixture['fullMatchUrl'] || $fixture['highlightsUrl']): ?>
-                <div class="relative w-full overflow-hidden rounded-lg shadow-xl bg-surface-hover" style="padding-bottom: 56.25%; height: 0;">
-                    <?php
-                    $videoUrl = null;
-                    if ($fixture['status'] === 'in_progress' && $fixture['liveStreamUrl']) {
-                        $videoUrl = $fixture['liveStreamUrl'];
-                    } elseif ($fixture['fullMatchUrl']) {
-                        $videoUrl = $fixture['fullMatchUrl'];
-                    } elseif ($fixture['highlightsUrl']) {
-                        $videoUrl = $fixture['highlightsUrl'];
-                    }
+            <?php
+            $videos = [];
+            if ($fixture['status'] === 'in_progress' && $fixture['liveStreamUrl']) {
+                $videos['Live Stream'] = $fixture['liveStreamUrl'];
+            }
+            if ($fixture['fullMatchUrl']) {
+                $videos['Full Match Replay'] = $fixture['fullMatchUrl'];
+            }
+            if ($fixture['highlightsUrl']) {
+                $videos['Match Highlights'] = $fixture['highlightsUrl'];
+            }
+            ?>
 
-                    if ($videoUrl):
-                        ?>
-                        <iframe src="<?= htmlspecialchars(\Core\View::formatVideoEmbedUrl($videoUrl)) ?>" 
-                            class="absolute inset-0 w-full h-full"
-                            frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowfullscreen>
-                        </iframe>
-                    <?php endif; ?>
+            <?php if (!empty($videos)): ?>
+                <div class="space-y-10">
+                    <?php foreach ($videos as $title => $url): ?>
+                        <div class="video-container">
+                            <?php if (count($videos) > 1): ?>
+                                <h3
+                                    class="text-sm font-bold text-text-muted uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(74,222,128,0.5)]"></span>
+                                    <?= $title ?>
+                                </h3>
+                            <?php endif; ?>
+
+                            <div class="relative w-full overflow-hidden rounded-lg shadow-2xl bg-surface-hover border border-border/50"
+                                style="padding-bottom: 56.25%; height: 0;">
+                                <iframe src="<?= htmlspecialchars(\Core\View::formatVideoEmbedUrl($url)) ?>"
+                                    class="absolute inset-0 w-full h-full" frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowfullscreen>
+                                </iframe>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
             <?php else: ?>
                 <?php
@@ -244,8 +258,8 @@
             <?php if (!empty($fixture['photos'])): ?>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <?php foreach ($fixture['photos'] as $photo): ?>
-                        <div
-                            class="group relative overflow-hidden rounded-lg bg-surface-hover shadow-lg hover:shadow-xl transition-shadow" style="aspect-ratio: 16 / 9;">
+                        <div class="group relative overflow-hidden rounded-lg bg-surface-hover shadow-lg hover:shadow-xl transition-shadow"
+                            style="aspect-ratio: 16 / 9;">
                             <img src="<?= $basePath ?>/uploads/fixtures/<?= htmlspecialchars($photo['filePath']) ?>"
                                 alt="<?= htmlspecialchars($photo['caption'] ?? 'Match photo') ?>"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
