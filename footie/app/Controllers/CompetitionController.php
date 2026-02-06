@@ -445,6 +445,22 @@ abstract class CompetitionController extends Controller
                 'minute' => $minute,
                 'notes' => $ownGoal ? 'og' : null,
             ];
+
+            // Process assist if provided
+            if (!empty($scorer['assist'])) {
+                $assistPlayerId = $this->findPlayerIdByName($scorer['assist'], $homeTeamId, $playerModel);
+                if ($assistPlayerId) {
+                    $events[] = [
+                        'fixture_type' => $fixtureType,
+                        'fixture_id' => $fixtureId,
+                        'team_id' => $homeTeamId,
+                        'player_id' => $assistPlayerId,
+                        'event_type' => 'assist',
+                        'minute' => $minute,
+                        'notes' => null,
+                    ];
+                }
+            }
         }
 
         // Process away scorers
@@ -462,6 +478,22 @@ abstract class CompetitionController extends Controller
                 'minute' => $minute,
                 'notes' => $ownGoal ? 'og' : null,
             ];
+
+            // Process assist if provided
+            if (!empty($scorer['assist'])) {
+                $assistPlayerId = $this->findPlayerIdByName($scorer['assist'], $awayTeamId, $playerModel);
+                if ($assistPlayerId) {
+                    $events[] = [
+                        'fixture_type' => $fixtureType,
+                        'fixture_id' => $fixtureId,
+                        'team_id' => $awayTeamId,
+                        'player_id' => $assistPlayerId,
+                        'event_type' => 'assist',
+                        'minute' => $minute,
+                        'notes' => null,
+                    ];
+                }
+            }
         }
 
         // Process home cards
