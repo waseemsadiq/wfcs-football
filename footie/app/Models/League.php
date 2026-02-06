@@ -179,7 +179,7 @@ class League extends Model
     /**
      * Get match events for a fixture and format them for display.
      */
-    private function getMatchEventsForFixture(int $fixtureId): array
+    private function getMatchEventsForFixture(int|string $fixtureId): array
     {
         $stmt = $this->db->prepare("
             SELECT
@@ -597,14 +597,14 @@ class League extends Model
             UPDATE league_fixtures
             SET pitch = ?,
                 referee_id = ?,
-                is_live = ?
+                motm_player_id = ?
             WHERE league_id = ? AND id = ?
         ");
 
         return $stmt->execute([
             $details['pitch'] ?? null,
             $details['refereeId'] ?? null,
-            (int) ($details['isLive'] ?? 0),
+            $details['motmPlayerId'] ?? null,
             $leagueId,
             $fixtureId
         ]);
@@ -658,7 +658,7 @@ class League extends Model
     /**
      * Get fixture by ID with full details including photos.
      */
-    public function getFixtureWithDetails(int $fixtureId): ?array
+    public function getFixtureWithDetails(int|string $fixtureId): ?array
     {
         $stmt = $this->db->prepare("
             SELECT
@@ -669,11 +669,13 @@ class League extends Model
                 at.name as away_team_name,
                 at.slug as away_team_slug,
                 at.colour as away_team_colour,
-                ts.name as referee
+                ts.name as referee,
+                p.name as motm_player_name
             FROM league_fixtures lf
             INNER JOIN teams ht ON lf.home_team_id = ht.id
             INNER JOIN teams at ON lf.away_team_id = at.id
             LEFT JOIN team_staff ts ON lf.referee_id = ts.id
+            LEFT JOIN players p ON lf.motm_player_id = p.id
             WHERE lf.id = ?
         ");
         $stmt->execute([$fixtureId]);
@@ -706,7 +708,7 @@ class League extends Model
     /**
      * Update fixture rich content (report, media URLs, status).
      */
-    public function updateFixtureRichContent(int $fixtureId, array $details): bool
+    public function updateFixtureRichContent(int|string $fixtureId, array $details): bool
     {
         $updateData = [];
 
@@ -728,6 +730,9 @@ class League extends Model
         if (isset($details['highlightsUrl'])) {
             $updateData['highlights_url'] = $details['highlightsUrl'];
         }
+        if (isset($details['motmPlayerId'])) {
+            $updateData['motm_player_id'] = $details['motmPlayerId'] ?: null;
+        }
 
         if (empty($updateData)) {
             return true;
@@ -744,6 +749,19 @@ class League extends Model
         $sql = "UPDATE league_fixtures SET " . implode(', ', $fields) . " WHERE id = ?";
         $stmt = $this->db->prepare($sql);
 
-        return $stmt->execute($values);
+        $success = $stmt->execute($values);
+
+        // Trigger stats recalculation if MOTM changed
+        if ($success && isset($updateData['motm_player_id'])) {
+            $statsService = new \App\Services\PlayerStatsService();
+            // We need to find which teams are involved to recalculate them properly
+            $fixture = $this->find($fixtureId);
+            if ($fixture) {
+                $statsService->recalculateTeamStats((int) $fixture['homeTeamId']);
+                $statsService->recalculateTeamStats((int) $fixture['awayTeamId']);
+            }
+        }
+
+        return $success;
     }
 }

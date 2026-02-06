@@ -212,7 +212,7 @@ class Cup extends Model
     /**
      * Get match events for a cup fixture and format them for display.
      */
-    private function getMatchEventsForFixture(int $fixtureId, int $homeTeamId, int $awayTeamId): array
+    private function getMatchEventsForFixture(int|string $fixtureId, int|string|null $homeTeamId, int|string|null $awayTeamId): array
     {
         $stmt = $this->db->prepare("
             SELECT
@@ -662,14 +662,14 @@ class Cup extends Model
             UPDATE cup_fixtures
             SET pitch = ?,
                 referee_id = ?,
-                is_live = ?
+                motm_player_id = ?
             WHERE cup_id = ? AND id = ?
         ");
 
         return $stmt->execute([
             $details['pitch'] ?? null,
             $details['refereeId'] ?? null,
-            (int) ($details['isLive'] ?? 0),
+            $details['motmPlayerId'] ?? null,
             $cupId,
             $fixtureId
         ]);
@@ -777,7 +777,7 @@ class Cup extends Model
     /**
      * Get fixture by ID with full details including photos.
      */
-    public function getFixtureWithDetails(int $fixtureId): ?array
+    public function getFixtureWithDetails(int|string $fixtureId): ?array
     {
         $stmt = $this->db->prepare("
             SELECT
@@ -789,12 +789,14 @@ class Cup extends Model
                 at.name as away_team_name,
                 at.slug as away_team_slug,
                 at.colour as away_team_colour,
-                ts.name as referee
+                ts.name as referee,
+                p.name as motm_player_name
             FROM cup_fixtures cf
             INNER JOIN cup_rounds cr ON cf.round_id = cr.id
             LEFT JOIN teams ht ON cf.home_team_id = ht.id
             LEFT JOIN teams at ON cf.away_team_id = at.id
             LEFT JOIN team_staff ts ON cf.referee_id = ts.id
+            LEFT JOIN players p ON cf.motm_player_id = p.id
             WHERE cf.id = ?
         ");
         $stmt->execute([$fixtureId]);
@@ -834,7 +836,7 @@ class Cup extends Model
     /**
      * Update fixture rich content (report, media URLs, status).
      */
-    public function updateFixtureRichContent(int $fixtureId, array $details): bool
+    public function updateFixtureRichContent(int|string $fixtureId, array $details): bool
     {
         $updateData = [];
 
@@ -856,6 +858,9 @@ class Cup extends Model
         if (isset($details['highlightsUrl'])) {
             $updateData['highlights_url'] = $details['highlightsUrl'];
         }
+        if (isset($details['motmPlayerId'])) {
+            $updateData['motm_player_id'] = $details['motmPlayerId'] ?: null;
+        }
 
         if (empty($updateData)) {
             return true;
@@ -872,6 +877,22 @@ class Cup extends Model
         $sql = "UPDATE cup_fixtures SET " . implode(', ', $fields) . " WHERE id = ?";
         $stmt = $this->db->prepare($sql);
 
-        return $stmt->execute($values);
+        $success = $stmt->execute($values);
+
+        // Trigger stats recalculation if MOTM changed
+        if ($success && isset($updateData['motm_player_id'])) {
+            $statsService = new \App\Services\PlayerStatsService();
+            // We need to find which teams are involved to recalculate them properly
+            $fixture = $this->find($fixtureId);
+            if ($fixture) {
+                // In Cup fixtures, teams might be null (TBD), handle safely
+                if (isset($fixture['homeTeamId']))
+                    $statsService->recalculateTeamStats((int) $fixture['homeTeamId']);
+                if (isset($fixture['awayTeamId']))
+                    $statsService->recalculateTeamStats((int) $fixture['awayTeamId']);
+            }
+        }
+
+        return $success;
     }
 }

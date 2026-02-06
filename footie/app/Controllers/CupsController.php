@@ -149,15 +149,15 @@ class CupsController extends CompetitionController
             $time = $this->normalizeTime($time);
         }
 
-        // Handle scheduling details (pitch, referee, isLive)
+        // Match details
         $pitch = $this->sanitizeString($this->post('pitch', ''), 50);
         $refereeId = $this->post('referee_id') !== '' ? (int) $this->post('referee_id') : null;
-        $isLive = $this->post('isLive') ? 1 : 0;
+        $motmPlayerId = $this->post('motm_player_id') !== '' ? (int) $this->post('motm_player_id') : null;
 
         $cupModel->updateFixtureDetails($cup['id'], $fixtureId, [
             'pitch' => $pitch,
             'refereeId' => $refereeId,
-            'isLive' => $isLive,
+            'motmPlayerId' => $motmPlayerId,
         ]);
 
         // Update date/time if provided

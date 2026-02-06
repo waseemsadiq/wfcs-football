@@ -154,16 +154,15 @@ class LeaguesController extends CompetitionController
             $time = $this->normalizeTime($time);
         }
 
-        // Handle scheduling details (pitch, referee, isLive)
+        // Match details
         $pitch = $this->sanitizeString($this->post('pitch', ''), 50);
         $refereeId = $this->post('referee_id') !== '' ? (int) $this->post('referee_id') : null;
-        // Checkboxes often not sent if unchecked, default to 0
-        $isLive = $this->post('isLive') ? 1 : 0;
+        $motmPlayerId = $this->post('motm_player_id') !== '' ? (int) $this->post('motm_player_id') : null;
 
         $leagueModel->updateFixtureDetails($league['id'], $fixtureId, [
             'pitch' => $pitch,
             'refereeId' => $refereeId,
-            'isLive' => $isLive,
+            'motmPlayerId' => $motmPlayerId,
         ]);
 
         // Update date/time if provided

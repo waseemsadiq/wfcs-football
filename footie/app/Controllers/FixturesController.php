@@ -52,8 +52,9 @@ class FixturesController extends Controller
                 return;
             }
 
+            $fixtures = $leagueModel->getFixtures($competition['id']);
             $fixture = $this->findFixtureByTeamIds(
-                $competition['fixtures'],
+                $fixtures,
                 $homeTeam['id'],
                 $awayTeam['id']
             );
@@ -70,8 +71,9 @@ class FixturesController extends Controller
                 return;
             }
 
+            $rounds = $cupModel->getRounds($competition['id']);
             $fixture = $this->findFixtureInRounds(
-                $competition['rounds'],
+                $rounds,
                 $homeTeam['id'],
                 $awayTeam['id']
             );
@@ -95,6 +97,11 @@ class FixturesController extends Controller
         $referees = $staffModel->getByRole('referee');
         usort($referees, fn($a, $b) => strcmp($a['name'], $b['name']));
 
+        // Load squads for MOTM selector
+        $playerModel = new \App\Models\Player();
+        $homeSquad = $playerModel->getByTeam($homeTeam['id']);
+        $awaySquad = $playerModel->getByTeam($awayTeam['id']);
+
         $this->render('fixtures/detail', [
             'title' => 'Edit Fixture: ' . $fixtureDetail['homeTeamName'] . ' vs ' . $fixtureDetail['awayTeamName'],
             'fixtureType' => $type,
@@ -103,6 +110,8 @@ class FixturesController extends Controller
             'fixtureSlug' => $fixtureSlug,
             'photos' => $photos,
             'referees' => $referees,
+            'homeSquad' => $homeSquad,
+            'awaySquad' => $awaySquad,
         ]);
     }
 
@@ -150,8 +159,9 @@ class FixturesController extends Controller
                 return;
             }
 
+            $fixtures = $leagueModel->getFixtures($competition['id']);
             $fixture = $this->findFixtureByTeamIds(
-                $competition['fixtures'],
+                $fixtures,
                 $homeTeam['id'],
                 $awayTeam['id']
             );
@@ -165,8 +175,9 @@ class FixturesController extends Controller
                 return;
             }
 
+            $rounds = $cupModel->getRounds($competition['id']);
             $fixture = $this->findFixtureInRounds(
-                $competition['rounds'],
+                $rounds,
                 $homeTeam['id'],
                 $awayTeam['id']
             );
@@ -186,6 +197,7 @@ class FixturesController extends Controller
             'liveStreamUrl' => $this->post('live_stream_url'),
             'fullMatchUrl' => $this->post('full_match_url'),
             'highlightsUrl' => $this->post('highlights_url'),
+            'motmPlayerId' => $this->post('motm_player_id'),
         ];
 
         // Update fixture rich content
@@ -202,7 +214,7 @@ class FixturesController extends Controller
     /**
      * Find fixture by team IDs in a fixture list.
      */
-    private function findFixtureByTeamIds(array $fixtures, int $homeId, int $awayId): ?array
+    private function findFixtureByTeamIds(array $fixtures, int|string $homeId, int|string $awayId): ?array
     {
         $matches = [];
         foreach ($fixtures as $fixture) {
@@ -238,7 +250,7 @@ class FixturesController extends Controller
     /**
      * Find fixture by team IDs in cup rounds.
      */
-    private function findFixtureInRounds(array $rounds, int $homeId, int $awayId): ?array
+    private function findFixtureInRounds(array $rounds, int|string $homeId, int|string $awayId): ?array
     {
         foreach ($rounds as $round) {
             foreach ($round['fixtures'] as $fixture) {
@@ -300,8 +312,9 @@ class FixturesController extends Controller
                     return;
                 }
 
+                $fixtures = $leagueModel->getFixtures($competition['id']);
                 $fixture = $this->findFixtureByTeamIds(
-                    $competition['fixtures'],
+                    $fixtures,
                     $homeTeam['id'],
                     $awayTeam['id']
                 );
@@ -315,8 +328,9 @@ class FixturesController extends Controller
                     return;
                 }
 
+                $rounds = $cupModel->getRounds($competition['id']);
                 $fixture = $this->findFixtureInRounds(
-                    $competition['rounds'],
+                    $rounds,
                     $homeTeam['id'],
                     $awayTeam['id']
                 );
@@ -335,70 +349,70 @@ class FixturesController extends Controller
                 return;
             }
 
-        $photoModel = new \App\Models\FixturePhoto();
-        $uploadCount = 0;
-        $errorCount = 0;
-        $errors = [];
+            $photoModel = new \App\Models\FixturePhoto();
+            $uploadCount = 0;
+            $errorCount = 0;
+            $errors = [];
 
-        // Get current max sort order
-        $sortOrder = $photoModel->getMaxSortOrder($type, $fixture['id']);
+            // Get current max sort order
+            $sortOrder = $photoModel->getMaxSortOrder($type, $fixture['id']);
 
-        // Create nested directory path: fixtures/competition/fixture
-        $uploadPath = 'fixtures/' . $competitionSlug . '/' . $fixtureSlug;
+            // Create nested directory path: fixtures/competition/fixture
+            $uploadPath = 'fixtures/' . $competitionSlug . '/' . $fixtureSlug;
 
-        // Process each uploaded file
-        $fileCount = count($_FILES['photos']['name']);
+            // Process each uploaded file
+            $fileCount = count($_FILES['photos']['name']);
 
-        for ($i = 0; $i < $fileCount; $i++) {
-            if ($_FILES['photos']['error'][$i] !== UPLOAD_ERR_OK) {
-                continue;
+            for ($i = 0; $i < $fileCount; $i++) {
+                if ($_FILES['photos']['error'][$i] !== UPLOAD_ERR_OK) {
+                    continue;
+                }
+
+                $file = [
+                    'name' => $_FILES['photos']['name'][$i],
+                    'type' => $_FILES['photos']['type'][$i],
+                    'tmp_name' => $_FILES['photos']['tmp_name'][$i],
+                    'error' => $_FILES['photos']['error'][$i],
+                    'size' => $_FILES['photos']['size'][$i],
+                ];
+
+                $caption = $_POST['captions'][$i] ?? '';
+
+                // Upload file to nested directory
+                $result = \Core\Upload::uploadFile($file, $uploadPath);
+
+                if ($result['success']) {
+                    // Create database record with full relative path
+                    $sortOrder++;
+                    $photoModel->create([
+                        'fixture_id' => $fixture['id'],
+                        'fixture_type' => $type,
+                        'file_path' => $uploadPath . '/' . $result['filename'],
+                        'caption' => $caption,
+                        'sort_order' => $sortOrder,
+                    ]);
+                    $uploadCount++;
+                } else {
+                    $errorCount++;
+                    $errors[] = $result['error'];
+                }
             }
 
-            $file = [
-                'name' => $_FILES['photos']['name'][$i],
-                'type' => $_FILES['photos']['type'][$i],
-                'tmp_name' => $_FILES['photos']['tmp_name'][$i],
-                'error' => $_FILES['photos']['error'][$i],
-                'size' => $_FILES['photos']['size'][$i],
-            ];
-
-            $caption = $_POST['captions'][$i] ?? '';
-
-            // Upload file to nested directory
-            $result = \Core\Upload::uploadFile($file, $uploadPath);
-
-            if ($result['success']) {
-                // Create database record with full relative path
-                $sortOrder++;
-                $photoModel->create([
-                    'fixture_id' => $fixture['id'],
-                    'fixture_type' => $type,
-                    'file_path' => $uploadPath . '/' . $result['filename'],
-                    'caption' => $caption,
-                    'sort_order' => $sortOrder,
-                ]);
-                $uploadCount++;
-            } else {
-                $errorCount++;
-                $errors[] = $result['error'];
+            if ($uploadCount > 0) {
+                $this->flash('success', "{$uploadCount} photo(s) uploaded successfully");
             }
-        }
-
-        if ($uploadCount > 0) {
-            $this->flash('success', "{$uploadCount} photo(s) uploaded successfully");
-        }
-        if ($errorCount > 0) {
-            $errorMsg = "{$errorCount} photo(s) failed to upload";
-            if (!empty($errors)) {
-                $errorMsg .= ": " . implode(', ', array_unique($errors));
+            if ($errorCount > 0) {
+                $errorMsg = "{$errorCount} photo(s) failed to upload";
+                if (!empty($errors)) {
+                    $errorMsg .= ": " . implode(', ', array_unique($errors));
+                }
+                $this->flash('error', $errorMsg);
             }
-            $this->flash('error', $errorMsg);
-        }
-        if ($uploadCount === 0 && $errorCount === 0) {
-            $this->flash('error', 'No valid files to upload');
-        }
+            if ($uploadCount === 0 && $errorCount === 0) {
+                $this->flash('error', 'No valid files to upload');
+            }
 
-        $this->redirect("/admin/fixture/{$type}/{$competitionSlug}/{$fixtureSlug}");
+            $this->redirect("/admin/fixture/{$type}/{$competitionSlug}/{$fixtureSlug}");
 
         } catch (\Exception $e) {
             $this->flash('error', 'Upload error: ' . $e->getMessage());
