@@ -268,6 +268,25 @@ class Controller
     }
 
     /**
+     * Format time for display by stripping seconds.
+     * Converts HH:MM:SS to HH:MM.
+     */
+    protected function formatTimeForDisplay(?string $time): string
+    {
+        if ($time === null || $time === '') {
+            return '';
+        }
+
+        // Strip seconds if present (HH:MM:SS -> HH:MM)
+        if (preg_match('/^(\d{2}:\d{2}):\d{2}$/', $time, $matches)) {
+            return $matches[1];
+        }
+
+        // Already in HH:MM format or invalid, return as-is
+        return $time;
+    }
+
+    /**
      * Normalize frequency value to a valid option.
      * Returns the frequency if valid, or 'weekly' as default.
      */

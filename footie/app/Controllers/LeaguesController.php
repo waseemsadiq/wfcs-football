@@ -84,11 +84,22 @@ class LeaguesController extends CompetitionController
 
         usort($fixtures, fn($a, $b) => strcmp($a['date'], $b['date']));
 
+        // Load players grouped by team for dropdowns
+        $playerModel = new \App\Models\Player();
+        $teamPlayers = [];
+        foreach ($teams as $team) {
+            $players = $playerModel->where('team_id', $team['id']);
+            // Sort by name
+            usort($players, fn($a, $b) => strcmp($a['name'], $b['name']));
+            $teamPlayers[$team['id']] = $players;
+        }
+
         $this->render('leagues/fixtures', [
             'title' => $league['name'] . ' Fixtures',
             'currentPage' => 'leagues',
             'league' => $league,
             'fixtures' => $fixtures,
+            'teamPlayers' => $teamPlayers,
             'csrfToken' => $this->csrfToken(),
         ]);
     }
@@ -114,7 +125,7 @@ class LeaguesController extends CompetitionController
             return;
         }
 
-        $fixtureId = $this->post('fixtureId');
+        $fixtureId = (int) $this->post('fixtureId');
         $homeScore = $this->post('homeScore');
         $awayScore = $this->post('awayScore');
         $date = $this->post('date');
@@ -345,5 +356,47 @@ class LeaguesController extends CompetitionController
         }
 
         return $fixtures;
+    }
+
+    /**
+     * AJAX endpoint to render a new scorer row.
+     */
+    public function renderScorerRow(): void
+    {
+        $teamId = (int) $this->get('teamId');
+        $side = $this->get('side', 'home');
+        $index = (int) $this->get('index', time());
+
+        $playerModel = new \App\Models\Player();
+        $players = $playerModel->where('team_id', $teamId);
+        // Sort by name
+        usort($players, fn($a, $b) => strcmp($a['name'], $b['name']));
+
+        $this->renderPartial('partials/scorer_row', [
+            'side' => $side,
+            'index' => $index,
+            'players' => $players,
+        ]);
+    }
+
+    /**
+     * AJAX endpoint to render a new card row.
+     */
+    public function renderCardRow(): void
+    {
+        $teamId = (int) $this->get('teamId');
+        $side = $this->get('side', 'home');
+        $index = (int) $this->get('index', time());
+
+        $playerModel = new \App\Models\Player();
+        $players = $playerModel->where('team_id', $teamId);
+        // Sort by name
+        usort($players, fn($a, $b) => strcmp($a['name'], $b['name']));
+
+        $this->renderPartial('partials/card_row', [
+            'side' => $side,
+            'index' => $index,
+            'players' => $players,
+        ]);
     }
 }

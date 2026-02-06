@@ -92,7 +92,9 @@ usort($fixtures, function ($a, $b) {
 
                                 <div class="flex justify-between items-start border-t border-border pt-4 mt-4">
                                     <div class="flex-1">
-                                        <details class="group">
+                                        <details class="group"
+                                            data-home-team-id="<?= $fixture['homeTeamId'] ?>"
+                                            data-away-team-id="<?= $fixture['awayTeamId'] ?>">
                                             <summary
                                                 class="cursor-pointer text-text-muted text-sm hover:text-primary transition-colors flex items-center gap-1 py-1 select-none w-max">
                                                 <svg xmlns="http://www.w3.org/2000/svg"
@@ -123,12 +125,24 @@ usort($fixtures, function ($a, $b) {
                                                                 $scorers = $fixture['result'][$side . 'Scorers'] ?? [];
                                                                 if (!is_array($scorers))
                                                                     $scorers = [];
-                                                                foreach ($scorers as $index => $scorer): ?>
+                                                                foreach ($scorers as $index => $scorer):
+                                                                    $teamId = $side === 'home' ? $fixture['homeTeamId'] : $fixture['awayTeamId'];
+                                                                    $players = $teamPlayers[$teamId] ?? [];
+                                                                ?>
                                                                     <div class="flex gap-1 items-center">
-                                                                        <input type="text" name="<?= $side ?>Scorers[<?= $index ?>][player]"
-                                                                            value="<?= htmlspecialchars($scorer['player'] ?? '') ?>"
-                                                                            class="form-input py-1 px-2 text-xs flex-1"
-                                                                            placeholder="Player">
+                                                                        <select name="<?= $side ?>Scorers[<?= $index ?>][player]"
+                                                                            class="form-input py-1 px-2 text-xs flex-1">
+                                                                            <option value="">Select player...</option>
+                                                                            <?php foreach ($players as $player): ?>
+                                                                                <option value="<?= htmlspecialchars($player['name']) ?>"
+                                                                                    <?= ($scorer['player'] ?? '') === $player['name'] ? 'selected' : '' ?>>
+                                                                                    <?= htmlspecialchars($player['name']) ?>
+                                                                                    <?php if (!empty($player['squadNumber'])): ?>
+                                                                                        (#<?= $player['squadNumber'] ?>)
+                                                                                    <?php endif; ?>
+                                                                                </option>
+                                                                            <?php endforeach; ?>
+                                                                        </select>
                                                                         <input type="text" name="<?= $side ?>Scorers[<?= $index ?>][minute]"
                                                                             value="<?= htmlspecialchars((string) ($scorer['minute'] ?? '')) ?>"
                                                                             class="form-input py-1 px-1 text-xs w-10 text-center"
@@ -174,7 +188,10 @@ usort($fixtures, function ($a, $b) {
                                                                         $allCards[] = $card;
                                                                     }
                                                                 }
-                                                                foreach ($allCards as $idx => $card): ?>
+                                                                foreach ($allCards as $idx => $card):
+                                                                    $teamId = $side === 'home' ? $fixture['homeTeamId'] : $fixture['awayTeamId'];
+                                                                    $players = $teamPlayers[$teamId] ?? [];
+                                                                ?>
                                                                     <div class="flex gap-1 items-center">
                                                                         <select name="<?= $side ?>CardsCombined[<?= $idx ?>][type]"
                                                                             class="form-input py-1 px-1 text-[10px] w-20">
@@ -182,11 +199,19 @@ usort($fixtures, function ($a, $b) {
                                                                                 <option value="<?= $val ?>" <?= ($card['type'] ?? '') === $val ? 'selected' : '' ?>><?= $lbl ?></option>
                                                                             <?php endforeach; ?>
                                                                         </select>
-                                                                        <input type="text"
-                                                                            name="<?= $side ?>CardsCombined[<?= $idx ?>][player]"
-                                                                            value="<?= htmlspecialchars($card['player'] ?? '') ?>"
-                                                                            class="form-input py-1 px-2 text-xs flex-1"
-                                                                            placeholder="Player">
+                                                                        <select name="<?= $side ?>CardsCombined[<?= $idx ?>][player]"
+                                                                            class="form-input py-1 px-2 text-xs flex-1">
+                                                                            <option value="">Select player...</option>
+                                                                            <?php foreach ($players as $player): ?>
+                                                                                <option value="<?= htmlspecialchars($player['name']) ?>"
+                                                                                    <?= ($card['player'] ?? '') === $player['name'] ? 'selected' : '' ?>>
+                                                                                    <?= htmlspecialchars($player['name']) ?>
+                                                                                    <?php if (!empty($player['squadNumber'])): ?>
+                                                                                        (#<?= $player['squadNumber'] ?>)
+                                                                                    <?php endif; ?>
+                                                                                </option>
+                                                                            <?php endforeach; ?>
+                                                                        </select>
                                                                         <input type="text"
                                                                             name="<?= $side ?>CardsCombined[<?= $idx ?>][minute]"
                                                                             value="<?= htmlspecialchars($card['minute'] ?? '') ?>"
@@ -273,41 +298,56 @@ usort($fixtures, function ($a, $b) {
         <?php endif; ?>
 
         <script>
-            function addScorerRow(btn, fieldName) {
-                                const container = btn.parentElement.nextElementSibling;
-                                const index = container.children.length + Math.floor(Math.random() * 1000);
+            async function addScorerRow(btn, fieldName) {
+                const container = btn.parentElement.nextElementSibling;
+                const index = container.children.length + Math.floor(Math.random() * 1000);
 
-                                const div = document.createElement('div');
-                                div.className = 'flex gap-1 items-center';
-                                div.innerHTML = `
-            <input type="text" name="${fieldName}[${index}][player]" class="form-input py-1 px-2 text-xs flex-1" placeholder="Player">
-            <input type="text" name="${fieldName}[${index}][minute]" class="form-input py-1 px-1 text-xs w-10 text-center" placeholder="Min">
-            <label class="flex items-center gap-1 text-[10px] text-text-muted cursor-pointer whitespace-nowrap">
-                <input type="checkbox" name="${fieldName}[${index}][ownGoal]" value="1"> OG
-            </label>
-            <button type="button" class="text-red-500 hover:text-red-400 text-xs px-1" onclick="this.parentElement.remove()">×</button>
-        `;
-                                container.appendChild(div);
-                            }
+                // Get team ID from data attribute
+                const details = btn.closest('details');
+                const side = fieldName.replace('Scorers', '').toLowerCase();
+                const teamId = side === 'home' ? details?.dataset?.homeTeamId : details?.dataset?.awayTeamId;
 
-                            function addCardRow(btn, fieldName) {
-                                const container = btn.parentElement.nextElementSibling;
-                                const index = container.children.length + Math.floor(Math.random() * 1000);
+                if (!teamId) {
+                    console.error('Team ID not found');
+                    return;
+                }
 
-                                const div = document.createElement('div');
-                                div.className = 'flex gap-1 items-center';
-                                div.innerHTML = `
-            <select name="${fieldName}[${index}][type]" class="form-input py-1 px-1 text-[10px] w-20">
-                <option value="sinBins">Sin Bin</option>
-                <option value="blue">Blue</option>
-                <option value="yellow" selected>Yellow</option>
-                <option value="red">Red</option>
-            </select>
-            <input type="text" name="${fieldName}[${index}][player]" class="form-input py-1 px-2 text-xs flex-1" placeholder="Player">
-            <input type="text" name="${fieldName}[${index}][minute]" class="form-input py-1 px-1 text-xs w-10 text-center" placeholder="Min">
-            <button type="button" class="text-red-500 hover:text-red-400 text-xs px-1" onclick="this.parentElement.remove()">×</button>
-        `;
-                                container.appendChild(div);
+                try {
+                    const response = await fetch(`/admin/leagues/ajax/scorer-row?teamId=${teamId}&side=${side}&index=${index}`);
+                    const html = await response.text();
+
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = html;
+                    container.appendChild(tempDiv.firstChild);
+                } catch (error) {
+                    console.error('Failed to load scorer row:', error);
+                }
+            }
+
+            async function addCardRow(btn, fieldName) {
+                const container = btn.parentElement.nextElementSibling;
+                const index = container.children.length + Math.floor(Math.random() * 1000);
+
+                // Get team ID from data attribute
+                const details = btn.closest('details');
+                const side = fieldName.replace('CardsCombined', '').toLowerCase();
+                const teamId = side === 'home' ? details?.dataset?.homeTeamId : details?.dataset?.awayTeamId;
+
+                if (!teamId) {
+                    console.error('Team ID not found');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/admin/leagues/ajax/card-row?teamId=${teamId}&side=${side}&index=${index}`);
+                    const html = await response.text();
+
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = html;
+                    container.appendChild(tempDiv.firstChild);
+                } catch (error) {
+                    console.error('Failed to load card row:', error);
+                }
             }
         </script>
 

@@ -30,12 +30,20 @@
                 <?php endif; ?>
             </div>
 
-            <div class="text-text-muted font-medium">Position</div>
+            <div class="text-text-muted font-medium">Position<?= !empty($player['position']) && str_contains($player['position'], ',') ? 's' : '' ?></div>
             <div>
                 <?php if (!empty($player['position'])): ?>
-                    <span class="text-xs px-2 py-1 rounded bg-surface-hover">
-                        <?= htmlspecialchars($player['position']) ?>
-                    </span>
+                    <?php
+                    $positions = explode(',', $player['position']);
+                    $positions = array_map('trim', $positions);
+                    ?>
+                    <div class="flex flex-wrap gap-2">
+                        <?php foreach ($positions as $pos): ?>
+                            <span class="text-xs px-2 py-1 rounded bg-surface-hover">
+                                <?= htmlspecialchars($pos) ?>
+                            </span>
+                        <?php endforeach; ?>
+                    </div>
                 <?php else: ?>
                     <span class="text-text-muted italic">Not set</span>
                 <?php endif; ?>

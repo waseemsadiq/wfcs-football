@@ -115,7 +115,7 @@ class PlayersController extends Controller
         // Validate and sanitize inputs
         $name = $this->sanitizeString($this->post('name'), 100);
         $teamId = $this->post('teamId', null);
-        $position = $this->post('position', null);
+        $positions = $this->post('positions', []);
         $squadNumber = $this->post('squadNumber', null);
         $status = $this->post('status', 'active');
         $isPoolPlayer = $this->post('isPoolPlayer', '0') === '1';
@@ -139,14 +139,20 @@ class PlayersController extends Controller
             $teamId = null;
         }
 
-        // Validate position
-        if ($position !== null && $position !== '') {
-            $validPositions = ['Goalkeeper', 'Defender', 'Midfielder', 'Forward'];
-            if (!in_array($position, $validPositions)) {
-                $this->flash('error', 'Invalid position selected.');
-                $this->redirect('/admin/players/create');
-                return;
+        // Validate positions
+        $validPositions = ['Goalkeeper', 'Defender', 'Midfielder', 'Forward'];
+        $position = null;
+        if (is_array($positions) && !empty($positions)) {
+            // Validate each position
+            foreach ($positions as $pos) {
+                if (!in_array($pos, $validPositions)) {
+                    $this->flash('error', 'Invalid position selected.');
+                    $this->redirect('/admin/players/create');
+                    return;
+                }
             }
+            // Join positions with comma
+            $position = implode(',', $positions);
         }
 
         // Validate squad number uniqueness per team
@@ -239,7 +245,7 @@ class PlayersController extends Controller
         // Validate and sanitize inputs
         $name = $this->sanitizeString($this->post('name'), 100);
         $teamId = $this->post('teamId', null);
-        $position = $this->post('position', null);
+        $positions = $this->post('positions', []);
         $squadNumber = $this->post('squadNumber', null);
         $status = $this->post('status', 'active');
         $isPoolPlayer = $this->post('isPoolPlayer', '0') === '1';
@@ -263,14 +269,20 @@ class PlayersController extends Controller
             $teamId = null;
         }
 
-        // Validate position
-        if ($position !== null && $position !== '') {
-            $validPositions = ['Goalkeeper', 'Defender', 'Midfielder', 'Forward'];
-            if (!in_array($position, $validPositions)) {
-                $this->flash('error', 'Invalid position selected.');
-                $this->redirect('/admin/players/' . $slug . '/edit');
-                return;
+        // Validate positions
+        $validPositions = ['Goalkeeper', 'Defender', 'Midfielder', 'Forward'];
+        $position = null;
+        if (is_array($positions) && !empty($positions)) {
+            // Validate each position
+            foreach ($positions as $pos) {
+                if (!in_array($pos, $validPositions)) {
+                    $this->flash('error', 'Invalid position selected.');
+                    $this->redirect('/admin/players/' . $slug . '/edit');
+                    return;
+                }
             }
+            // Join positions with comma
+            $position = implode(',', $positions);
         }
 
         // Validate squad number uniqueness per team
@@ -371,5 +383,32 @@ class PlayersController extends Controller
         $message = $deletedCount . ' player' . ($deletedCount !== 1 ? 's' : '') . ' deleted successfully.';
         $this->flash('success', $message);
         $this->redirect('/admin/players');
+    }
+
+    /**
+     * AJAX endpoint to get filtered player list.
+     */
+    public function getPlayersList(): void
+    {
+        $teamId = $this->get('team_id');
+        $pool = $this->get('pool', '0') === '1';
+
+        if ($pool) {
+            $players = $this->playerModel->getPoolPlayers();
+        } elseif ($teamId) {
+            $players = $this->playerModel->getByTeam($teamId);
+        } else {
+            $players = $this->playerModel->all();
+        }
+
+        $teams = $this->teamModel->allSorted();
+        $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
+
+        $this->renderPartial('players/players_table', [
+            'players' => $players,
+            'teams' => $teams,
+            'basePath' => $basePath,
+            'pool' => $pool,
+        ]);
     }
 }

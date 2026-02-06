@@ -64,6 +64,7 @@ $router->get('/admin/players/{slug}/edit', 'PlayersController', 'edit');
 $router->post('/admin/players/{slug}/update', 'PlayersController', 'update');
 $router->post('/admin/players/{slug}/delete', 'PlayersController', 'delete');
 $router->post('/admin/players/delete-multiple', 'PlayersController', 'deleteMultiple');
+$router->get('/admin/players/ajax/list', 'PlayersController', 'getPlayersList');
 
 // Seasons
 $router->get('/admin/seasons', 'SeasonsController', 'index');
@@ -86,6 +87,8 @@ $router->post('/admin/leagues/{slug}/delete', 'LeaguesController', 'delete');
 $router->get('/admin/leagues/{slug}/fixtures', 'LeaguesController', 'fixtures');
 $router->post('/admin/leagues/{slug}/fixtures', 'LeaguesController', 'updateFixtures');
 $router->post('/admin/leagues/{slug}/regenerate-fixtures', 'LeaguesController', 'regenerateFixtures');
+$router->get('/admin/leagues/ajax/scorer-row', 'LeaguesController', 'renderScorerRow');
+$router->get('/admin/leagues/ajax/card-row', 'LeaguesController', 'renderCardRow');
 
 // Cups
 $router->get('/admin/cups', 'CupsController', 'index');
@@ -97,6 +100,8 @@ $router->post('/admin/cups/{slug}/update', 'CupsController', 'update');
 $router->post('/admin/cups/{slug}/delete', 'CupsController', 'delete');
 $router->get('/admin/cups/{slug}/fixtures', 'CupsController', 'fixtures');
 $router->post('/admin/cups/{slug}/fixtures', 'CupsController', 'updateFixtures');
+$router->get('/admin/cups/ajax/scorer-row', 'CupsController', 'renderScorerRow');
+$router->get('/admin/cups/ajax/card-row', 'CupsController', 'renderCardRow');
 $router->post('/admin/cups/{slug}/regenerate-fixtures', 'CupsController', 'regenerateFixtures');
 
 return $router;

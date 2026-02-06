@@ -42,17 +42,59 @@
             </div>
 
             <div class="mb-6">
-                <label for="position" class="block text-sm font-medium text-text-muted mb-2">Position</label>
-                <select id="position" name="position" class="form-input">
-                    <option value="">Select position...</option>
-                    <option value="Goalkeeper" <?= ($player['position'] === 'Goalkeeper') ? 'selected' : '' ?>>Goalkeeper
-                    </option>
-                    <option value="Defender" <?= ($player['position'] === 'Defender') ? 'selected' : '' ?>>Defender
-                    </option>
-                    <option value="Midfielder" <?= ($player['position'] === 'Midfielder') ? 'selected' : '' ?>>Midfielder
-                    </option>
-                    <option value="Forward" <?= ($player['position'] === 'Forward') ? 'selected' : '' ?>>Forward</option>
-                </select>
+                <?php
+                // Split comma-separated positions into array
+                $selectedPositions = !empty($player['position']) ? explode(',', $player['position']) : [];
+                $selectedPositions = array_map('trim', $selectedPositions);
+                ?>
+                <label class="block text-sm font-medium text-text-muted mb-3">Position(s)</label>
+                <div class="space-y-3">
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <div class="relative inline-block w-11 h-6">
+                            <input type="checkbox" name="positions[]" value="Goalkeeper"
+                                class="sr-only peer"
+                                role="switch"
+                                <?= in_array('Goalkeeper', $selectedPositions) ? 'checked' : '' ?>>
+                            <div class="w-11 h-6 bg-gray-600 rounded-full peer-checked:bg-primary transition-colors peer-focus:ring-2 peer-focus:ring-primary/50"></div>
+                            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
+                        </div>
+                        <span class="text-sm text-text">Goalkeeper</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <div class="relative inline-block w-11 h-6">
+                            <input type="checkbox" name="positions[]" value="Defender"
+                                class="sr-only peer"
+                                role="switch"
+                                <?= in_array('Defender', $selectedPositions) ? 'checked' : '' ?>>
+                            <div class="w-11 h-6 bg-gray-600 rounded-full peer-checked:bg-primary transition-colors peer-focus:ring-2 peer-focus:ring-primary/50"></div>
+                            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
+                        </div>
+                        <span class="text-sm text-text">Defender</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <div class="relative inline-block w-11 h-6">
+                            <input type="checkbox" name="positions[]" value="Midfielder"
+                                class="sr-only peer"
+                                role="switch"
+                                <?= in_array('Midfielder', $selectedPositions) ? 'checked' : '' ?>>
+                            <div class="w-11 h-6 bg-gray-600 rounded-full peer-checked:bg-primary transition-colors peer-focus:ring-2 peer-focus:ring-primary/50"></div>
+                            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
+                        </div>
+                        <span class="text-sm text-text">Midfielder</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <div class="relative inline-block w-11 h-6">
+                            <input type="checkbox" name="positions[]" value="Forward"
+                                class="sr-only peer"
+                                role="switch"
+                                <?= in_array('Forward', $selectedPositions) ? 'checked' : '' ?>>
+                            <div class="w-11 h-6 bg-gray-600 rounded-full peer-checked:bg-primary transition-colors peer-focus:ring-2 peer-focus:ring-primary/50"></div>
+                            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
+                        </div>
+                        <span class="text-sm text-text">Forward</span>
+                    </label>
+                </div>
+                <p class="mt-3 text-sm text-text-muted">Select all positions this player can play.</p>
             </div>
 
             <div class="mb-6">

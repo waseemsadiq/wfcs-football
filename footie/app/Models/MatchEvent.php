@@ -116,9 +116,6 @@ class MatchEvent extends Model
     public function replaceFixtureEvents(string $fixtureType, int|string $fixtureId, array $events): bool
     {
         try {
-            // Start transaction
-            $this->db->beginTransaction();
-
             // Delete existing events
             $stmt = $this->db->prepare(
                 "DELETE FROM match_events WHERE fixture_type = ? AND fixture_id = ?"
@@ -146,12 +143,8 @@ class MatchEvent extends Model
                 }
             }
 
-            // Commit transaction
-            $this->db->commit();
             return true;
         } catch (\Exception $e) {
-            // Rollback on error
-            $this->db->rollBack();
             error_log("Failed to replace fixture events: " . $e->getMessage());
             return false;
         }

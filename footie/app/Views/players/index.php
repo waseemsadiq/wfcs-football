@@ -18,8 +18,8 @@ include __DIR__ . '/../partials/admin_page_header.php';
             <?php endif; ?>
         </div>
         <div class="flex gap-4 items-center flex-wrap">
-            <select id="teamFilter" class="form-input py-2 px-3 text-sm"
-                onchange="window.location.href='<?= $basePath ?>/admin/players?team_id=' + this.value">
+            <select id="teamFilter"
+                class="bg-surface border border-border rounded px-3 py-2 text-text-main focus:outline-none focus:border-primary min-w-[200px]">
                 <option value="">All Teams</option>
                 <?php foreach ($teams as $team): ?>
                     <option value="<?= htmlspecialchars($team['id']) ?>"
@@ -28,10 +28,10 @@ include __DIR__ . '/../partials/admin_page_header.php';
                     </option>
                 <?php endforeach; ?>
             </select>
-            <a href="<?= $basePath ?>/admin/players?pool=1"
+            <button type="button" id="poolFilterBtn"
                 class="btn btn-secondary <?= $pool ? 'bg-primary text-white' : '' ?>">
                 Pool Players
-            </a>
+            </button>
             <a href="<?= $basePath ?>/admin/players/create" class="btn btn-primary">+ Add Player</a>
             <button type="button" id="deleteSelectedBtn"
                 class="btn bg-danger text-white hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
@@ -41,6 +41,12 @@ include __DIR__ . '/../partials/admin_page_header.php';
         </div>
     </div>
 
+    <div id="players-loader" class="hidden flex justify-center py-8" role="status" aria-live="polite">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <span class="sr-only">Loading players...</span>
+    </div>
+
+    <div id="players-container">
     <?php if (empty($players)): ?>
         <?php
         $message = $pool ? 'No pool players yet.' : 'No players added yet. Get started by adding your first player.';
@@ -67,7 +73,7 @@ include __DIR__ . '/../partials/admin_page_header.php';
                         </th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="players-tbody">
                     <?php foreach ($players as $player): ?>
                         <tr class="hover:bg-surface-hover transition-colors">
                             <td class="table-td">
@@ -94,9 +100,17 @@ include __DIR__ . '/../partials/admin_page_header.php';
                             </td>
                             <td class="table-td">
                                 <?php if (!empty($player['position'])): ?>
-                                    <span class="text-xs px-2 py-1 rounded bg-surface-hover">
-                                        <?= htmlspecialchars($player['position']) ?>
-                                    </span>
+                                    <?php
+                                    $positions = explode(',', $player['position']);
+                                    $positions = array_map('trim', $positions);
+                                    ?>
+                                    <div class="flex flex-wrap gap-1">
+                                        <?php foreach ($positions as $pos): ?>
+                                            <span class="text-xs px-2 py-1 rounded bg-surface-hover whitespace-nowrap">
+                                                <?= htmlspecialchars($pos) ?>
+                                            </span>
+                                        <?php endforeach; ?>
+                                    </div>
                                 <?php else: ?>
                                     <span class="text-text-muted italic">-</span>
                                 <?php endif; ?>
@@ -148,6 +162,7 @@ include __DIR__ . '/../partials/admin_page_header.php';
             </table>
         </div>
     <?php endif; ?>
+    </div>
 </div>
 
 <!-- Bulk delete form -->
@@ -156,24 +171,89 @@ include __DIR__ . '/../partials/admin_page_header.php';
 </form>
 
 <script>
+    const BASE_PATH = '<?= $basePath ?>';
+    let currentPool = <?= $pool ? 'true' : 'false' ?>;
+    let currentTeamId = '<?= $selectedTeamId ?? '' ?>';
+
+    // Filter functionality
+    const teamFilter = document.getElementById('teamFilter');
+    const poolFilterBtn = document.getElementById('poolFilterBtn');
+    const playersContainer = document.getElementById('players-container');
+    const playersLoader = document.getElementById('players-loader');
+
+    teamFilter?.addEventListener('change', function() {
+        currentTeamId = this.value;
+        currentPool = false;
+        loadPlayers();
+    });
+
+    poolFilterBtn?.addEventListener('click', function() {
+        currentPool = !currentPool;
+        currentTeamId = '';
+        teamFilter.value = '';
+
+        // Update button style
+        if (currentPool) {
+            this.classList.add('bg-primary', 'text-white');
+        } else {
+            this.classList.remove('bg-primary', 'text-white');
+        }
+
+        loadPlayers();
+    });
+
+    function loadPlayers() {
+        playersLoader.classList.remove('hidden');
+        playersContainer.style.opacity = '0.5';
+
+        let url = `${BASE_PATH}/admin/players/ajax/list?`;
+        if (currentPool) {
+            url += 'pool=1';
+        } else if (currentTeamId) {
+            url += `team_id=${currentTeamId}`;
+        }
+
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                // Safe to use innerHTML here - content is from our own trusted server endpoint
+                playersContainer.innerHTML = html;
+
+                // Reinitialize bulk delete after loading new content
+                initBulkDelete();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                playersContainer.innerHTML = '<div class="text-error text-center py-8">Failed to load players.</div>';
+            })
+            .finally(() => {
+                playersLoader.classList.add('hidden');
+                playersContainer.style.opacity = '1';
+            });
+    }
+
     // Bulk delete functionality
-    const selectAllCheckbox = document.getElementById('selectAll');
-    const playerCheckboxes = document.querySelectorAll('.player-checkbox');
-    const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+    let selectAllCheckbox, playerCheckboxes, deleteSelectedBtn;
     const bulkDeleteForm = document.getElementById('bulkDeleteForm');
 
-    // Select all functionality
-    selectAllCheckbox?.addEventListener('change', function() {
-        playerCheckboxes.forEach(checkbox => {
-            checkbox.checked = this.checked;
-        });
-        updateDeleteButton();
-    });
+    function initBulkDelete() {
+        selectAllCheckbox = document.getElementById('selectAll');
+        playerCheckboxes = document.querySelectorAll('.player-checkbox');
+        deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
 
-    // Update delete button state
-    playerCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', updateDeleteButton);
-    });
+        // Select all functionality
+        selectAllCheckbox?.addEventListener('change', function() {
+            playerCheckboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            updateDeleteButton();
+        });
+
+        // Update delete button state
+        playerCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateDeleteButton);
+        });
+    }
 
     function updateDeleteButton() {
         const checkedCount = document.querySelectorAll('.player-checkbox:checked').length;
@@ -182,6 +262,9 @@ include __DIR__ . '/../partials/admin_page_header.php';
             `Delete Selected (${checkedCount})` :
             'Delete Selected';
     }
+
+    // Initialize on page load
+    initBulkDelete();
 
     // Handle bulk delete
     deleteSelectedBtn?.addEventListener('click', function() {
