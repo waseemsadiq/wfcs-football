@@ -123,19 +123,19 @@
                 renderHeader(data.team, data.competitions);
 
                 // Render Recent Results
+                recentResultsSection.classList.remove('hidden');
                 if (data.recentResults && data.recentResults.length > 0) {
                     renderFixtures(data.recentResults, recentResultsContent);
-                    recentResultsSection.classList.remove('hidden');
                 } else {
-                    recentResultsSection.classList.add('hidden');
+                    renderEmptyState(recentResultsContent, 'No recent matches');
                 }
 
                 // Render Upcoming Fixtures
+                upcomingFixturesSection.classList.remove('hidden');
                 if (data.upcomingFixtures && data.upcomingFixtures.length > 0) {
                     renderFixtures(data.upcomingFixtures, upcomingFixturesContent);
-                    upcomingFixturesSection.classList.remove('hidden');
                 } else {
-                    upcomingFixturesSection.classList.add('hidden');
+                    renderEmptyState(upcomingFixturesContent, 'No upcoming fixtures');
                 }
 
                 // Hide loading, show content
@@ -198,6 +198,14 @@
             });
 
             container.innerHTML = html;
+        }
+
+        function renderEmptyState(container, message) {
+            const li = document.createElement('li');
+            li.className = 'text-center py-8 text-text-muted text-sm';
+            li.textContent = message;
+            container.innerHTML = '';
+            container.appendChild(li);
         }
 
 
