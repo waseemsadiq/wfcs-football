@@ -49,7 +49,6 @@
                             <th class="table-th text-left">Player</th>
                             <th class="table-th text-left">Team</th>
                             <th class="table-th text-center">Goals</th>
-                            <th class="table-th text-center">Assists</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-border">
@@ -110,13 +109,6 @@
                                 <td class="table-td text-center">
                                     <span class="font-mono font-bold text-primary text-lg">
                                         <?= $scorer['totalGoals'] ?? 0 ?>
-                                    </span>
-                                </td>
-
-                                <!-- Assists -->
-                                <td class="table-td text-center">
-                                    <span class="font-mono text-text-muted">
-                                        <?= $scorer['totalAssists'] ?? 0 ?>
                                     </span>
                                 </td>
                             </tr>

@@ -910,4 +910,36 @@ class PublicController extends Controller
             'selectedLeagueId' => $leagueId,
         ], 'public');
     }
+
+    /**
+     * AJAX endpoint - returns top scorers data as JSON with rendered HTML.
+     */
+    public function topScorersData(): void
+    {
+        header('Content-Type: application/json');
+
+        $playerModel = new \App\Models\Player();
+        $leagueId = $this->get('league_id');
+
+        // Get top scorers (limit 20)
+        $scorers = $playerModel->getTopScorers(20, $leagueId ? (int)$leagueId : null);
+
+        // Enrich with team data
+        $teams = $this->teamModel->all();
+        $teamsById = $this->indexById($teams);
+
+        foreach ($scorers as &$scorer) {
+            $scorer['team'] = $teamsById[$scorer['teamId']] ?? null;
+        }
+
+        // Render table HTML using partial
+        ob_start();
+        include dirname(__DIR__) . '/Views/public/partials/top_scorers_table.php';
+        $tableHtml = ob_get_clean();
+
+        echo json_encode([
+            'tableHtml' => $tableHtml,
+            'count' => count($scorers),
+        ]);
+    }
 }

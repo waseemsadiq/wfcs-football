@@ -67,7 +67,7 @@
     <!-- Player Statistics -->
     <div class="mb-12">
         <h2 class="text-2xl font-bold text-text-main mb-6">Season Statistics</h2>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
             <!-- Goals -->
             <div class="card text-center">
                 <div class="p-6">
@@ -76,18 +76,6 @@
                     </div>
                     <div class="text-sm font-semibold text-text-muted uppercase tracking-wide">
                         Goals
-                    </div>
-                </div>
-            </div>
-
-            <!-- Assists -->
-            <div class="card text-center">
-                <div class="p-6">
-                    <div class="text-4xl font-extrabold text-primary mb-2">
-                        <?= $stats['totalAssists'] ?? 0 ?>
-                    </div>
-                    <div class="text-sm font-semibold text-text-muted uppercase tracking-wide">
-                        Assists
                     </div>
                 </div>
             </div>
@@ -132,10 +120,6 @@
                                     <?php if ($event['eventType'] === 'goal'): ?>
                                         <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
                                             ⚽
-                                        </div>
-                                    <?php elseif ($event['eventType'] === 'assist'): ?>
-                                        <div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold">
-                                            🅰️
                                         </div>
                                     <?php elseif ($event['eventType'] === 'yellow_card'): ?>
                                         <div class="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center">
