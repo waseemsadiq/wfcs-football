@@ -138,7 +138,7 @@ class Cup extends Model
                     match_date as date,
                     match_time as time,
                     pitch,
-                    referee,
+                    referee_id as refereeId,
                     is_live as isLive,
                     home_score,
                     away_score,
