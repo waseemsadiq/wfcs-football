@@ -122,7 +122,7 @@ class League extends Model
     }
 
     /**
-     * Get fixtures for a league.
+     * Get fixtures for a league with match events from match_events table.
      */
     public function getFixtures(int|string $leagueId): array
     {
@@ -137,11 +137,7 @@ class League extends Model
                 referee,
                 is_live as isLive,
                 home_score,
-                away_score,
-                home_scorers,
-                away_scorers,
-                home_cards,
-                away_cards
+                away_score
             FROM league_fixtures
             WHERE league_id = ?
             ORDER BY match_date, match_time
@@ -150,16 +146,19 @@ class League extends Model
 
         $fixtures = $stmt->fetchAll();
 
-        // Convert result fields to 'result' object if scores exist
+        // Load match events and convert to result format
         foreach ($fixtures as &$fixture) {
             if ($fixture['home_score'] !== null) {
+                // Fetch match events for this fixture
+                $events = $this->getMatchEventsForFixture($fixture['id']);
+
                 $fixture['result'] = [
                     'homeScore' => $fixture['home_score'],
                     'awayScore' => $fixture['away_score'],
-                    'homeScorers' => $this->decodeLegacyField($fixture['home_scorers']),
-                    'awayScorers' => $this->decodeLegacyField($fixture['away_scorers']),
-                    'homeCards' => $this->decodeLegacyField($fixture['home_cards']),
-                    'awayCards' => $this->decodeLegacyField($fixture['away_cards']),
+                    'homeScorers' => $events['homeScorers'],
+                    'awayScorers' => $events['awayScorers'],
+                    'homeCards' => $events['homeCards'],
+                    'awayCards' => $events['awayCards'],
                 ];
             } else {
                 $fixture['result'] = null;
@@ -167,13 +166,82 @@ class League extends Model
 
             // Remove individual score fields and original column names
             unset($fixture['home_score'], $fixture['away_score']);
-            unset($fixture['home_scorers'], $fixture['away_scorers']);
-            unset($fixture['home_cards'], $fixture['away_cards']);
             unset($fixture['home_team_id'], $fixture['away_team_id']);
             unset($fixture['match_date'], $fixture['match_time']);
         }
 
         return $fixtures;
+    }
+
+    /**
+     * Get match events for a fixture and format them for display.
+     */
+    private function getMatchEventsForFixture(int $fixtureId): array
+    {
+        $stmt = $this->db->prepare("
+            SELECT
+                me.team_id,
+                me.player_id,
+                me.event_type,
+                me.minute,
+                me.notes,
+                p.name as player_name
+            FROM match_events me
+            LEFT JOIN players p ON me.player_id = p.id
+            WHERE me.fixture_type = 'league' AND me.fixture_id = ?
+            ORDER BY me.minute, me.id
+        ");
+        $stmt->execute([$fixtureId]);
+        $events = $stmt->fetchAll();
+
+        // Get fixture to determine home/away teams
+        $fixtureStmt = $this->db->prepare("SELECT home_team_id, away_team_id FROM league_fixtures WHERE id = ?");
+        $fixtureStmt->execute([$fixtureId]);
+        $fixture = $fixtureStmt->fetch();
+
+        $homeScorers = [];
+        $awayScorers = [];
+        $homeCards = ['yellow' => [], 'red' => [], 'blue' => [], 'sinBins' => []];
+        $awayCards = ['yellow' => [], 'red' => [], 'blue' => [], 'sinBins' => []];
+
+        foreach ($events as $event) {
+            $playerName = $event['player_name'] ?? 'Unknown';
+            $minute = $event['minute'] ? (string)$event['minute'] : '';
+            $isHome = $event['team_id'] == $fixture['home_team_id'];
+
+            if ($event['event_type'] === 'goal') {
+                $goalData = ['player' => $playerName, 'minute' => $minute];
+                if ($event['notes'] === 'og') {
+                    $goalData['ownGoal'] = true;
+                }
+                if ($isHome) {
+                    $homeScorers[] = $goalData;
+                } else {
+                    $awayScorers[] = $goalData;
+                }
+            } elseif ($event['event_type'] === 'yellow_card') {
+                $cardData = ['player' => $playerName, 'minute' => $minute];
+                if ($isHome) {
+                    $homeCards['yellow'][] = $cardData;
+                } else {
+                    $awayCards['yellow'][] = $cardData;
+                }
+            } elseif ($event['event_type'] === 'red_card') {
+                $cardData = ['player' => $playerName, 'minute' => $minute];
+                if ($isHome) {
+                    $homeCards['red'][] = $cardData;
+                } else {
+                    $awayCards['red'][] = $cardData;
+                }
+            }
+        }
+
+        return [
+            'homeScorers' => $homeScorers,
+            'awayScorers' => $awayScorers,
+            'homeCards' => $homeCards,
+            'awayCards' => $awayCards,
+        ];
     }
 
     /**
