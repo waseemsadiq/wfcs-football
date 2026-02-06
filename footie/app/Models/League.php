@@ -477,21 +477,13 @@ class League extends Model
         $stmt = $this->db->prepare("
             UPDATE league_fixtures
             SET home_score = ?,
-                away_score = ?,
-                home_scorers = ?,
-                away_scorers = ?,
-                home_cards = ?,
-                away_cards = ?
+                away_score = ?
             WHERE league_id = ? AND id = ?
         ");
 
         $success = $stmt->execute([
             $result['homeScore'] ?? null,
             $result['awayScore'] ?? null,
-            json_encode($result['homeScorers'] ?? ''),
-            json_encode($result['awayScorers'] ?? ''),
-            json_encode($result['homeCards'] ?? ''),
-            json_encode($result['awayCards'] ?? ''),
             $leagueId,
             $fixtureId
         ]);

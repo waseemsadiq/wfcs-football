@@ -412,4 +412,119 @@ abstract class CompetitionController extends Controller
 
         return $cards;
     }
+
+    /**
+     * Convert parsed scorers and cards into match events and save to database.
+     * Matches player names to player IDs and creates structured event records.
+     */
+    protected function saveMatchEvents(
+        string $fixtureType,
+        int $fixtureId,
+        int $homeTeamId,
+        int $awayTeamId,
+        array $homeScorers,
+        array $awayScorers,
+        array $homeCards,
+        array $awayCards
+    ): void {
+        $events = [];
+        $playerModel = new \App\Models\Player();
+
+        // Process home scorers
+        foreach ($homeScorers as $scorer) {
+            $playerId = $this->findPlayerIdByName($scorer['player'], $homeTeamId, $playerModel);
+            $minute = !empty($scorer['minute']) ? (int) $scorer['minute'] : null;
+            $ownGoal = $scorer['ownGoal'] ?? false;
+
+            $events[] = [
+                'fixture_type' => $fixtureType,
+                'fixture_id' => $fixtureId,
+                'team_id' => $homeTeamId,
+                'player_id' => $playerId,
+                'event_type' => 'goal',
+                'minute' => $minute,
+                'notes' => $ownGoal ? 'og' : null,
+            ];
+        }
+
+        // Process away scorers
+        foreach ($awayScorers as $scorer) {
+            $playerId = $this->findPlayerIdByName($scorer['player'], $awayTeamId, $playerModel);
+            $minute = !empty($scorer['minute']) ? (int) $scorer['minute'] : null;
+            $ownGoal = $scorer['ownGoal'] ?? false;
+
+            $events[] = [
+                'fixture_type' => $fixtureType,
+                'fixture_id' => $fixtureId,
+                'team_id' => $awayTeamId,
+                'player_id' => $playerId,
+                'event_type' => 'goal',
+                'minute' => $minute,
+                'notes' => $ownGoal ? 'og' : null,
+            ];
+        }
+
+        // Process home cards
+        $this->processCardsForTeam($events, $homeCards, $fixtureType, $fixtureId, $homeTeamId, $playerModel);
+
+        // Process away cards
+        $this->processCardsForTeam($events, $awayCards, $fixtureType, $fixtureId, $awayTeamId, $playerModel);
+
+        // Save all events to database
+        $matchEventModel = new \App\Models\MatchEvent();
+        $matchEventModel->replaceFixtureEvents($fixtureType, $fixtureId, $events);
+    }
+
+    /**
+     * Process cards for a specific team and add to events array.
+     */
+    private function processCardsForTeam(
+        array &$events,
+        array $cards,
+        string $fixtureType,
+        int $fixtureId,
+        int $teamId,
+        \App\Models\Player $playerModel
+    ): void {
+        // Yellow cards
+        foreach ($cards['yellow'] ?? [] as $card) {
+            $playerId = $this->findPlayerIdByName($card['player'], $teamId, $playerModel);
+            $minute = !empty($card['minute']) ? (int) $card['minute'] : null;
+
+            $events[] = [
+                'fixture_type' => $fixtureType,
+                'fixture_id' => $fixtureId,
+                'team_id' => $teamId,
+                'player_id' => $playerId,
+                'event_type' => 'yellow_card',
+                'minute' => $minute,
+                'notes' => null,
+            ];
+        }
+
+        // Red cards
+        foreach ($cards['red'] ?? [] as $card) {
+            $playerId = $this->findPlayerIdByName($card['player'], $teamId, $playerModel);
+            $minute = !empty($card['minute']) ? (int) $card['minute'] : null;
+
+            $events[] = [
+                'fixture_type' => $fixtureType,
+                'fixture_id' => $fixtureId,
+                'team_id' => $teamId,
+                'player_id' => $playerId,
+                'event_type' => 'red_card',
+                'minute' => $minute,
+                'notes' => null,
+            ];
+        }
+    }
+
+    /**
+     * Find player ID by name using the Player model's fuzzy matching.
+     * Returns null if player not found (for own goals, unknown players, etc.)
+     */
+    private function findPlayerIdByName(string $playerName, int $teamId, \App\Models\Player $playerModel): ?int
+    {
+        return $playerModel->findIdByNameInTeam($playerName, $teamId);
+    }
 }

@@ -215,4 +215,41 @@ class Player extends Model
 
         return $this->transformRows($stmt->fetchAll());
     }
+
+    /**
+     * Find player ID by name with fuzzy matching within a specific team.
+     * Returns null if player not found.
+     */
+    public function findIdByNameInTeam(string $playerName, int $teamId): ?int
+    {
+        $playerName = trim($playerName);
+
+        if (empty($playerName)) {
+            return null;
+        }
+
+        // Try exact match first (case-insensitive)
+        $stmt = $this->db->prepare("
+            SELECT id FROM players
+            WHERE team_id = ? AND LOWER(name) = LOWER(?)
+            LIMIT 1
+        ");
+        $stmt->execute([$teamId, $playerName]);
+        $player = $stmt->fetch();
+
+        if ($player) {
+            return (int) $player['id'];
+        }
+
+        // Try fuzzy match (contains, case-insensitive)
+        $stmt = $this->db->prepare("
+            SELECT id FROM players
+            WHERE team_id = ? AND LOWER(name) LIKE LOWER(?)
+            LIMIT 1
+        ");
+        $stmt->execute([$teamId, '%' . $playerName . '%']);
+        $player = $stmt->fetch();
+
+        return $player ? (int) $player['id'] : null;
+    }
 }

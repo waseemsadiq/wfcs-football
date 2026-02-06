@@ -396,10 +396,6 @@ class Cup extends Model
             UPDATE cup_fixtures
             SET home_score = ?,
                 away_score = ?,
-                home_scorers = ?,
-                away_scorers = ?,
-                home_cards = ?,
-                away_cards = ?,
                 extra_time = ?,
                 home_score_et = ?,
                 away_score_et = ?,
@@ -413,10 +409,6 @@ class Cup extends Model
         $success = $stmt->execute([
             $result['homeScore'] ?? null,
             $result['awayScore'] ?? null,
-            json_encode($result['homeScorers'] ?? ''),
-            json_encode($result['awayScorers'] ?? ''),
-            json_encode($result['homeCards'] ?? ''),
-            json_encode($result['awayCards'] ?? ''),
             ($result['extraTime'] ?? false) ? 1 : 0,
             $result['homeScoreET'] ?? null,
             $result['awayScoreET'] ?? null,

@@ -150,6 +150,15 @@ class CupsController extends CompetitionController
 
         // Update result if scores provided or cleared
         if ($fixtureId && (($homeScore !== '' && $awayScore !== '') || ($homeScore === '' && $awayScore === ''))) {
+            // Get fixture to retrieve team IDs
+            $fixture = $cupModel->getFixture($cup['id'], $fixtureId);
+
+            if (!$fixture) {
+                $this->flash('error', 'Fixture not found.');
+                $this->redirect('/admin/cups/' . $slug . '/fixtures');
+                return;
+            }
+
             if ($homeScore !== '') {
                 // Validate scores are non-negative integers
                 if (!is_numeric($homeScore) || !is_numeric($awayScore) || (int) $homeScore < 0 || (int) $awayScore < 0) {
@@ -162,13 +171,15 @@ class CupsController extends CompetitionController
                     return;
                 }
 
+                // Parse scorers and cards
+                $homeScorers = $this->parseScorersInput($_POST, 'homeScorers');
+                $awayScorers = $this->parseScorersInput($_POST, 'awayScorers');
+                $homeCards = $this->parseCardsInput($_POST, 'home');
+                $awayCards = $this->parseCardsInput($_POST, 'away');
+
                 $result = [
                     'homeScore' => (int) $homeScore,
                     'awayScore' => (int) $awayScore,
-                    'homeScorers' => $this->parseScorersInput($_POST, 'homeScorers'),
-                    'awayScorers' => $this->parseScorersInput($_POST, 'awayScorers'),
-                    'homeCards' => $this->parseCardsInput($_POST, 'home'),
-                    'awayCards' => $this->parseCardsInput($_POST, 'away'),
                     'extraTime' => $this->post('extraTime') === '1',
                     'homeScoreET' => $this->post('homeScoreET') !== '' ? (int) $this->post('homeScoreET') : null,
                     'awayScoreET' => $this->post('awayScoreET') !== '' ? (int) $this->post('awayScoreET') : null,
@@ -176,15 +187,23 @@ class CupsController extends CompetitionController
                     'homePens' => $this->post('homePens') !== '' ? (int) $this->post('homePens') : null,
                     'awayPens' => $this->post('awayPens') !== '' ? (int) $this->post('awayPens') : null,
                 ];
+
+                // Save match events (goals, cards) to match_events table
+                $this->saveMatchEvents(
+                    'cup',
+                    $fixtureId,
+                    $fixture['homeTeamId'],
+                    $fixture['awayTeamId'],
+                    $homeScorers,
+                    $awayScorers,
+                    $homeCards,
+                    $awayCards
+                );
             } else {
-                // Clear result
+                // Clear result and events
                 $result = [
                     'homeScore' => null,
                     'awayScore' => null,
-                    'homeScorers' => [],
-                    'awayScorers' => [],
-                    'homeCards' => [],
-                    'awayCards' => [],
                     'extraTime' => false,
                     'homeScoreET' => null,
                     'awayScoreET' => null,
@@ -192,6 +211,18 @@ class CupsController extends CompetitionController
                     'homePens' => null,
                     'awayPens' => null,
                 ];
+
+                // Clear match events
+                $this->saveMatchEvents(
+                    'cup',
+                    $fixtureId,
+                    $fixture['homeTeamId'],
+                    $fixture['awayTeamId'],
+                    [],
+                    [],
+                    ['yellow' => [], 'red' => [], 'blue' => [], 'sinBins' => []],
+                    ['yellow' => [], 'red' => [], 'blue' => [], 'sinBins' => []]
+                );
             }
             $cupModel->updateFixtureResult($cup['id'], $fixtureId, $result);
         } elseif ($fixtureId && ($homeScore === '' || $awayScore === '')) {

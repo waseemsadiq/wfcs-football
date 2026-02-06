@@ -156,6 +156,15 @@ class LeaguesController extends CompetitionController
 
         // Update result if scores provided or cleared
         if ($fixtureId && (($homeScore !== '' && $awayScore !== '') || ($homeScore === '' && $awayScore === ''))) {
+            // Get fixture to retrieve team IDs
+            $fixture = $leagueModel->getFixture($league['id'], $fixtureId);
+
+            if (!$fixture) {
+                $this->flash('error', 'Fixture not found.');
+                $this->redirect('/admin/leagues/' . $slug . '/fixtures');
+                return;
+            }
+
             if ($homeScore !== '') {
                 // Validate scores are non-negative integers
                 if (!is_numeric($homeScore) || !is_numeric($awayScore) || (int) $homeScore < 0 || (int) $awayScore < 0) {
@@ -168,24 +177,46 @@ class LeaguesController extends CompetitionController
                     return;
                 }
 
+                // Parse scorers and cards
+                $homeScorers = $this->parseScorersInput($_POST, 'homeScorers');
+                $awayScorers = $this->parseScorersInput($_POST, 'awayScorers');
+                $homeCards = $this->parseCardsInput($_POST, 'home');
+                $awayCards = $this->parseCardsInput($_POST, 'away');
+
                 $result = [
                     'homeScore' => (int) $homeScore,
                     'awayScore' => (int) $awayScore,
-                    'homeScorers' => $this->parseScorersInput($_POST, 'homeScorers'),
-                    'awayScorers' => $this->parseScorersInput($_POST, 'awayScorers'),
-                    'homeCards' => $this->parseCardsInput($_POST, 'home'),
-                    'awayCards' => $this->parseCardsInput($_POST, 'away'),
                 ];
+
+                // Save match events (goals, cards) to match_events table
+                $this->saveMatchEvents(
+                    'league',
+                    $fixtureId,
+                    $fixture['homeTeamId'],
+                    $fixture['awayTeamId'],
+                    $homeScorers,
+                    $awayScorers,
+                    $homeCards,
+                    $awayCards
+                );
             } else {
-                // Clear result
+                // Clear result and events
                 $result = [
                     'homeScore' => null,
                     'awayScore' => null,
-                    'homeScorers' => [],
-                    'awayScorers' => [],
-                    'homeCards' => [],
-                    'awayCards' => [],
                 ];
+
+                // Clear match events
+                $this->saveMatchEvents(
+                    'league',
+                    $fixtureId,
+                    $fixture['homeTeamId'],
+                    $fixture['awayTeamId'],
+                    [],
+                    [],
+                    ['yellow' => [], 'red' => [], 'blue' => [], 'sinBins' => []],
+                    ['yellow' => [], 'red' => [], 'blue' => [], 'sinBins' => []]
+                );
             }
             $leagueModel->updateFixtureResult($league['id'], $fixtureId, $result);
         } elseif ($fixtureId && ($homeScore === '' || $awayScore === '')) {
