@@ -96,38 +96,36 @@ class View
     /**
      * Convert various video URLs to their embed format.
      */
-    public static function formatVideoEmbedUrl(?string $url): string
+    public static function formatVideoEmbedUrl($url)
     {
-        if (empty($url)) {
-            return '';
+        if (empty($url) || !is_string($url)) {
+            return $url ?? '';
         }
 
         // YouTube
-        if (preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i', $url, $matches)) {
+        if (preg_match('#(?:youtube\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?\/ ]{11})#i', $url, $matches)) {
             $videoId = $matches[1];
             return "https://www.youtube.com/embed/{$videoId}";
         }
 
         // Vimeo: vimeo.com/ID
-        if (preg_match('/vimeo\.com\/(?:channels\/(?:\w+\/)|groups\/(?:\w+\/)|album\/(?:\d+\/)|video\/|)(\d+)(?:$|\/|\?)/i', $url, $matches)) {
+        if (preg_match('#vimeo\.com/(?:channels/(?:\w+/)|groups/(?:\w+/)|album/(?:\d+/)|video/|)(\d+)(?:$|/|\?)#i', $url, $matches)) {
             $videoId = $matches[1];
             return "https://player.vimeo.com/video/{$videoId}";
         }
 
         // Cloudflare Stream
-        if (str_contains($url, 'cloudflarestream.com') || str_contains($url, 'videodelivery.net')) {
+        if (strpos($url, 'cloudflarestream.com') !== false || strpos($url, 'videodelivery.net') !== false) {
             // If it's already an iframe or watch URL that's embeddable, leave it
-            if (str_contains($url, '/iframe') || str_contains($url, '/embed/')) {
+            if (strpos($url, '/iframe') !== false || strpos($url, '/embed/') !== false) {
                 return $url;
             }
             // Extract 32-char hex ID
-            if (preg_match('/\/([a-f0-9]{32})(?:$|\/|\?)/i', $url, $matches)) {
+            if (preg_match('#/([a-f0-9]{32})(?:$|/|\?)#i', $url, $matches)) {
                 $videoId = $matches[1];
-                $domain = str_contains($url, 'videodelivery.net') ? 'iframe.videodelivery.net' : 'customer-id.cloudflarestream.com';
-                // Note: 'customer-id' is usually a placeholder in docs, 
-                // but real URLs often use unique domains. We'll try to preserve the domain if possible.
+                $domain = strpos($url, 'videodelivery.net') !== false ? 'iframe.videodelivery.net' : 'customer-id.cloudflarestream.com';
                 $parsedUrl = parse_url($url);
-                $host = $parsedUrl['host'] ?? $domain;
+                $host = isset($parsedUrl['host']) ? $parsedUrl['host'] : $domain;
                 return "https://{$host}/{$videoId}/iframe";
             }
         }
@@ -139,7 +137,9 @@ class View
 /**
  * Global helper function for escaping output.
  */
-function e(string $value): string
-{
-    return View::escape($value);
+if (!function_exists('e')) {
+    function e($value)
+    {
+        return View::escape((string) $value);
+    }
 }
