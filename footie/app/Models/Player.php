@@ -198,9 +198,10 @@ class Player extends Model
                 LEFT JOIN teams t ON p.team_id = t.id
                 WHERE ps.total_goals > 0
                 ORDER BY ps.total_goals DESC, p.name ASC
-                LIMIT ?
+                LIMIT :limit
             ");
-            $stmt->execute([$limit]);
+            $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
+            $stmt->execute();
         } else {
             // Get top scorers overall
             $stmt = $this->db->prepare("
@@ -210,9 +211,10 @@ class Player extends Model
                 LEFT JOIN teams t ON p.team_id = t.id
                 WHERE ps.total_goals > 0
                 ORDER BY ps.total_goals DESC, p.name ASC
-                LIMIT ?
+                LIMIT :limit
             ");
-            $stmt->execute([$limit]);
+            $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
+            $stmt->execute();
         }
 
         return $this->transformRows($stmt->fetchAll());
