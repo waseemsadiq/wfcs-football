@@ -27,6 +27,10 @@ include __DIR__ . '/../partials/head.php'; ?>
                     class="<?= ($currentPage ?? '') === 'cups' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-base transition-colors uppercase tracking-wider">Cups</a>
                 <a href="<?= $basePath ?>/teams"
                     class="<?= ($currentPage ?? '') === 'teams' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-base transition-colors uppercase tracking-wider">Teams</a>
+                <a href="<?= $basePath ?>/players"
+                    class="<?= ($currentPage ?? '') === 'players' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-base transition-colors uppercase tracking-wider">Players</a>
+                <a href="<?= $basePath ?>/top-scorers"
+                    class="<?= ($currentPage ?? '') === 'top-scorers' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-base transition-colors uppercase tracking-wider">Top Scorers</a>
                 <?php if (isset($_SESSION['admin_id'])): ?>
                     <a href="<?= $basePath ?>/admin"
                         class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Admin
@@ -97,6 +101,10 @@ include __DIR__ . '/../partials/head.php'; ?>
                     class="<?= ($currentPage ?? '') === 'cups' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-base transition-colors uppercase tracking-wider">Cups</a>
                 <a href="<?= $basePath ?>/teams"
                     class="<?= ($currentPage ?? '') === 'teams' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-base transition-colors uppercase tracking-wider">Teams</a>
+                <a href="<?= $basePath ?>/players"
+                    class="<?= ($currentPage ?? '') === 'players' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-base transition-colors uppercase tracking-wider">Players</a>
+                <a href="<?= $basePath ?>/top-scorers"
+                    class="<?= ($currentPage ?? '') === 'top-scorers' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-base transition-colors uppercase tracking-wider">Top Scorers</a>
                 <?php if (isset($_SESSION['admin_id'])): ?>
                     <a href="<?= $basePath ?>/admin"
                         class="text-text-muted font-semibold text-base transition-colors uppercase tracking-wider hover:text-primary">Admin

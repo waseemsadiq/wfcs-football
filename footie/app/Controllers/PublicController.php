@@ -776,4 +776,138 @@ class PublicController extends Controller
 
         return $number . $suffix;
     }
+
+    /**
+     * Display a list of all players with optional team filter.
+     */
+    public function players(): void
+    {
+        $playerModel = new \App\Models\Player();
+        $teamId = $this->get('team_id');
+
+        $where = [];
+        if ($teamId) {
+            $where['team_id'] = (int) $teamId;
+        }
+
+        $players = $playerModel->paginate(1000, 0, $where, 'name', 'ASC');
+
+        // Enrich with team data
+        $teams = $this->teamModel->all();
+        $teamsById = $this->indexById($teams);
+
+        foreach ($players as &$player) {
+            $player['team'] = $teamsById[$player['teamId']] ?? null;
+        }
+
+        $this->render('public/players', [
+            'title' => 'Players',
+            'currentPage' => 'players',
+            'players' => $players,
+            'teams' => $teams,
+            'selectedTeamId' => $teamId,
+        ], 'layouts/public');
+    }
+
+    /**
+     * Display individual player profile with stats and events.
+     */
+    public function player(string $slug): void
+    {
+        $playerModel = new \App\Models\Player();
+        $player = $playerModel->findWhere('slug', $slug);
+
+        if (!$player) {
+            $this->redirect('/players');
+            return;
+        }
+
+        // Get player stats
+        $stats = $playerModel->getStats($player['id']);
+
+        // Get player events
+        $matchEventModel = new \App\Models\MatchEvent();
+        $events = $matchEventModel->getByPlayer($player['id']);
+
+        // Enrich events with fixture/team data
+        $teams = $this->teamModel->all();
+        $teamsById = $this->indexById($teams);
+
+        $leagues = $this->leagueModel->all();
+        $cups = $this->cupModel->all();
+
+        foreach ($events as &$event) {
+            // Find the fixture and competition this event belongs to
+            $fixture = null;
+            $competition = null;
+
+            // Check leagues
+            foreach ($leagues as $league) {
+                foreach ($league['fixtures'] ?? [] as $f) {
+                    if ($f['id'] === $event['fixtureId'] && $event['fixtureType'] === 'league') {
+                        $fixture = $f;
+                        $competition = $league;
+                        break 2;
+                    }
+                }
+            }
+
+            // Check cups if not found
+            if (!$fixture) {
+                foreach ($cups as $cup) {
+                    foreach ($cup['fixtures'] ?? [] as $f) {
+                        if ($f['id'] === $event['fixtureId'] && $event['fixtureType'] === 'cup') {
+                            $fixture = $f;
+                            $competition = $cup;
+                            break 2;
+                        }
+                    }
+                }
+            }
+
+            $event['fixture'] = $fixture;
+            $event['competition'] = $competition;
+            $event['homeTeam'] = $teamsById[$fixture['homeTeamId'] ?? 0] ?? null;
+            $event['awayTeam'] = $teamsById[$fixture['awayTeamId'] ?? 0] ?? null;
+        }
+
+        // Get player's team
+        $player['team'] = $teamsById[$player['teamId']] ?? null;
+
+        $this->render('public/player', [
+            'title' => $player['name'],
+            'currentPage' => 'players',
+            'player' => $player,
+            'stats' => $stats,
+            'events' => $events,
+        ], 'layouts/public');
+    }
+
+    /**
+     * Display top scorers leaderboard with optional league filter.
+     */
+    public function topScorers(): void
+    {
+        $playerModel = new \App\Models\Player();
+        $leagueId = $this->get('league_id');
+
+        // Get top scorers (limit 20)
+        $scorers = $playerModel->getTopScorers(20, $leagueId);
+
+        // Enrich with team data
+        $teams = $this->teamModel->all();
+        $teamsById = $this->indexById($teams);
+
+        foreach ($scorers as &$scorer) {
+            $scorer['team'] = $teamsById[$scorer['teamId']] ?? null;
+        }
+
+        $this->render('public/top_scorers', [
+            'title' => 'Top Scorers',
+            'currentPage' => 'top-scorers',
+            'scorers' => $scorers,
+            'leagues' => $this->leagueModel->all(),
+            'selectedLeagueId' => $leagueId,
+        ], 'layouts/public');
+    }
 }

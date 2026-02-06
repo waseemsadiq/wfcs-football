@@ -25,9 +25,12 @@ $router->get('/cups', 'PublicController', 'cups', false);
 $router->get('/cups/{slug}/data', 'PublicController', 'cupData', false);
 $router->get('/teams', 'PublicController', 'teams', false);
 $router->get('/teams/{slug}/data', 'PublicController', 'teamData', false);
+$router->get('/players', 'PublicController', 'players', false);
+$router->get('/top-scorers', 'PublicController', 'topScorers', false);
 $router->get('/league/{slug}', 'PublicController', 'league', false);
 $router->get('/cup/{slug}', 'PublicController', 'cup', false);
 $router->get('/team/{slug}', 'PublicController', 'team', false);
+$router->get('/player/{slug}', 'PublicController', 'player', false);
 
 // ===================
 // AUTHENTICATION ROUTES (no auth required)
