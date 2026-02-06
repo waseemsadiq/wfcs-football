@@ -69,7 +69,7 @@
     <!-- Player Statistics -->
     <div class="mb-12">
         <h2 class="text-2xl font-bold text-text-main mb-6">Season Statistics</h2>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div class="grid grid-cols-3 gap-4">
             <!-- Goals -->
             <div class="card text-center">
                 <div class="p-6">
@@ -78,6 +78,42 @@
                     </div>
                     <div class="text-sm font-semibold text-text-muted uppercase tracking-wide">
                         Goals
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assists -->
+            <div class="card text-center">
+                <div class="p-6">
+                    <div class="text-4xl font-extrabold text-blue-500 mb-2">
+                        <?= $stats['totalAssists'] ?? 0 ?>
+                    </div>
+                    <div class="text-sm font-semibold text-text-muted uppercase tracking-wide">
+                        Assists
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sin Bins -->
+            <div class="card text-center">
+                <div class="p-6">
+                    <div class="text-4xl font-extrabold text-purple-500 mb-2">
+                        <?= $stats['sinBins'] ?? 0 ?>
+                    </div>
+                    <div class="text-sm font-semibold text-text-muted uppercase tracking-wide">
+                        Sin Bins
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blue Cards -->
+            <div class="card text-center">
+                <div class="p-6">
+                    <div class="text-4xl font-extrabold text-blue-400 mb-2">
+                        <?= $stats['blueCards'] ?? 0 ?>
+                    </div>
+                    <div class="text-sm font-semibold text-text-muted uppercase tracking-wide">
+                        Blue Cards
                     </div>
                 </div>
             </div>
@@ -102,18 +138,6 @@
                     </div>
                     <div class="text-sm font-semibold text-text-muted uppercase tracking-wide">
                         Red Cards
-                    </div>
-                </div>
-            </div>
-
-            <!-- Man of the Match Awards -->
-            <div class="card text-center sm:col-span-2 md:col-span-1">
-                <div class="p-6">
-                    <div class="text-4xl font-extrabold text-yellow-500 mb-2">
-                        <?= $stats['motmAwards'] ?? 0 ?>
-                    </div>
-                    <div class="text-sm font-semibold text-text-muted uppercase tracking-wide">
-                        MOTM Awards
                     </div>
                 </div>
             </div>
