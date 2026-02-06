@@ -1072,16 +1072,16 @@ class PublicController extends Controller
             return null;
         }
 
-        // 1. Prefer matches with videos (active or historical content)
+        // 1. Prefer completed matches (those with results/scores)
         foreach ($matches as $match) {
-            if (!empty($match['fullMatchUrl']) || !empty($match['highlightsUrl']) || !empty($match['liveStreamUrl'])) {
+            if (isset($match['result']) && $match['result'] !== null) {
                 return $match;
             }
         }
 
-        // 2. Prefer completed matches (those with results)
+        // 2. Prefer matches with videos (active or historical content)
         foreach ($matches as $match) {
-            if (isset($match['result']) && $match['result'] !== null) {
+            if (!empty($match['fullMatchUrl']) || !empty($match['highlightsUrl']) || !empty($match['liveStreamUrl'])) {
                 return $match;
             }
         }

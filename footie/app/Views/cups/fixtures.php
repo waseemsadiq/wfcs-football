@@ -314,7 +314,11 @@
                                                     <div class="flex items-center justify-between bg-surface-hover/20 p-2 rounded">
                                                         <span class="text-[10px] text-text-muted uppercase font-bold">Live Match</span>
                                                         <label class="relative inline-block w-10 h-5 cursor-pointer">
-                                                            <input type="checkbox" name="isLive" value="1" <?= ($fixture['isLive'] ?? 0) ? 'checked' : '' ?> class="sr-only peer">
+                                                            <?php
+                                                            $hasScore = isset($fixture['result']) && $fixture['result'] !== null;
+                                                            $shouldBeChecked = !$hasScore && (($fixture['isLive'] ?? 0) || !empty($fixture['liveStreamUrl']));
+                                                            ?>
+                                                            <input type="checkbox" name="isLive" value="1" <?= $shouldBeChecked ? 'checked' : '' ?> class="sr-only peer">
                                                             <div class="w-10 h-5 bg-gray-600 rounded-full peer-checked:bg-primary transition-colors"></div>
                                                             <div class="absolute left-1 top-1 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
                                                         </label>

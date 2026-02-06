@@ -82,7 +82,7 @@
                     $awayScore = $fixture['awayScore'] ?? $fixture['result']['awayScore'] ?? null;
                     ?>
                     <?php if ($homeScore !== null): ?>
-                        <div class="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-primary leading-none mb-2">
+                        <div class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-primary leading-none mb-2">
                             <?= $homeScore ?> <span class="text-text-muted">-</span>
                             <?= $awayScore ?>
                         </div>

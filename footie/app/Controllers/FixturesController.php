@@ -204,17 +204,35 @@ class FixturesController extends Controller
      */
     private function findFixtureByTeamIds(array $fixtures, int $homeId, int $awayId): ?array
     {
+        $matches = [];
         foreach ($fixtures as $fixture) {
             if (isset($fixture['homeTeamId'], $fixture['awayTeamId'])) {
-                if (
-                    $fixture['homeTeamId'] == $homeId &&
-                    $fixture['awayTeamId'] == $awayId
-                ) {
-                    return $fixture;
+                if ($fixture['homeTeamId'] == $homeId && $fixture['awayTeamId'] == $awayId) {
+                    $matches[] = $fixture;
                 }
             }
         }
-        return null;
+
+        if (empty($matches)) {
+            return null;
+        }
+
+        // 1. Prefer completed matches (those with results/scores)
+        foreach ($matches as $match) {
+            if (isset($match['result']) && $match['result'] !== null) {
+                return $match;
+            }
+        }
+
+        // 2. Prefer matches with videos (active or historical content)
+        foreach ($matches as $match) {
+            if (!empty($match['fullMatchUrl']) || !empty($match['highlightsUrl']) || !empty($match['liveStreamUrl'])) {
+                return $match;
+            }
+        }
+
+        // 3. Default to the most recent one (assuming order from model)
+        return $matches[count($matches) - 1];
     }
 
     /**
