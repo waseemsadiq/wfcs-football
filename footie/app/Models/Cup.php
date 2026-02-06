@@ -148,7 +148,10 @@ class Cup extends Model
                     penalties,
                     home_pens,
                     away_pens,
-                    winner
+                    winner,
+                    full_match_url as fullMatchUrl,
+                    highlights_url as highlightsUrl,
+                    live_stream_url as liveStreamUrl
                 FROM cup_fixtures
                 WHERE round_id = ?
                 ORDER BY id

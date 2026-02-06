@@ -137,7 +137,10 @@ class League extends Model
                 referee_id as refereeId,
                 is_live as isLive,
                 home_score,
-                away_score
+                away_score,
+                full_match_url as fullMatchUrl,
+                highlights_url as highlightsUrl,
+                live_stream_url as liveStreamUrl
             FROM league_fixtures
             WHERE league_id = ?
             ORDER BY match_date, match_time
