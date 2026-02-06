@@ -101,7 +101,9 @@
                             <li>
                                 <a href="<?= $basePath ?>/league/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>"
                                     class="flex items-center gap-3 p-3 rounded-sm hover:bg-surface-hover transition-colors group">
-                                    <span class="text-xl group-hover:scale-110 transition-transform">🏆</span>
+                                    <svg class="w-5 h-5 text-primary group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M6 3h12c1.1 0 2 .9 2 2v2c0 1.1-.9 2-2 2h-.5c0 3.32-2.28 6.1-5.34 6.84l-.66.66V19h2c1.1 0 2 .9 2 2v1H8v-1c0-1.1.9-2 2-2h2v-2.5l-.66-.66C8.28 15.1 6 12.32 6 9h-.5c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2zm2 6h8c0 2.21-1.79 4-4 4s-4-1.79-4-4z"/>
+                                    </svg>
                                     <span
                                         class="font-semibold text-text-main group-hover:text-primary transition-colors"><?= htmlspecialchars($league['name']) ?></span>
                                 </a>

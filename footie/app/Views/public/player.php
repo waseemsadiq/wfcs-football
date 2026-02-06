@@ -134,7 +134,7 @@
                                     <?php if ($event['eventType'] === 'goal'): ?>
                                         <div
                                             class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
-                                            ⚽
+                                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 3.3l2.8 2.04-1.07 3.29H10.3l-1.07-3.3L12 5.3zM7.54 8.59l2.8-2.04.53 1.62-1.84 1.34-1.5-1.03zm8.92 0l-1.5 1.03-1.84-1.34.53-1.62 2.8 2.04zM12 17.7l-2.8-2.04 1.07-3.29h3.46l1.07 3.29L12 17.7zm-4.46-.89l1.5-1.03 1.84 1.34-.53 1.62-2.8-2.04zm8.92 0l-2.8 2.04-.53-1.62 1.84-1.34 1.5 1.03z"/></svg>
                                         </div>
                                     <?php elseif ($event['eventType'] === 'yellow_card'): ?>
                                         <div class="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center">

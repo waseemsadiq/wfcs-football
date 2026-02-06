@@ -29,18 +29,33 @@
             <?php if (isset($fixture['status'])): ?>
                 <?php
                 $statusConfig = [
-                    'scheduled' => ['color' => 'bg-blue-500/20 text-blue-400 border-blue-500/30', 'icon' => '📅'],
-                    'in_progress' => ['color' => 'bg-green-500/20 text-green-400 border-green-500/30', 'icon' => '🔴'],
-                    'completed' => ['color' => 'bg-gray-500/20 text-gray-400 border-gray-500/30', 'icon' => '✓'],
-                    'postponed' => ['color' => 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30', 'icon' => '⏸️'],
-                    'cancelled' => ['color' => 'bg-red-500/20 text-red-400 border-red-500/30', 'icon' => '✕'],
+                    'scheduled' => [
+                        'color' => 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+                        'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke-width="2"/><line x1="16" y1="2" x2="16" y2="6" stroke-width="2" stroke-linecap="round"/><line x1="8" y1="2" x2="8" y2="6" stroke-width="2" stroke-linecap="round"/><line x1="3" y1="10" x2="21" y2="10" stroke-width="2"/></svg>'
+                    ],
+                    'in_progress' => [
+                        'color' => 'bg-green-500/20 text-green-400 border-green-500/30',
+                        'icon' => '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>'
+                    ],
+                    'completed' => [
+                        'color' => 'bg-gray-500/20 text-gray-400 border-gray-500/30',
+                        'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+                    ],
+                    'postponed' => [
+                        'color' => 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+                        'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" stroke-width="2" stroke-linecap="round"/><rect x="14" y="4" width="4" height="16" stroke-width="2" stroke-linecap="round"/></svg>'
+                    ],
+                    'cancelled' => [
+                        'color' => 'bg-red-500/20 text-red-400 border-red-500/30',
+                        'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" stroke-width="2" stroke-linecap="round"/><line x1="6" y1="6" x2="18" y2="18" stroke-width="2" stroke-linecap="round"/></svg>'
+                    ],
                 ];
                 $config = $statusConfig[$fixture['status']] ?? $statusConfig['scheduled'];
                 ?>
                 <div class="flex justify-center mb-6">
                     <span
                         class="inline-flex items-center gap-2 px-4 py-2 rounded-full border <?= $config['color'] ?> text-sm font-bold uppercase tracking-wider">
-                        <span>
+                        <span class="flex-shrink-0">
                             <?= $config['icon'] ?>
                         </span>
                         <?= htmlspecialchars(str_replace('_', ' ', $fixture['status'])) ?>
@@ -401,7 +416,7 @@
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center gap-3 mb-1">
                                         <?php if ($event['eventType'] === 'goal'): ?>
-                                            <span class="text-3xl">⚽</span>
+                                            <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 3.3l2.8 2.04-1.07 3.29H10.3l-1.07-3.3L12 5.3zM7.54 8.59l2.8-2.04.53 1.62-1.84 1.34-1.5-1.03zm8.92 0l-1.5 1.03-1.84-1.34.53-1.62 2.8 2.04zM12 17.7l-2.8-2.04 1.07-3.29h3.46l1.07 3.29L12 17.7zm-4.46-.89l1.5-1.03 1.84 1.34-.53 1.62-2.8-2.04zm8.92 0l-2.8 2.04-.53-1.62 1.84-1.34 1.5 1.03z"/></svg>
                                             <div>
                                                 <span class="font-bold text-text-main text-lg">
                                                     <?= htmlspecialchars($event['playerName'] ?? 'Unknown') ?>
@@ -516,7 +531,7 @@
                                             <div class="flex gap-1 shrink-0">
                                                 <?php foreach ($homePlayerEvents[$player['id']] as $eventType): ?>
                                                     <?php if ($eventType === 'goal'): ?>
-                                                        <span class="text-lg">⚽</span>
+                                                        <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 3.3l2.8 2.04-1.07 3.29H10.3l-1.07-3.3L12 5.3zM7.54 8.59l2.8-2.04.53 1.62-1.84 1.34-1.5-1.03zm8.92 0l-1.5 1.03-1.84-1.34.53-1.62 2.8 2.04zM12 17.7l-2.8-2.04 1.07-3.29h3.46l1.07 3.29L12 17.7zm-4.46-.89l1.5-1.03 1.84 1.34-.53 1.62-2.8-2.04zm8.92 0l-2.8 2.04-.53-1.62 1.84-1.34 1.5 1.03z"/></svg>
                                                     <?php elseif ($eventType === 'yellow_card'): ?>
                                                         <div class="w-3 h-4 bg-yellow-400 rounded-sm"></div>
                                                     <?php elseif ($eventType === 'red_card'): ?>
@@ -595,7 +610,7 @@
                                             <div class="flex gap-1 shrink-0">
                                                 <?php foreach ($awayPlayerEvents[$player['id']] as $eventType): ?>
                                                     <?php if ($eventType === 'goal'): ?>
-                                                        <span class="text-lg">⚽</span>
+                                                        <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 3.3l2.8 2.04-1.07 3.29H10.3l-1.07-3.3L12 5.3zM7.54 8.59l2.8-2.04.53 1.62-1.84 1.34-1.5-1.03zm8.92 0l-1.5 1.03-1.84-1.34.53-1.62 2.8 2.04zM12 17.7l-2.8-2.04 1.07-3.29h3.46l1.07 3.29L12 17.7zm-4.46-.89l1.5-1.03 1.84 1.34-.53 1.62-2.8-2.04zm8.92 0l-2.8 2.04-.53-1.62 1.84-1.34 1.5 1.03z"/></svg>
                                                     <?php elseif ($eventType === 'yellow_card'): ?>
                                                         <div class="w-3 h-4 bg-yellow-400 rounded-sm"></div>
                                                     <?php elseif ($eventType === 'red_card'): ?>

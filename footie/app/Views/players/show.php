@@ -160,14 +160,14 @@
                                 <td class="table-td">
                                     <?php
                                     $eventIcons = [
-                                        'goal' => '⚽',
-                                        'assist' => '🅰️',
-                                        'yellow_card' => '🟨',
-                                        'red_card' => '🟥',
+                                        'goal' => '<svg class="w-4 h-4 inline text-primary" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 3.3l2.8 2.04-1.07 3.29H10.3l-1.07-3.3L12 5.3zM7.54 8.59l2.8-2.04.53 1.62-1.84 1.34-1.5-1.03zm8.92 0l-1.5 1.03-1.84-1.34.53-1.62 2.8 2.04zM12 17.7l-2.8-2.04 1.07-3.29h3.46l1.07 3.29L12 17.7zm-4.46-.89l1.5-1.03 1.84 1.34-.53 1.62-2.8-2.04zm8.92 0l-2.8 2.04-.53-1.62 1.84-1.34 1.5 1.03z"/></svg>',
+                                        'assist' => '<svg class="w-4 h-4 inline text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>',
+                                        'yellow_card' => '<svg class="w-3 h-4 inline" viewBox="0 0 12 16"><rect width="12" height="16" rx="1" fill="#fbbf24"/></svg>',
+                                        'red_card' => '<svg class="w-3 h-4 inline" viewBox="0 0 12 16"><rect width="12" height="16" rx="1" fill="#ef4444"/></svg>',
                                     ];
                                     $icon = $eventIcons[$event['eventType']] ?? '';
                                     ?>
-                                    <span><?= $icon ?> <?= htmlspecialchars(str_replace('_', ' ', ucwords($event['eventType'], '_'))) ?></span>
+                                    <span class="flex items-center gap-1.5"><?= $icon ?> <?= htmlspecialchars(str_replace('_', ' ', ucwords($event['eventType'], '_'))) ?></span>
                                 </td>
                                 <td class="table-td">
                                     <?= !empty($event['minute']) ? htmlspecialchars($event['minute']) . "'" : '-' ?>
