@@ -1055,7 +1055,7 @@ class PublicController extends Controller
 
     /**
      * Find fixture by team IDs in a fixture list.
-     * Prefers completed matches if multiple exist between the same teams.
+     * Prefers matches with results or video content if multiple exist.
      */
     private function findFixtureByTeamIds(array $fixtures, int $homeId, int $awayId): ?array
     {
@@ -1072,15 +1072,22 @@ class PublicController extends Controller
             return null;
         }
 
-        // If multiple matches, prefer the ones with results (completed)
+        // 1. Prefer completed matches (those with results)
         foreach ($matches as $match) {
             if (isset($match['result']) && $match['result'] !== null) {
                 return $match;
             }
         }
 
-        // Default to the first one found (usually earliest by date)
-        return $matches[0];
+        // 2. Prefer matches with videos if no completed match found
+        foreach ($matches as $match) {
+            if (!empty($match['fullMatchUrl']) || !empty($match['highlightsUrl']) || !empty($match['liveStreamUrl'])) {
+                return $match;
+            }
+        }
+
+        // 3. Default to the most recent one (assuming order from model)
+        return $matches[count($matches) - 1];
     }
 
     /**

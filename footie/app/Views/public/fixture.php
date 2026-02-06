@@ -109,7 +109,7 @@
                         <div class="text-3xl sm:text-4xl font-bold text-text-muted">
                             <?php
                             $mTime = $fixture['matchTime'] ?? $fixture['time'] ?? null;
-                            echo $mTime ? date('g:i A', strtotime($mTime)) : 'TBD';
+                            echo $mTime ? date('H:i', strtotime($mTime)) : 'TBD';
                             ?>
                         </div>
                     <?php endif; ?>
@@ -140,7 +140,7 @@
                 <?php
                 $mDate = $fixture['matchDate'] ?? $fixture['date'] ?? null;
                 if ($mDate):
-                ?>
+                    ?>
                     <div class="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
@@ -156,7 +156,7 @@
                 <?php
                 $mTime = $fixture['matchTime'] ?? $fixture['time'] ?? null;
                 if ($mTime):
-                ?>
+                    ?>
                     <div class="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
@@ -164,7 +164,7 @@
                                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <span class="font-medium">
-                            <?= date('g:i A', strtotime($fixture['time'])) ?>
+                            <?= date('H:i', strtotime($mTime)) ?>
                         </span>
                     </div>
                 <?php endif; ?>
@@ -265,7 +265,7 @@
                             document.querySelectorAll('.video-content').forEach((el, idx) => {
                                 if (idx !== index) {
                                     el.classList.add('hidden');
-                                    
+
                                     // Try to pause YouTube video via postMessage
                                     const iframe = el.querySelector('iframe');
                                     if (iframe && iframe.src.includes('youtube.com')) {
@@ -278,7 +278,7 @@
                                     }
                                 }
                             });
-                            
+
                             // Show selected container
                             document.getElementById('video-container-' + index).classList.remove('hidden');
 
