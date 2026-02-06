@@ -806,7 +806,7 @@ class PublicController extends Controller
             'players' => $players,
             'teams' => $teams,
             'selectedTeamId' => $teamId,
-        ], 'layouts/public');
+        ], 'public');
     }
 
     /**
@@ -880,7 +880,7 @@ class PublicController extends Controller
             'player' => $player,
             'stats' => $stats,
             'events' => $events,
-        ], 'layouts/public');
+        ], 'public');
     }
 
     /**
@@ -908,6 +908,6 @@ class PublicController extends Controller
             'scorers' => $scorers,
             'leagues' => $this->leagueModel->all(),
             'selectedLeagueId' => $leagueId,
-        ], 'layouts/public');
+        ], 'public');
     }
 }
