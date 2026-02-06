@@ -130,9 +130,6 @@ class TeamsController extends Controller
 
         // Validate and sanitize inputs
         $name = $this->sanitizeString($this->post('name'), 100);
-        $contact = $this->sanitizeString($this->post('contact', ''), 100);
-        $phone = $this->sanitizeString($this->post('phone', ''), 50);
-        $email = $this->sanitizeString($this->post('email', ''), 255);
         $colour = $this->post('colour', '#1a5f2a');
 
         if (!$this->validateLength($name, 1, 100)) {
@@ -141,26 +138,13 @@ class TeamsController extends Controller
             return;
         }
 
-        if ($email !== '' && !$this->validateEmail($email)) {
-            $this->flash('error', 'Please provide a valid email address.');
-            $this->redirect('/admin/teams/create');
-            return;
-        }
-
         if (!$this->validateHexColour($colour)) {
             $colour = '#1a5f2a'; // Default colour if invalid
         }
 
-        $playersText = $this->post('players', '');
-        $players = $this->teamModel->parsePlayersFromText($playersText);
-
         $team = $this->teamModel->create([
             'name' => $name,
-            'contact' => $contact,
-            'phone' => $phone,
-            'email' => $email,
             'colour' => $colour,
-            'players' => $players,
         ]);
 
         $this->flash('success', 'Team created. ' . $team['name'] . ' is ready to go.');
@@ -219,9 +203,6 @@ class TeamsController extends Controller
 
         // Validate and sanitize inputs
         $name = $this->sanitizeString($this->post('name'), 100);
-        $contact = $this->sanitizeString($this->post('contact', ''), 100);
-        $phone = $this->sanitizeString($this->post('phone', ''), 50);
-        $email = $this->sanitizeString($this->post('email', ''), 255);
         $colour = $this->post('colour', '#1a5f2a');
 
         if (!$this->validateLength($name, 1, 100)) {
@@ -230,26 +211,13 @@ class TeamsController extends Controller
             return;
         }
 
-        if ($email !== '' && !$this->validateEmail($email)) {
-            $this->flash('error', 'Please provide a valid email address.');
-            $this->redirect('/admin/teams/' . $slug . '/edit');
-            return;
-        }
-
         if (!$this->validateHexColour($colour)) {
             $colour = '#1a5f2a'; // Default colour if invalid
         }
 
-        $playersText = $this->post('players', '');
-        $players = $this->teamModel->parsePlayersFromText($playersText);
-
         $this->teamModel->update($team['id'], [
             'name' => $name,
-            'contact' => $contact,
-            'phone' => $phone,
-            'email' => $email,
             'colour' => $colour,
-            'players' => $players,
         ]);
 
         // Fetch the actual slug from database (may be unique if name conflicts)

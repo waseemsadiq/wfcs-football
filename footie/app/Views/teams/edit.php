@@ -37,29 +37,15 @@
                         value="<?= htmlspecialchars($team['name'] ?? '') ?>">
                 </div>
 
-                <div class="mb-6">
-                    <label for="contact" class="block text-sm font-medium text-text-muted mb-2">Contact Person</label>
-                    <input type="text" id="contact" name="contact" class="form-input"
-                        value="<?= htmlspecialchars($team['contact'] ?? '') ?>" placeholder="e.g. John Smith">
-                    <p class="mt-2 text-sm text-text-muted">The main person to get in touch with about this team.</p>
-                </div>
-
-                <div class="mb-6">
-                    <label for="phone" class="block text-sm font-medium text-text-muted mb-2">Phone Number</label>
-                    <input type="tel" id="phone" name="phone" class="form-input"
-                        value="<?= htmlspecialchars($team['phone'] ?? '') ?>" placeholder="e.g. 07700 900123">
-                </div>
-
-                <div class="mb-6">
-                    <label for="email" class="block text-sm font-medium text-text-muted mb-2">Email Address</label>
-                    <input type="email" id="email" name="email" class="form-input"
-                        value="<?= htmlspecialchars($team['email'] ?? '') ?>" placeholder="e.g. john@example.com">
-                </div>
-
                 <?php
                 $colourValue = htmlspecialchars($team['colour'] ?? '#1a5f2a');
                 include __DIR__ . '/../partials/colour_picker.php';
                 ?>
+
+                <div class="mb-8 p-4 bg-blue-500/10 border border-blue-500/30 rounded">
+                    <p class="text-sm text-blue-400 mb-3"><strong>Managing Contacts:</strong></p>
+                    <p class="text-sm text-text-muted mb-3">Team contacts, coaches, and managers are now managed in the Support Staff tab above.</p>
+                </div>
 
                 <div class="flex items-center gap-4 pt-6 border-t border-border">
                     <button type="submit" class="btn btn-primary">Save Changes</button>

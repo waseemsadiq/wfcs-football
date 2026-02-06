@@ -15,30 +15,14 @@
                     placeholder="e.g. Red Lions FC">
             </div>
 
-            <div class="mb-6">
-                <label for="contact" class="block text-sm font-medium text-text-muted mb-2">Contact Person</label>
-                <input type="text" id="contact" name="contact" class="form-input" placeholder="e.g. John Smith">
-                <p class="mt-2 text-sm text-text-muted">The main person to get in touch with about this team.</p>
-            </div>
-
-            <div class="mb-6">
-                <label for="phone" class="block text-sm font-medium text-text-muted mb-2">Phone Number</label>
-                <input type="tel" id="phone" name="phone" class="form-input" placeholder="e.g. 07700 900123">
-            </div>
-
-            <div class="mb-6">
-                <label for="email" class="block text-sm font-medium text-text-muted mb-2">Email Address</label>
-                <input type="email" id="email" name="email" class="form-input" placeholder="e.g. john@example.com">
-            </div>
-
             <?php
             $colourValue = '#1a5f2a';
             include __DIR__ . '/../partials/colour_picker.php';
             ?>
 
             <div class="mb-8 p-4 bg-blue-500/10 border border-blue-500/30 rounded">
-                <p class="text-sm text-blue-400 mb-2"><strong>Note:</strong> Players are now managed separately.</p>
-                <p class="text-sm text-text-muted">After creating the team, use the <strong class="text-text-main">Manage Squad</strong> button to add players.</p>
+                <p class="text-sm text-blue-400 mb-2"><strong>Note:</strong> Players and staff are managed separately.</p>
+                <p class="text-sm text-text-muted">After creating the team, you can add players, coaches, managers, and contacts from the team page.</p>
             </div>
 
             <div class="flex items-center gap-4 pt-6 border-t border-border">

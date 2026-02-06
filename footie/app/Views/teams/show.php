@@ -17,35 +17,6 @@
         <h2 class="text-xl font-bold mb-6 pb-4 border-b border-border">Team Details</h2>
 
         <div class="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-y-6 gap-x-8">
-            <div class="text-text-muted font-medium">Contact Person</div>
-            <div>
-                <?php if (!empty($team['contact'])): ?>
-                    <?= htmlspecialchars($team['contact']) ?>
-                <?php else: ?>
-                    <span class="text-text-muted italic">Not set</span>
-                <?php endif; ?>
-            </div>
-
-            <div class="text-text-muted font-medium">Phone Number</div>
-            <div>
-                <?php if (!empty($team['phone'])): ?>
-                    <a href="tel:<?= htmlspecialchars($team['phone']) ?>"
-                        class="text-primary hover:text-primary-hover underline decoration-primary/30 underline-offset-4 transition-colors"><?= htmlspecialchars($team['phone']) ?></a>
-                <?php else: ?>
-                    <span class="text-text-muted italic">Not set</span>
-                <?php endif; ?>
-            </div>
-
-            <div class="text-text-muted font-medium">Email</div>
-            <div>
-                <?php if (!empty($team['email'])): ?>
-                    <a href="mailto:<?= htmlspecialchars($team['email']) ?>"
-                        class="text-primary hover:text-primary-hover underline decoration-primary/30 underline-offset-4 transition-colors"><?= htmlspecialchars($team['email']) ?></a>
-                <?php else: ?>
-                    <span class="text-text-muted italic">Not set</span>
-                <?php endif; ?>
-            </div>
-
             <div class="text-text-muted font-medium">Team Colour</div>
             <div class="flex items-center gap-3">
                 <span class="inline-block w-6 h-6 rounded-full border border-border"
