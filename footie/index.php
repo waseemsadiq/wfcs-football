@@ -50,6 +50,7 @@ spl_autoload_register(function (string $class): void {
         'Core\\' => 'core/',
         'App\\Controllers\\' => 'app/Controllers/',
         'App\\Models\\' => 'app/Models/',
+        'App\\Services\\' => 'app/Services/',
     ];
 
     foreach ($namespaces as $namespace => $dir) {
