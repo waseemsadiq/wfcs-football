@@ -5,7 +5,7 @@
  */
 ?>
 
-<div class="max-w-4xl mx-auto">
+<div class="w-full">
     <?php
     $title = 'Edit Fixture: ' . $fixture['homeTeamName'] . ' vs ' . $fixture['awayTeamName'];
     $subtitle = $competition['name'];
