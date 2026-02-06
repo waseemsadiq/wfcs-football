@@ -369,12 +369,16 @@ abstract class CompetitionController extends Controller
         foreach ($input as $row) {
             $player = isset($row['player']) ? trim($row['player']) : '';
             $minute = isset($row['minute']) ? trim($row['minute']) : '';
+            $assist = isset($row['assist']) ? trim($row['assist']) : '';
             $ownGoal = isset($row['ownGoal']);
 
             if (!empty($player)) {
                 $item = ['player' => $player, 'minute' => $minute];
                 if ($ownGoal) {
                     $item['ownGoal'] = true;
+                }
+                if (!empty($assist)) {
+                    $item['assist'] = $assist;
                 }
                 $scorers[] = $item;
             }
