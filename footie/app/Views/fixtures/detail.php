@@ -117,8 +117,37 @@
                                 </option>
                             <?php endforeach; ?>
                         </select>
+                    </div>
+
+                    <!-- Man of the Match -->
+                    <div class="md:col-span-2">
+                        <label for="motm_player_id" class="block text-sm font-bold text-text-muted uppercase tracking-wider mb-3">
+                            Man of the Match
+                        </label>
+                        <select name="motm_player_id" id="motm_player_id"
+                                class="w-full bg-surface border border-border text-text-main rounded-sm px-4 py-3 font-semibold focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <option value="">Select Man of the Match...</option>
+                            
+                            <optgroup label="<?= htmlspecialchars($fixture['homeTeamName']) ?>">
+                                <?php foreach ($homeSquad as $player): ?>
+                                    <option value="<?= htmlspecialchars($player['id']) ?>"
+                                        <?= ($fixture['motmPlayerId'] ?? null) == $player['id'] ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($player['name']) ?> (<?= $player['squadNumber'] ?: '—' ?>)
+                                    </option>
+                                <?php endforeach; ?>
+                            </optgroup>
+
+                            <optgroup label="<?= htmlspecialchars($fixture['awayTeamName']) ?>">
+                                <?php foreach ($awaySquad as $player): ?>
+                                    <option value="<?= htmlspecialchars($player['id']) ?>"
+                                        <?= ($fixture['motmPlayerId'] ?? null) == $player['id'] ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($player['name']) ?> (<?= $player['squadNumber'] ?: '—' ?>)
+                                    </option>
+                                <?php endforeach; ?>
+                            </optgroup>
+                        </select>
                         <p class="text-sm text-text-muted mt-2">
-                            Select the match referee
+                            Awarded player will receive +1 to their MOTM awards count.
                         </p>
                     </div>
                 </div>

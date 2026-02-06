@@ -334,9 +334,6 @@
   .order-3 {
     order: 3;
   }
-  .col-span-1 {
-    grid-column: span 1 / span 1;
-  }
   .container {
     width: 100%;
     @media (width >= 40rem) {
@@ -788,6 +785,9 @@
   }
   .gap-x-8 {
     column-gap: calc(var(--spacing) * 8);
+  }
+  .gap-x-12 {
+    column-gap: calc(var(--spacing) * 12);
   }
   .space-x-6 {
     :where(& > :not(:last-child)) {
@@ -1275,6 +1275,9 @@
   .pt-0\.5 {
     padding-top: calc(var(--spacing) * 0.5);
   }
+  .pt-2 {
+    padding-top: calc(var(--spacing) * 2);
+  }
   .pt-3 {
     padding-top: calc(var(--spacing) * 3);
   }
@@ -1652,6 +1655,14 @@
     &:is(:where(.peer):focus ~ *) {
       --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
       box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+    }
+  }
+  .peer-focus\:ring-primary\/20 {
+    &:is(:where(.peer):focus ~ *) {
+      --tw-ring-color: color-mix(in srgb, #4ade80 20%, transparent);
+      @supports (color: color-mix(in lab, red, red)) {
+        --tw-ring-color: color-mix(in oklab, var(--color-primary) 20%, transparent);
+      }
     }
   }
   .peer-focus\:ring-primary\/50 {
@@ -2141,11 +2152,6 @@
     @media (width >= 40rem) {
       font-size: var(--text-base);
       line-height: var(--tw-leading, var(--text-base--line-height));
-    }
-  }
-  .md\:col-span-2 {
-    @media (width >= 48rem) {
-      grid-column: span 2 / span 2;
     }
   }
   .md\:flex {

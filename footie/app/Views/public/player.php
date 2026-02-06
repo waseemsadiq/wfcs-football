@@ -10,8 +10,10 @@
         <div class="card">
             <div class="p-8">
                 <!-- Back Link -->
-                <a href="<?= $basePath ?>/players" class="inline-flex items-center gap-2 text-text-muted hover:text-primary transition-colors mb-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <a href="<?= $basePath ?>/players"
+                    class="inline-flex items-center gap-2 text-text-muted hover:text-primary transition-colors mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>
                     Back to Players
@@ -103,6 +105,18 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Man of the Match Awards -->
+            <div class="card text-center sm:col-span-2 md:col-span-1">
+                <div class="p-6">
+                    <div class="text-4xl font-extrabold text-yellow-500 mb-2">
+                        <?= $stats['motmAwards'] ?? 0 ?>
+                    </div>
+                    <div class="text-sm font-semibold text-text-muted uppercase tracking-wide">
+                        MOTM Awards
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -116,9 +130,10 @@
                         <div class="p-6 hover:bg-surface-hover/30 transition-colors">
                             <div class="flex items-start gap-4">
                                 <!-- Event Icon -->
-                                <div class="flex-shrink-0 mt-1">
+                                <div class="shrink-0 mt-1">
                                     <?php if ($event['eventType'] === 'goal'): ?>
-                                        <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+                                        <div
+                                            class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
                                             ⚽
                                         </div>
                                     <?php elseif ($event['eventType'] === 'yellow_card'): ?>

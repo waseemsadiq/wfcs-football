@@ -98,11 +98,22 @@ class PlayerStatsService
             $matchesStmt->execute([$playerId]);
             $matchesPlayed = (int) $matchesStmt->fetch()['count'];
 
+            // Count Man of the Match awards
+            $motmStmt = $this->db->prepare("
+                SELECT (
+                    SELECT COUNT(*) FROM league_fixtures WHERE motm_player_id = ?
+                ) + (
+                    SELECT COUNT(*) FROM cup_fixtures WHERE motm_player_id = ?
+                ) as count
+            ");
+            $motmStmt->execute([$playerId, $playerId]);
+            $motmAwards = (int) $motmStmt->fetch()['count'];
+
             // Upsert into player_stats
             $upsertStmt = $this->db->prepare("
                 INSERT INTO player_stats
-                (player_id, team_id, total_goals, total_assists, yellow_cards, red_cards, blue_cards, sin_bins, matches_played, last_updated)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+                (player_id, team_id, total_goals, total_assists, yellow_cards, red_cards, blue_cards, sin_bins, matches_played, motm_awards, last_updated)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
                 ON DUPLICATE KEY UPDATE
                     team_id = VALUES(team_id),
                     total_goals = VALUES(total_goals),
@@ -112,6 +123,7 @@ class PlayerStatsService
                     blue_cards = VALUES(blue_cards),
                     sin_bins = VALUES(sin_bins),
                     matches_played = VALUES(matches_played),
+                    motm_awards = VALUES(motm_awards),
                     last_updated = NOW()
             ");
 
@@ -125,6 +137,7 @@ class PlayerStatsService
                 $blueCards,
                 $sinBins,
                 $matchesPlayed,
+                $motmAwards,
             ]);
         } catch (\Exception $e) {
             error_log("Failed to recalculate player stats: " . $e->getMessage());

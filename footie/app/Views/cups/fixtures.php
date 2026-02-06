@@ -168,7 +168,8 @@
                                                 </svg>
                                                 Match Details (Scorers, Cards)
                                             </summary>
-                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3 bg-surface-hover/30 p-4 rounded text-sm">
+                                            <div class="mt-3 bg-surface-hover/30 p-4 rounded text-sm">
+                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                                 <?php foreach (['home', 'away'] as $side): ?>
                                                     <div>
                                                         <label class="block mb-2 text-xs uppercase tracking-wide font-semibold text-text-muted border-b border-border/50 pb-1">
@@ -268,60 +269,79 @@
                                                     </div>
                                                 <?php endforeach; ?>
 
-                                                <div class="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 border-t border-border/50 pt-4 mt-2">
-                                                    <!-- Row 1: Date | Referee -->
-                                                <div class="flex flex-col">
-                                                    <label class="text-[10px] text-text-muted uppercase mb-1">Date</label>
-                                                        <input type="date" name="date" value="<?= htmlspecialchars($fixture['date']) ?>" class="form-input py-1 px-2 text-xs">
-                                                    </div>
-                                                    <div class="flex flex-col">
-                                                        <label class="text-[10px] text-text-muted uppercase mb-1">Referee</label>
-                                                        <select name="referee_id" class="form-input py-1 px-2 text-xs">
-                                                            <option value="">No referee assigned</option>
-                                                            <?php foreach ($referees as $referee): ?>
-                                                                <option value="<?= htmlspecialchars($referee['id']) ?>"
-                                                                    <?= ($fixture['refereeId'] ?? null) == $referee['id'] ? 'selected' : '' ?>>
-                                                                    <?= htmlspecialchars($referee['name']) ?>
-                                                                </option>
-                                                            <?php endforeach; ?>
-                                                        </select>
-                                                    </div>
+                                                </div>
 
-                                                    <!-- Row 2: Time | Pitch -->
-                                                    <div class="flex flex-col">
-                                                        <label class="text-[10px] text-text-muted uppercase mb-1">Time</label>
-                                                        <input type="time" name="time" value="<?= htmlspecialchars(substr($fixture['time'], 0, 5)) ?>" class="form-input py-1 px-2 text-xs">
-                                                    </div>
-                                                    <div class="flex flex-col">
-                                                        <label class="text-[10px] text-text-muted uppercase mb-1">Pitch</label>
-                                                        <input type="text" name="pitch" value="<?= htmlspecialchars($fixture['pitch'] ?? '') ?>" class="form-input py-1 px-2 text-xs" placeholder="Pitch">
-                                                    </div>
+                                                <div class="border-t border-border/50 pt-4 mt-2">
+                                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6 pt-2">
+                                                        <!-- Row 1: Date | Referee -->
+                                                        <div class="flex flex-col">
+                                                            <label class="text-[10px] text-text-muted uppercase mb-1 font-bold">Date</label>
+                                                            <input type="date" name="date" value="<?= htmlspecialchars($fixture['date']) ?>" class="form-input py-1 px-2 text-xs">
+                                                        </div>
+                                                        <div class="flex flex-col">
+                                                            <label class="text-[10px] text-text-muted uppercase mb-1 font-bold">Referee</label>
+                                                            <select name="referee_id" class="form-input py-1 px-2 text-xs">
+                                                                <option value="">No referee assigned</option>
+                                                                <?php foreach ($referees as $referee): ?>
+                                                                    <option value="<?= htmlspecialchars($referee['id']) ?>"
+                                                                        <?= ($fixture['refereeId'] ?? null) == $referee['id'] ? 'selected' : '' ?>>
+                                                                        <?= htmlspecialchars($referee['name']) ?>
+                                                                    </option>
+                                                                <?php endforeach; ?>
+                                                            </select>
+                                                        </div>
 
-                                                    <!-- Row 3: Week | Live -->
-                                                    <div class="flex items-center justify-between bg-surface-hover/20 p-2 rounded">
-                                                        <span class="text-[10px] text-text-muted uppercase font-bold">Match Week</span>
-                                                        <?php
-                                                        // Simple auto-calculation based on round order in cups
-                                                        static $cupWeeks = [];
-                                                        $roundKey = $round['id'] ?? $round['name'];
-                                                        if (!in_array($roundKey, $cupWeeks)) {
-                                                            $cupWeeks[] = $roundKey;
-                                                        }
-                                                        $weekNum = array_search($roundKey, $cupWeeks) + 1;
-                                                        ?>
-                                                        <span class="text-xs font-bold text-primary">#<?= $weekNum ?></span>
-                                                    </div>
-                                                    <div class="flex items-center justify-between bg-surface-hover/20 p-2 rounded">
-                                                        <span class="text-[10px] text-text-muted uppercase font-bold">Live Match</span>
-                                                        <label class="relative inline-block w-10 h-5 cursor-pointer">
+                                                        <!-- Row 2: Time | Pitch -->
+                                                        <div class="flex flex-col">
+                                                            <label class="text-[10px] text-text-muted uppercase mb-1 font-bold">Time</label>
+                                                            <input type="time" name="time" value="<?= htmlspecialchars(substr($fixture['time'], 0, 5)) ?>" class="form-input py-1 px-2 text-xs">
+                                                        </div>
+                                                        <div class="flex flex-col">
+                                                            <label class="text-[10px] text-text-muted uppercase mb-1 font-bold">Pitch</label>
+                                                            <input type="text" name="pitch" value="<?= htmlspecialchars($fixture['pitch'] ?? '') ?>" class="form-input py-1 px-2 text-xs" placeholder="Pitch">
+                                                        </div>
+
+                                                        <!-- Row 3: Week -->
+                                                        <div class="flex items-center justify-between bg-surface-hover/30 p-2 rounded-sm border border-border/50">
+                                                            <span class="text-[10px] text-text-muted uppercase font-bold tracking-wider">Match Week</span>
                                                             <?php
-                                                            $hasScore = isset($fixture['result']) && $fixture['result'] !== null;
-                                                            $shouldBeChecked = !$hasScore && (($fixture['isLive'] ?? 0) || !empty($fixture['liveStreamUrl']));
+                                                            // Simple auto-calculation based on round order in cups
+                                                            static $cupWeeks = [];
+                                                            $roundKey = $round['id'] ?? $round['name'];
+                                                            if (!in_array($roundKey, $cupWeeks)) {
+                                                                $cupWeeks[] = $roundKey;
+                                                            }
+                                                            $weekNum = array_search($roundKey, $cupWeeks) + 1;
                                                             ?>
-                                                            <input type="checkbox" name="isLive" value="1" <?= $shouldBeChecked ? 'checked' : '' ?> class="sr-only peer">
-                                                            <div class="w-10 h-5 bg-gray-600 rounded-full peer-checked:bg-primary transition-colors"></div>
-                                                            <div class="absolute left-1 top-1 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
-                                                        </label>
+                                                            <span class="text-xs font-bold text-primary">#<?= $weekNum ?></span>
+                                                        </div>
+
+                                                        <!-- Row 4: Man of the Match -->
+                                                        <div class="flex flex-col bg-surface-hover/30 p-2 rounded-sm border border-border/50">
+                                                            <label class="text-[10px] text-text-muted uppercase mb-1 font-bold">Man of the Match</label>
+                                                            <select name="motm_player_id" class="form-input py-1 px-2 text-xs">
+                                                                <option value="">None</option>
+                                                                <?php if (isset($fixture['homeTeamId'])): ?>
+                                                                    <optgroup label="<?= htmlspecialchars($fixture['homeTeamName']) ?>">
+                                                                        <?php foreach ($teamPlayers[$fixture['homeTeamId']] ?? [] as $player): ?>
+                                                                            <option value="<?= $player['id'] ?>" <?= ($fixture['motmPlayerId'] ?? null) == $player['id'] ? 'selected' : '' ?>>
+                                                                                <?= htmlspecialchars($player['name']) ?>
+                                                                            </option>
+                                                                        <?php endforeach; ?>
+                                                                    </optgroup>
+                                                                <?php endif; ?>
+                                                                <?php if (isset($fixture['awayTeamId'])): ?>
+                                                                    <optgroup label="<?= htmlspecialchars($fixture['awayTeamName']) ?>">
+                                                                        <?php foreach ($teamPlayers[$fixture['awayTeamId']] ?? [] as $player): ?>
+                                                                            <option value="<?= $player['id'] ?>" <?= ($fixture['motmPlayerId'] ?? null) == $player['id'] ? 'selected' : '' ?>>
+                                                                                <?= htmlspecialchars($player['name']) ?>
+                                                                            </option>
+                                                                        <?php endforeach; ?>
+                                                                    </optgroup>
+                                                                <?php endif; ?>
+                                                            </select>
+                                                        </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </details>

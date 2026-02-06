@@ -52,3 +52,4 @@ footie/config/*-shared.php
 /.claude
 /CLAUDE-G.md
 /footie/uploads/
+/footie/docs/migrations/010_add_man_of_the_match.sql

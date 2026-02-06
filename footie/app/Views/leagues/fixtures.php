@@ -105,194 +105,204 @@ usort($fixtures, function ($a, $b) {
                                                 </svg>
                                                 <span>Match Details (Scorers & Cards)</span>
                                             </summary>
-                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4 bg-surface p-6 rounded-sm">
-                                                <?php foreach (['home', 'away'] as $side): ?>
-                                                    <div>
-                                                        <label
-                                                            class="block mb-4 text-xs uppercase tracking-wide font-semibold text-text-muted border-b border-border pb-2">
-                                                            <?= ucfirst($side) ?> Details
-                                                        </label>
+                                            <div class="mt-4 bg-surface p-6 rounded-sm">
+                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
+                                                    <?php foreach (['home', 'away'] as $side): ?>
+                                                        <div>
+                                                            <label
+                                                                class="block mb-4 text-xs uppercase tracking-wide font-semibold text-text-muted border-b border-border pb-2">
+                                                                <?= ucfirst($side) ?> Details
+                                                            </label>
 
-                                                        <!-- Scorers -->
-                                                        <div class="mb-4">
-                                                            <div class="flex justify-between items-center mb-1">
-                                                                <span class="text-xs font-bold">Scorers</span>
-                                                                <button type="button" class="text-xs text-primary hover:underline"
-                                                                    onclick="addScorerRow(this, '<?= $side ?>Scorers')">+ Add</button>
+                                                            <!-- Scorers -->
+                                                            <div class="mb-4">
+                                                                <div class="flex justify-between items-center mb-1">
+                                                                    <span class="text-xs font-bold">Scorers</span>
+                                                                    <button type="button" class="text-xs text-primary hover:underline"
+                                                                        onclick="addScorerRow(this, '<?= $side ?>Scorers')">+ Add</button>
+                                                                </div>
+                                                                <div class="scorers-list space-y-1">
+                                                                    <?php
+                                                                    $scorers = $fixture['result'][$side . 'Scorers'] ?? [];
+                                                                    if (!is_array($scorers))
+                                                                        $scorers = [];
+                                                                    foreach ($scorers as $index => $scorer):
+                                                                        $teamId = $side === 'home' ? $fixture['homeTeamId'] : $fixture['awayTeamId'];
+                                                                        $players = $teamPlayers[$teamId] ?? [];
+                                                                    ?>
+                                                                        <div class="flex gap-1 items-center">
+                                                                            <select name="<?= $side ?>Scorers[<?= $index ?>][player]"
+                                                                                class="form-input py-1 px-2 text-xs flex-1">
+                                                                                <option value="">Select player...</option>
+                                                                                <?php foreach ($players as $player): ?>
+                                                                                    <option value="<?= htmlspecialchars($player['name']) ?>"
+                                                                                        <?= ($scorer['player'] ?? '') === $player['name'] ? 'selected' : '' ?>>
+                                                                                        <?= htmlspecialchars($player['name']) ?>
+                                                                                        <?php if (!empty($player['squadNumber'])): ?>
+                                                                                            (#<?= $player['squadNumber'] ?>)
+                                                                                        <?php endif; ?>
+                                                                                    </option>
+                                                                                <?php endforeach; ?>
+                                                                            </select>
+                                                                            <input type="text" name="<?= $side ?>Scorers[<?= $index ?>][minute]"
+                                                                                value="<?= htmlspecialchars((string) ($scorer['minute'] ?? '')) ?>"
+                                                                                class="form-input py-1 px-1 text-xs w-10 text-center"
+                                                                                placeholder="Min">
+                                                                            <label
+                                                                                class="flex items-center gap-1 text-[10px] text-text-muted cursor-pointer whitespace-nowrap">
+                                                                                <input type="checkbox"
+                                                                                    name="<?= $side ?>Scorers[<?= $index ?>][ownGoal]" value="1"
+                                                                                    <?= ($scorer['ownGoal'] ?? false) ? 'checked' : '' ?>> OG
+                                                                            </label>
+                                                                            <button type="button"
+                                                                                class="text-red-500 hover:text-red-400 text-xs px-1"
+                                                                                onclick="this.parentElement.remove()">×</button>
+                                                                        </div>
+                                                                    <?php endforeach; ?>
+                                                                </div>
                                                             </div>
-                                                            <div class="scorers-list space-y-1">
-                                                                <?php
-                                                                $scorers = $fixture['result'][$side . 'Scorers'] ?? [];
-                                                                if (!is_array($scorers))
-                                                                    $scorers = [];
-                                                                foreach ($scorers as $index => $scorer):
-                                                                    $teamId = $side === 'home' ? $fixture['homeTeamId'] : $fixture['awayTeamId'];
-                                                                    $players = $teamPlayers[$teamId] ?? [];
-                                                                ?>
-                                                                    <div class="flex gap-1 items-center">
-                                                                        <select name="<?= $side ?>Scorers[<?= $index ?>][player]"
-                                                                            class="form-input py-1 px-2 text-xs flex-1">
-                                                                            <option value="">Select player...</option>
-                                                                            <?php foreach ($players as $player): ?>
-                                                                                <option value="<?= htmlspecialchars($player['name']) ?>"
-                                                                                    <?= ($scorer['player'] ?? '') === $player['name'] ? 'selected' : '' ?>>
-                                                                                    <?= htmlspecialchars($player['name']) ?>
-                                                                                    <?php if (!empty($player['squadNumber'])): ?>
-                                                                                        (#<?= $player['squadNumber'] ?>)
-                                                                                    <?php endif; ?>
-                                                                                </option>
-                                                                            <?php endforeach; ?>
-                                                                        </select>
-                                                                        <input type="text" name="<?= $side ?>Scorers[<?= $index ?>][minute]"
-                                                                            value="<?= htmlspecialchars((string) ($scorer['minute'] ?? '')) ?>"
-                                                                            class="form-input py-1 px-1 text-xs w-10 text-center"
-                                                                            placeholder="Min">
-                                                                        <label
-                                                                            class="flex items-center gap-1 text-[10px] text-text-muted cursor-pointer whitespace-nowrap">
-                                                                            <input type="checkbox"
-                                                                                name="<?= $side ?>Scorers[<?= $index ?>][ownGoal]" value="1"
-                                                                                <?= ($scorer['ownGoal'] ?? false) ? 'checked' : '' ?>> OG
-                                                                        </label>
-                                                                        <button type="button"
-                                                                            class="text-red-500 hover:text-red-400 text-xs px-1"
-                                                                            onclick="this.parentElement.remove()">×</button>
-                                                                    </div>
-                                                                <?php endforeach; ?>
+
+                                                            <div class="space-y-2">
+                                                                <div class="flex justify-between items-center mb-1">
+                                                                    <span class="text-xs font-bold">Cards</span>
+                                                                    <button type="button" class="text-xs text-primary hover:underline"
+                                                                        onclick="addCardRow(this, '<?= $side ?>CardsCombined')">+
+                                                                        Add</button>
+                                                                </div>
+                                                                <div class="cards-list space-y-1">
+                                                                    <?php
+                                                                    $cards = $fixture['result'][$side . 'Cards'] ?? [];
+                                                                    if (!is_array($cards))
+                                                                        $cards = [];
+                                                                    $cardTypes = [
+                                                                        'sinBins' => 'Sin Bin',
+                                                                        'blue' => 'Blue',
+                                                                        'yellow' => 'Yellow',
+                                                                        'red' => 'Red'
+                                                                    ];
+                                                                    $allCards = [];
+                                                                    foreach ($cards as $typeKey => $typeCards) {
+                                                                        if (!is_array($typeCards))
+                                                                            continue;
+                                                                        foreach ($typeCards as $card) {
+                                                                            $card['type'] = $typeKey;
+                                                                            $allCards[] = $card;
+                                                                        }
+                                                                    }
+                                                                    foreach ($allCards as $idx => $card):
+                                                                        $teamId = $side === 'home' ? $fixture['homeTeamId'] : $fixture['awayTeamId'];
+                                                                        $players = $teamPlayers[$teamId] ?? [];
+                                                                    ?>
+                                                                        <div class="flex gap-1 items-center">
+                                                                            <select name="<?= $side ?>CardsCombined[<?= $idx ?>][type]"
+                                                                                class="form-input py-1 px-1 text-[10px] w-20">
+                                                                                <?php foreach ($cardTypes as $val => $lbl): ?>
+                                                                                    <option value="<?= $val ?>" <?= ($card['type'] ?? '') === $val ? 'selected' : '' ?>><?= $lbl ?></option>
+                                                                                <?php endforeach; ?>
+                                                                            </select>
+                                                                            <select name="<?= $side ?>CardsCombined[<?= $idx ?>][player]"
+                                                                                class="form-input py-1 px-2 text-xs flex-1">
+                                                                                <option value="">Select player...</option>
+                                                                                <?php foreach ($players as $player): ?>
+                                                                                    <option value="<?= htmlspecialchars($player['name']) ?>"
+                                                                                        <?= ($card['player'] ?? '') === $player['name'] ? 'selected' : '' ?>>
+                                                                                        <?= htmlspecialchars($player['name']) ?>
+                                                                                        <?php if (!empty($player['squadNumber'])): ?>
+                                                                                            (#<?= $player['squadNumber'] ?>)
+                                                                                        <?php endif; ?>
+                                                                                    </option>
+                                                                                <?php endforeach; ?>
+                                                                            </select>
+                                                                            <input type="text"
+                                                                                name="<?= $side ?>CardsCombined[<?= $idx ?>][minute]"
+                                                                                value="<?= htmlspecialchars($card['minute'] ?? '') ?>"
+                                                                                class="form-input py-1 px-1 text-xs w-10 text-center"
+                                                                                placeholder="Min">
+                                                                            <button type="button"
+                                                                                class="text-red-500 hover:text-red-400 text-xs px-1"
+                                                                                onclick="this.parentElement.remove()">×</button>
+                                                                        </div>
+                                                                    <?php endforeach; ?>
+                                                                </div>
                                                             </div>
                                                         </div>
+                                                    <?php endforeach; ?>
+                                                </div>
 
-                                                        <div class="space-y-2">
-                                                            <div class="flex justify-between items-center mb-1">
-                                                                <span class="text-xs font-bold">Cards</span>
-                                                                <button type="button" class="text-xs text-primary hover:underline"
-                                                                    onclick="addCardRow(this, '<?= $side ?>CardsCombined')">+
-                                                                    Add</button>
-                                                            </div>
-                                                            <div class="cards-list space-y-1">
-                                                                <?php
-                                                                $cards = $fixture['result'][$side . 'Cards'] ?? [];
-                                                                if (!is_array($cards))
-                                                                    $cards = [];
-                                                                $cardTypes = [
-                                                                    'sinBins' => 'Sin Bin',
-                                                                    'blue' => 'Blue',
-                                                                    'yellow' => 'Yellow',
-                                                                    'red' => 'Red'
-                                                                ];
-                                                                $allCards = [];
-                                                                foreach ($cards as $typeKey => $typeCards) {
-                                                                    if (!is_array($typeCards))
-                                                                        continue;
-                                                                    foreach ($typeCards as $card) {
-                                                                        $card['type'] = $typeKey;
-                                                                        $allCards[] = $card;
-                                                                    }
-                                                                }
-                                                                foreach ($allCards as $idx => $card):
-                                                                    $teamId = $side === 'home' ? $fixture['homeTeamId'] : $fixture['awayTeamId'];
-                                                                    $players = $teamPlayers[$teamId] ?? [];
-                                                                ?>
-                                                                    <div class="flex gap-1 items-center">
-                                                                        <select name="<?= $side ?>CardsCombined[<?= $idx ?>][type]"
-                                                                            class="form-input py-1 px-1 text-[10px] w-20">
-                                                                            <?php foreach ($cardTypes as $val => $lbl): ?>
-                                                                                <option value="<?= $val ?>" <?= ($card['type'] ?? '') === $val ? 'selected' : '' ?>><?= $lbl ?></option>
-                                                                            <?php endforeach; ?>
-                                                                        </select>
-                                                                        <select name="<?= $side ?>CardsCombined[<?= $idx ?>][player]"
-                                                                            class="form-input py-1 px-2 text-xs flex-1">
-                                                                            <option value="">Select player...</option>
-                                                                            <?php foreach ($players as $player): ?>
-                                                                                <option value="<?= htmlspecialchars($player['name']) ?>"
-                                                                                    <?= ($card['player'] ?? '') === $player['name'] ? 'selected' : '' ?>>
-                                                                                    <?= htmlspecialchars($player['name']) ?>
-                                                                                    <?php if (!empty($player['squadNumber'])): ?>
-                                                                                        (#<?= $player['squadNumber'] ?>)
-                                                                                    <?php endif; ?>
-                                                                                </option>
-                                                                            <?php endforeach; ?>
-                                                                        </select>
-                                                                        <input type="text"
-                                                                            name="<?= $side ?>CardsCombined[<?= $idx ?>][minute]"
-                                                                            value="<?= htmlspecialchars($card['minute'] ?? '') ?>"
-                                                                            class="form-input py-1 px-1 text-xs w-10 text-center"
-                                                                            placeholder="Min">
-                                                                        <button type="button"
-                                                                            class="text-red-500 hover:text-red-400 text-xs px-1"
-                                                                            onclick="this.parentElement.remove()">×</button>
-                                                                    </div>
+                                                <div class="border-t border-border pt-6 mt-6">
+                                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+                                                        <!-- Row 1: Date | Referee -->
+                                                        <div class="flex flex-col">
+                                                            <label class="text-xs text-text-muted uppercase mb-1 font-bold">Date</label>
+                                                            <input type="date" name="date" value="<?= htmlspecialchars($fixture['date']) ?>"
+                                                                class="form-input py-2">
+                                                        </div>
+                                                        <div class="flex flex-col">
+                                                            <label class="text-xs text-text-muted uppercase mb-1 font-bold">Referee</label>
+                                                            <select name="referee_id"
+                                                                class="form-input py-2">
+                                                                <option value="">No referee assigned</option>
+                                                                <?php foreach ($referees as $referee): ?>
+                                                                    <option value="<?= htmlspecialchars($referee['id']) ?>"
+                                                                        <?= ($fixture['refereeId'] ?? null) == $referee['id'] ? 'selected' : '' ?>>
+                                                                        <?= htmlspecialchars($referee['name']) ?>
+                                                                    </option>
                                                                 <?php endforeach; ?>
-                                                            </div>
+                                                            </select>
+                                                        </div>
+
+                                                        <!-- Row 2: Time | Pitch -->
+                                                        <div class="flex flex-col">
+                                                            <label class="text-xs text-text-muted uppercase mb-1 font-bold">Time</label>
+                                                            <input type="time" name="time"
+                                                                value="<?= htmlspecialchars(substr($fixture['time'], 0, 5)) ?>"
+                                                                class="form-input py-2">
+                                                        </div>
+                                                        <div class="flex flex-col">
+                                                            <label class="text-xs text-text-muted uppercase mb-1 font-bold">Pitch</label>
+                                                            <input type="text" name="pitch"
+                                                                value="<?= htmlspecialchars($fixture['pitch'] ?? '') ?>"
+                                                                class="form-input py-2"
+                                                                placeholder="Pitch">
+                                                        </div>
+
+                                                        <!-- Row 3: Match Week -->
+                                                        <div class="flex items-center justify-between bg-surface-hover/30 p-3 rounded-sm border border-border">
+                                                            <span class="text-xs text-text-muted uppercase font-bold tracking-wider">Match Week</span>
+                                                            <?php
+                                                            static $dates = [];
+                                                            if (!in_array($fixture['date'], $dates)) {
+                                                                $dates[] = $fixture['date'];
+                                                            }
+                                                            $weekNum = array_search($fixture['date'], $dates) + 1;
+                                                            ?>
+                                                            <span class="text-base font-bold text-primary">#<?= $weekNum ?></span>
+                                                        </div>
+
+                                                        <!-- Row 4: Man of the Match -->
+                                                        <div class="flex flex-col bg-surface-hover/30 p-3 rounded-sm border border-border">
+                                                            <label class="text-[10px] text-text-muted uppercase mb-1 font-bold">Man of the Match</label>
+                                                            <select name="motm_player_id" class="form-input py-1 text-xs">
+                                                                <option value="">None</option>
+                                                                <optgroup label="<?= htmlspecialchars($fixture['homeTeamName']) ?>">
+                                                                    <?php foreach ($teamPlayers[$fixture['homeTeamId']] ?? [] as $player): ?>
+                                                                        <option value="<?= $player['id'] ?>" <?= ($fixture['motmPlayerId'] ?? null) == $player['id'] ? 'selected' : '' ?>>
+                                                                            <?= htmlspecialchars($player['name']) ?>
+                                                                        </option>
+                                                                    <?php endforeach; ?>
+                                                                </optgroup>
+                                                                <optgroup label="<?= htmlspecialchars($fixture['awayTeamName']) ?>">
+                                                                    <?php foreach ($teamPlayers[$fixture['awayTeamId']] ?? [] as $player): ?>
+                                                                        <option value="<?= $player['id'] ?>" <?= ($fixture['motmPlayerId'] ?? null) == $player['id'] ? 'selected' : '' ?>>
+                                                                            <?= htmlspecialchars($player['name']) ?>
+                                                                        </option>
+                                                                    <?php endforeach; ?>
+                                                                </optgroup>
+                                                            </select>
+                                                        </div>
                                                         </div>
                                                     </div>
-                                                <?php endforeach; ?>
-
-                                                <div class="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 border-t border-border pt-6 mt-4">
-                                                    <!-- Row 1: Date | Referee -->
-                                                <div class="flex flex-col">
-                                                    <label class="text-xs text-text-muted uppercase mb-1">Date</label>
-                                                    <input type="date" name="date" value="<?= htmlspecialchars($fixture['date']) ?>"
-                                                        class="bg-transparent border border-border text-text-main p-1 rounded focus:border-primary focus:outline-none text-xs">
                                                 </div>
-                                                <div class="flex flex-col">
-                                                    <label class="text-xs text-text-muted uppercase mb-1">Referee</label>
-                                                    <select name="referee_id"
-                                                        class="bg-transparent border border-border text-text-main p-1 rounded focus:border-primary focus:outline-none text-xs">
-                                                        <option value="">No referee assigned</option>
-                                                        <?php foreach ($referees as $referee): ?>
-                                                            <option value="<?= htmlspecialchars($referee['id']) ?>"
-                                                                <?= ($fixture['refereeId'] ?? null) == $referee['id'] ? 'selected' : '' ?>>
-                                                                <?= htmlspecialchars($referee['name']) ?>
-                                                            </option>
-                                                        <?php endforeach; ?>
-                                                    </select>
-                                                </div>
-
-                                                <!-- Row 2: Time | Pitch -->
-                                                <div class="flex flex-col">
-                                                    <label class="text-xs text-text-muted uppercase mb-1">Time</label>
-                                                    <input type="time" name="time"
-                                                        value="<?= htmlspecialchars(substr($fixture['time'], 0, 5)) ?>"
-                                                        class="bg-transparent border border-border text-text-main p-1 rounded focus:border-primary focus:outline-none text-xs">
-                                                </div>
-                                                <div class="flex flex-col">
-                                                    <label class="text-xs text-text-muted uppercase mb-1">Pitch</label>
-                                                    <input type="text" name="pitch"
-                                                        value="<?= htmlspecialchars($fixture['pitch'] ?? '') ?>"
-                                                        class="bg-transparent border border-border text-text-main p-1 rounded focus:border-primary focus:outline-none text-xs"
-                                                        placeholder="Pitch">
-                                                </div>
-
-                                                <!-- Row 3: Week | Live -->
-                                                <div class="flex items-center justify-between bg-surface-hover/20 p-2 rounded">
-                                                    <span class="text-xs text-text-muted uppercase font-bold">Match Week</span>
-                                                    <?php
-                                                    // Simple auto-calculation based on unique dates
-                                                    static $dates = [];
-                                                    if (!in_array($fixture['date'], $dates)) {
-                                                        $dates[] = $fixture['date'];
-                                                    }
-                                                    $weekNum = array_search($fixture['date'], $dates) + 1;
-                                                    ?>
-                                                    <span class="text-sm font-bold text-primary">#<?= $weekNum ?></span>
-                                                </div>
-                                                <div class="flex items-center justify-between bg-surface-hover/20 p-2 rounded">
-                                                    <span class="text-xs text-text-muted uppercase font-bold">Live Match</span>
-                                                    <label class="relative inline-block w-10 h-5 cursor-pointer">
-                                                        <?php
-                                                        $hasScore = isset($fixture['result']) && $fixture['result'] !== null;
-                                                        $shouldBeChecked = !$hasScore && (($fixture['isLive'] ?? 0) || !empty($fixture['liveStreamUrl']));
-                                                        ?>
-                                                        <input type="checkbox" name="isLive" value="1" <?= $shouldBeChecked ? 'checked' : '' ?> class="sr-only peer">
-                                                        <div
-                                                            class="w-10 h-5 bg-gray-600 rounded-full peer-checked:bg-primary transition-colors">
-                                                        </div>
-                                                        <div
-                                                            class="absolute left-1 top-1 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-5">
-                                                        </div>
-                                                    </label>
-                                                </div>
-                                            </div>
                                         </details>
                                     </div>
                                         <div class="pt-0.5 flex items-center gap-3">
