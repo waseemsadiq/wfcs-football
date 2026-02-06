@@ -26,6 +26,7 @@ $router->get('/cups/{slug}/data', 'PublicController', 'cupData', false);
 $router->get('/teams', 'PublicController', 'teams', false);
 $router->get('/teams/{slug}/data', 'PublicController', 'teamData', false);
 $router->get('/players', 'PublicController', 'players', false);
+$router->get('/ajax/players/list', 'PublicController', 'getPlayersList', false);
 $router->get('/top-scorers/data', 'PublicController', 'topScorersData', false);
 $router->get('/top-scorers', 'PublicController', 'topScorers', false);
 $router->get('/fixture/{type}/{competitionSlug}/{fixtureSlug}', 'PublicController', 'fixture', false);

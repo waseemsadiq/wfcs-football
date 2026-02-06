@@ -798,13 +798,22 @@ class PublicController extends Controller
     {
         $playerModel = new \App\Models\Player();
         $teamId = $this->get('team_id');
+        $page = max(1, (int) $this->get('page', 1));
+        $perPage = 24;
 
         $where = [];
         if ($teamId) {
             $where['team_id'] = (int) $teamId;
         }
 
-        $players = $playerModel->paginate(1000, 0, $where, 'name', 'ASC');
+        // Get total count
+        $totalCount = $playerModel->count($where);
+
+        // Calculate pagination
+        $pagination = $this->paginate($totalCount, $page, $perPage);
+
+        // Get paginated players
+        $players = $playerModel->paginate($perPage, $pagination['offset'], $where, 'name', 'ASC');
 
         // Enrich with team data
         $teams = $this->teamModel->all();
@@ -820,7 +829,50 @@ class PublicController extends Controller
             'players' => $players,
             'teams' => $teams,
             'selectedTeamId' => $teamId,
+            'pagination' => $pagination,
         ], 'public');
+    }
+
+    /**
+     * AJAX endpoint to get paginated players list.
+     */
+    public function getPlayersList(): void
+    {
+        $playerModel = new \App\Models\Player();
+        $teamId = $this->get('team_id');
+        $page = max(1, (int) $this->get('page', 1));
+        $perPage = 24;
+
+        $where = [];
+        if ($teamId) {
+            $where['team_id'] = (int) $teamId;
+        }
+
+        // Get total count
+        $totalCount = $playerModel->count($where);
+
+        // Calculate pagination
+        $pagination = $this->paginate($totalCount, $page, $perPage);
+
+        // Get paginated players
+        $players = $playerModel->paginate($perPage, $pagination['offset'], $where, 'name', 'ASC');
+
+        // Enrich with team data
+        $teams = $this->teamModel->all();
+        $teamsById = $this->indexById($teams);
+
+        foreach ($players as &$player) {
+            $player['team'] = $teamsById[$player['teamId']] ?? null;
+        }
+
+        $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
+
+        $this->renderPartial('public/partials/players_grid', [
+            'players' => $players,
+            'teams' => $teams,
+            'basePath' => $basePath,
+            'pagination' => $pagination,
+        ]);
     }
 
     /**

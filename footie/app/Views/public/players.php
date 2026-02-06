@@ -1,6 +1,6 @@
 <?php
 /**
- * Public Players Page - Player directory
+ * Public Players Page - Player directory with AJAX pagination
  */
 ?>
 
@@ -32,78 +32,105 @@
         </div>
     <?php endif; ?>
 
-    <?php if (empty($players)): ?>
-        <div class="card">
-            <div class="text-center py-12 text-text-muted">
-                <p>No players available.</p>
-            </div>
-        </div>
-    <?php else: ?>
-        <!-- Players Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <?php foreach ($players as $player): ?>
-                <a href="<?= $basePath ?>/player/<?= htmlspecialchars($player['slug']) ?>"
-                    class="card hover:border-primary/50 transition-all duration-200 hover:shadow-lg group">
-                    <div class="p-6">
-                        <!-- Player Name -->
-                        <h3 class="text-xl font-bold text-text-main mb-2 group-hover:text-primary transition-colors">
-                            <?= htmlspecialchars($player['name']) ?>
-                        </h3>
+    <div id="players-loader" class="hidden flex justify-center py-8" role="status" aria-live="polite">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <span class="sr-only">Loading players...</span>
+    </div>
 
-                        <!-- Team -->
-                        <?php if ($player['team']): ?>
-                            <p class="text-sm text-text-muted mb-3 flex items-center gap-2">
-                                <span class="inline-block w-3 h-3 rounded-full"
-                                    style="background-color: <?= htmlspecialchars($player['team']['colour'] ?? '#1a5f2a') ?>"></span>
-                                <?= htmlspecialchars($player['team']['name']) ?>
-                            </p>
-                        <?php endif; ?>
-
-                        <!-- Position and Squad Number -->
-                        <div class="flex items-center gap-4 text-sm">
-                            <?php if (!empty($player['position'])): ?>
-                                <span class="px-3 py-1 bg-surface-hover rounded text-text-muted font-medium">
-                                    <?= htmlspecialchars($player['position']) ?>
-                                </span>
-                            <?php endif; ?>
-
-                            <?php if (!empty($player['squadNumber'])): ?>
-                                <span class="font-mono font-bold text-primary text-lg">
-                                    #<?= htmlspecialchars($player['squadNumber']) ?>
-                                </span>
-                            <?php endif; ?>
-                        </div>
-
-                        <!-- Status Badge -->
-                        <?php
-                        $statusColors = [
-                            'active' => 'bg-green-500/20 text-green-400',
-                            'injured' => 'bg-red-500/20 text-red-400',
-                            'suspended' => 'bg-yellow-500/20 text-yellow-400',
-                            'unavailable' => 'bg-gray-500/20 text-gray-400',
-                        ];
-                        $statusColor = $statusColors[$player['status']] ?? 'bg-gray-500/20 text-gray-400';
-                        ?>
-                        <div class="mt-4">
-                            <span class="text-xs px-2 py-1 rounded <?= $statusColor ?>">
-                                <?= htmlspecialchars(ucfirst($player['status'])) ?>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-            <?php endforeach; ?>
-        </div>
-    <?php endif; ?>
+    <div id="players-container">
+        <?php include __DIR__ . '/partials/players_grid.php'; ?>
+    </div>
 </div>
 
 <script>
-    function filterByTeam(teamId) {
-        const url = new URL(window.location.href);
-        if (teamId) {
-            url.searchParams.set('team_id', teamId);
-        } else {
-            url.searchParams.delete('team_id');
+    const BASE_PATH = '<?= $basePath ?>';
+    let currentTeamId = '<?= $selectedTeamId ?? '' ?>';
+    let currentPage = 1;
+
+    // Filter functionality
+    const teamFilter = document.getElementById('team-filter');
+    const playersContainer = document.getElementById('players-container');
+    const playersLoader = document.getElementById('players-loader');
+
+    teamFilter?.addEventListener('change', function() {
+        currentTeamId = this.value;
+        currentPage = 1;
+        loadPlayers();
+    });
+
+    function loadPlayers(page = 1) {
+        currentPage = page;
+        playersLoader.classList.remove('hidden');
+        playersContainer.style.opacity = '0.5';
+
+        let url = `${BASE_PATH}/ajax/players/list?`;
+        const params = [];
+
+        if (currentTeamId) {
+            params.push(`team_id=${currentTeamId}`);
         }
-        window.location.href = url.toString();
+
+        if (page > 1) {
+            params.push(`page=${page}`);
+        }
+
+        url += params.join('&');
+
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                // Safe to use innerHTML here - content is from our own trusted server endpoint
+                playersContainer.innerHTML = html;
+
+                // Reinitialize pagination after loading new content
+                initPagination();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                playersContainer.innerHTML = '<div class="text-error text-center py-8">Failed to load players.</div>';
+            })
+            .finally(() => {
+                playersLoader.classList.add('hidden');
+                playersContainer.style.opacity = '1';
+            });
+    }
+
+    // Pagination functionality
+    function initPagination() {
+        // Handle pagination button clicks
+        document.querySelectorAll('[data-pagination-prev]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (!this.disabled && currentPage > 1) {
+                    loadPlayers(currentPage - 1);
+                }
+            });
+        });
+
+        document.querySelectorAll('[data-pagination-next]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (!this.disabled) {
+                    loadPlayers(currentPage + 1);
+                }
+            });
+        });
+
+        document.querySelectorAll('[data-page]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const page = parseInt(this.dataset.page);
+                if (page !== currentPage) {
+                    loadPlayers(page);
+                }
+            });
+        });
+    }
+
+    // Initialize on page load
+    initPagination();
+
+    function filterByTeam(teamId) {
+        // Reset to page 1 when filtering
+        currentTeamId = teamId;
+        currentPage = 1;
+        loadPlayers();
     }
 </script>
