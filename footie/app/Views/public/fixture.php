@@ -77,30 +77,34 @@
 
                 <!-- Score -->
                 <div class="text-center min-w-[140px] sm:min-w-[160px]">
-                    <?php if ($fixture['result']): ?>
+                    <?php if (isset($fixture['result']) && $fixture['result']): ?>
                         <div class="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-primary leading-none mb-2">
                             <?= $fixture['result']['homeScore'] ?> <span class="text-text-muted">-</span>
                             <?= $fixture['result']['awayScore'] ?>
                         </div>
 
                         <?php if ($fixtureType === 'cup'): ?>
-                            <?php if (!empty($fixture['result']['extraTime'])): ?>
-                                <div class="text-sm sm:text-base text-text-muted font-semibold mt-2">
-                                    After Extra Time:
-                                    <?= $fixture['result']['homeScoreEt'] ?? $fixture['result']['homeScore'] ?> -
-                                    <?= $fixture['result']['awayScoreEt'] ?? $fixture['result']['awayScore'] ?>
-                                </div>
-                            <?php endif; ?>
-                            <?php if (!empty($fixture['result']['penalties'])): ?>
-                                <div class="text-sm sm:text-base text-text-muted font-semibold mt-1">
-                                    Penalties:
-                                    <?= $fixture['result']['homePens'] ?? 0 ?> -
-                                    <?= $fixture['result']['awayPens'] ?? 0 ?>
-                                </div>
-                            <?php endif; ?>
+                            <div class="space-y-1">
+                                <?php if (!empty($fixture['result']['extraTime'])): ?>
+                                    <div class="text-sm sm:text-base text-text-muted font-semibold">
+                                        After Extra Time:
+                                        <?= $fixture['result']['homeScoreEt'] ?? $fixture['result']['homeScore'] ?> -
+                                        <?= $fixture['result']['awayScoreEt'] ?? $fixture['result']['awayScore'] ?>
+                                    </div>
+                                <?php endif; ?>
+                                <?php if (!empty($fixture['result']['penalties'])): ?>
+                                    <div class="text-sm sm:text-base text-text-muted font-semibold">
+                                        Penalties:
+                                        <?= $fixture['result']['homePens'] ?? 0 ?> -
+                                        <?= $fixture['result']['awayPens'] ?? 0 ?>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
                         <?php endif; ?>
                     <?php else: ?>
-                        <div class="text-3xl sm:text-4xl font-bold text-text-muted">vs</div>
+                        <div class="text-3xl sm:text-4xl font-bold text-text-muted">
+                            <?= $fixture['time'] ? date('g:i A', strtotime($fixture['time'])) : 'TBD' ?>
+                        </div>
                     <?php endif; ?>
                 </div>
 
