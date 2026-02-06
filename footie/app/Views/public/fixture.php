@@ -77,33 +77,33 @@
 
                 <!-- Score -->
                 <div class="text-center min-w-[140px] sm:min-w-[160px]">
-                    <?php if (isset($fixture['result']) && $fixture['result']): ?>
+                    <?php if (isset($fixture['homeScore']) && $fixture['homeScore'] !== null): ?>
                         <div class="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-primary leading-none mb-2">
-                            <?= $fixture['result']['homeScore'] ?> <span class="text-text-muted">-</span>
-                            <?= $fixture['result']['awayScore'] ?>
+                            <?= $fixture['homeScore'] ?> <span class="text-text-muted">-</span>
+                            <?= $fixture['awayScore'] ?>
                         </div>
 
                         <?php if ($fixtureType === 'cup'): ?>
                             <div class="space-y-1">
-                                <?php if (!empty($fixture['result']['extraTime'])): ?>
+                                <?php if (!empty($fixture['extraTime'])): ?>
                                     <div class="text-sm sm:text-base text-text-muted font-semibold">
                                         After Extra Time:
-                                        <?= $fixture['result']['homeScoreEt'] ?? $fixture['result']['homeScore'] ?> -
-                                        <?= $fixture['result']['awayScoreEt'] ?? $fixture['result']['awayScore'] ?>
+                                        <?= $fixture['homeScoreEt'] ?? $fixture['homeScore'] ?> -
+                                        <?= $fixture['awayScoreEt'] ?? $fixture['awayScore'] ?>
                                     </div>
                                 <?php endif; ?>
-                                <?php if (!empty($fixture['result']['penalties'])): ?>
+                                <?php if (!empty($fixture['penalties'])): ?>
                                     <div class="text-sm sm:text-base text-text-muted font-semibold">
                                         Penalties:
-                                        <?= $fixture['result']['homePens'] ?? 0 ?> -
-                                        <?= $fixture['result']['awayPens'] ?? 0 ?>
+                                        <?= $fixture['homePens'] ?? 0 ?> -
+                                        <?= $fixture['awayPens'] ?? 0 ?>
                                     </div>
                                 <?php endif; ?>
                             </div>
                         <?php endif; ?>
                     <?php else: ?>
                         <div class="text-3xl sm:text-4xl font-bold text-text-muted">
-                            <?= $fixture['time'] ? date('g:i A', strtotime($fixture['time'])) : 'TBD' ?>
+                            <?= ($fixture['matchTime'] ?? null) ? date('g:i A', strtotime($fixture['matchTime'])) : 'TBD' ?>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -127,9 +127,9 @@
                 </div>
             </div>
 
-            <!-- Match Details -->
+            <!-- Match Meta (Date, Time, Venue, Referee) -->
             <div
-                class="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-text-muted text-sm sm:text-base border-t border-border pt-6">
+                class="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 pt-8 border-t border-border text-text-muted">
                 <?php if ($fixture['date']): ?>
                     <div class="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24"
@@ -143,7 +143,7 @@
                     </div>
                 <?php endif; ?>
 
-                <?php if ($fixture['time']): ?>
+                <?php if ($fixture['matchTime'] ?? null): ?>
                     <div class="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
