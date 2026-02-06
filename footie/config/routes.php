@@ -27,6 +27,7 @@ $router->get('/teams', 'PublicController', 'teams', false);
 $router->get('/teams/{slug}/data', 'PublicController', 'teamData', false);
 $router->get('/players', 'PublicController', 'players', false);
 $router->get('/top-scorers', 'PublicController', 'topScorers', false);
+$router->get('/top-scorers/data', 'PublicController', 'topScorersData', false);
 $router->get('/league/{slug}', 'PublicController', 'league', false);
 $router->get('/cup/{slug}', 'PublicController', 'cup', false);
 $router->get('/team/{slug}', 'PublicController', 'team', false);

@@ -1,6 +1,6 @@
 <?php
 /**
- * Public Top Scorers Page - Leaderboards
+ * Public Top Scorers Page - Leaderboards with AJAX filtering
  */
 ?>
 
@@ -19,8 +19,7 @@
                     Filter by League
                 </label>
                 <select id="league-filter"
-                    class="w-full bg-surface border border-border text-text-main rounded-sm px-4 py-3 font-semibold focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                    onchange="filterByLeague(this.value)">
+                    class="w-full bg-surface border border-border text-text-main rounded-sm px-4 py-3 font-semibold focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
                     <option value="">All Competitions</option>
                     <?php foreach ($leagues as $league): ?>
                         <option value="<?= $league['id'] ?>" <?= ($selectedLeagueId == $league['id']) ? 'selected' : '' ?>>
@@ -32,93 +31,21 @@
         </div>
     <?php endif; ?>
 
-    <?php if (empty($scorers)): ?>
+    <!-- Loading State -->
+    <div id="loading-state" class="hidden">
         <div class="card">
-            <div class="text-center py-12 text-text-muted">
-                <p>No goals recorded yet.</p>
+            <div class="text-center py-12" role="status" aria-live="polite">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4" aria-hidden="true"></div>
+                <p class="text-text-muted">Loading top scorers...</p>
             </div>
         </div>
-    <?php else: ?>
-        <!-- Leaderboard -->
+    </div>
+
+    <!-- Leaderboard Content -->
+    <div id="scorers-content">
         <div class="card overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead>
-                        <tr class="bg-surface-hover/50 border-b border-border">
-                            <th class="table-th text-center w-20">Rank</th>
-                            <th class="table-th text-left">Player</th>
-                            <th class="table-th text-left">Team</th>
-                            <th class="table-th text-center">Goals</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-border">
-                        <?php
-                        $rank = 1;
-                        $prevGoals = null;
-                        $displayRank = 1;
-
-                        foreach ($scorers as $index => $scorer):
-                            // Handle tied rankings
-                            if ($prevGoals !== null && $scorer['totalGoals'] != $prevGoals) {
-                                $displayRank = $rank;
-                            }
-
-                            // Medal colors for top 3
-                            $rankColor = '';
-                            if ($displayRank === 1) {
-                                $rankColor = 'text-yellow-400';
-                            } elseif ($displayRank === 2) {
-                                $rankColor = 'text-gray-400';
-                            } elseif ($displayRank === 3) {
-                                $rankColor = 'text-orange-400';
-                            }
-                        ?>
-                            <tr class="hover:bg-surface-hover/30 transition-colors">
-                                <!-- Rank -->
-                                <td class="table-td text-center">
-                                    <span class="font-bold text-lg <?= $rankColor ?>">
-                                        <?= $displayRank ?>
-                                    </span>
-                                </td>
-
-                                <!-- Player Name -->
-                                <td class="table-td">
-                                    <a href="<?= $basePath ?>/player/<?= htmlspecialchars($scorer['slug']) ?>"
-                                        class="font-semibold text-text-main hover:text-primary transition-colors">
-                                        <?= htmlspecialchars($scorer['name']) ?>
-                                    </a>
-                                </td>
-
-                                <!-- Team -->
-                                <td class="table-td">
-                                    <?php if ($scorer['team']): ?>
-                                        <div class="flex items-center gap-2">
-                                            <span class="inline-block w-3 h-3 rounded-full"
-                                                style="background-color: <?= htmlspecialchars($scorer['team']['colour'] ?? '#1a5f2a') ?>"></span>
-                                            <a href="<?= $basePath ?>/team/<?= htmlspecialchars($scorer['team']['slug']) ?>"
-                                                class="text-text-muted hover:text-primary transition-colors">
-                                                <?= htmlspecialchars($scorer['team']['name']) ?>
-                                            </a>
-                                        </div>
-                                    <?php else: ?>
-                                        <span class="text-text-muted italic">-</span>
-                                    <?php endif; ?>
-                                </td>
-
-                                <!-- Goals -->
-                                <td class="table-td text-center">
-                                    <span class="font-mono font-bold text-primary text-lg">
-                                        <?= $scorer['totalGoals'] ?? 0 ?>
-                                    </span>
-                                </td>
-                            </tr>
-                        <?php
-                            $prevGoals = $scorer['totalGoals'];
-                            $rank++;
-                        endforeach;
-                        ?>
-                    </tbody>
-                </table>
+            <div class="overflow-x-auto" id="scorers-table">
+                <?php include __DIR__ . '/partials/top_scorers_table.php'; ?>
             </div>
         </div>
 
@@ -137,17 +64,76 @@
                 <span>Bronze</span>
             </div>
         </div>
-    <?php endif; ?>
+    </div>
+
+    <!-- Error State -->
+    <div id="error-state" class="hidden">
+        <div class="card">
+            <div class="text-center py-12 text-danger">
+                <p id="error-message">Unable to load top scorers. Please try again.</p>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
-    function filterByLeague(leagueId) {
-        const url = new URL(window.location.href);
-        if (leagueId) {
-            url.searchParams.set('league_id', leagueId);
-        } else {
-            url.searchParams.delete('league_id');
+    (function () {
+        const leagueFilter = document.getElementById('league-filter');
+        const loadingState = document.getElementById('loading-state');
+        const scorersContent = document.getElementById('scorers-content');
+        const errorState = document.getElementById('error-state');
+        const scorersTable = document.getElementById('scorers-table');
+        const errorMessage = document.getElementById('error-message');
+
+        if (!leagueFilter) return;
+
+        // Load top scorers data via AJAX
+        async function loadTopScorers(leagueId) {
+            // Show loading state
+            scorersContent.classList.add('hidden');
+            errorState.classList.add('hidden');
+            loadingState.classList.remove('hidden');
+
+            try {
+                const url = leagueId
+                    ? `<?= $basePath ?>/top-scorers/data?league_id=${leagueId}`
+                    : `<?= $basePath ?>/top-scorers/data`;
+
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    throw new Error('Failed to load top scorers');
+                }
+
+                const data = await response.json();
+
+                // Server-rendered HTML (sanitized with htmlspecialchars in partial)
+                if (data.tableHtml) {
+                    scorersTable.innerHTML = data.tableHtml;
+                } else {
+                    scorersTable.innerHTML = '<div class="text-center py-12 text-text-muted"><p>No goals recorded yet.</p></div>';
+                }
+
+                // Hide loading, show content
+                loadingState.classList.add('hidden');
+                scorersContent.classList.remove('hidden');
+
+            } catch (error) {
+                console.error('Error loading top scorers:', error);
+                errorMessage.textContent = 'Unable to load top scorers. Please try again.';
+                loadingState.classList.add('hidden');
+                errorState.classList.remove('hidden');
+            }
         }
-        window.location.href = url.toString();
-    }
+
+        // Handle league filter change
+        leagueFilter.addEventListener('change', function () {
+            loadTopScorers(this.value);
+        });
+
+        // Initial load if league is pre-selected
+        <?php if ($selectedLeagueId): ?>
+        loadTopScorers('<?= $selectedLeagueId ?>');
+        <?php endif; ?>
+    })();
 </script>
