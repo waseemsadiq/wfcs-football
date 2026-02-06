@@ -49,7 +49,7 @@ class FixturesController extends Controller
             );
 
             if ($fixture) {
-                $fixtureDetail = $leagueModel->getFixtureById($fixture['id']);
+                $fixtureDetail = $leagueModel->getFixtureWithDetails($fixture['id']);
             }
         } else {
             $cupModel = new \App\Models\Cup();
@@ -67,7 +67,7 @@ class FixturesController extends Controller
             );
 
             if ($fixture) {
-                $fixtureDetail = $cupModel->getFixtureById($fixture['id']);
+                $fixtureDetail = $cupModel->getFixtureWithDetails($fixture['id']);
             }
         }
 
@@ -155,11 +155,11 @@ class FixturesController extends Controller
             'highlightsUrl' => $this->post('highlights_url'),
         ];
 
-        // Update fixture details
+        // Update fixture rich content
         if ($type === 'league') {
-            $leagueModel->updateFixtureDetails($fixture['id'], $details);
+            $leagueModel->updateFixtureRichContent($fixture['id'], $details);
         } else {
-            $cupModel->updateFixtureDetails($fixture['id'], $details);
+            $cupModel->updateFixtureRichContent($fixture['id'], $details);
         }
 
         $this->flash('success', 'Fixture details updated successfully');

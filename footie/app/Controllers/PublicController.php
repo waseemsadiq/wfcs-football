@@ -981,7 +981,7 @@ class PublicController extends Controller
             );
 
             if ($fixture) {
-                $fixtureDetail = $leagueModel->getFixtureById($fixture['id']);
+                $fixtureDetail = $leagueModel->getFixtureWithDetails($fixture['id']);
             }
         } else {
             $cupModel = new \App\Models\Cup();
@@ -1000,7 +1000,7 @@ class PublicController extends Controller
             );
 
             if ($fixture) {
-                $fixtureDetail = $cupModel->getFixtureById($fixture['id']);
+                $fixtureDetail = $cupModel->getFixtureWithDetails($fixture['id']);
             }
         }
 

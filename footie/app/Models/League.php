@@ -636,7 +636,7 @@ class League extends Model
     /**
      * Get fixture by ID with full details including photos.
      */
-    public function getFixtureById(int $fixtureId): ?array
+    public function getFixtureWithDetails(int $fixtureId): ?array
     {
         $stmt = $this->db->prepare("
             SELECT
@@ -682,7 +682,7 @@ class League extends Model
     /**
      * Update fixture rich content (report, media URLs, status).
      */
-    public function updateFixtureDetails(int $fixtureId, array $details): bool
+    public function updateFixtureRichContent(int $fixtureId, array $details): bool
     {
         $updateData = [];
 
