@@ -542,16 +542,21 @@ class League extends Model
         $fixtureStmt->execute([$leagueId, $fixtureId]);
         $fixture = $fixtureStmt->fetch();
 
+        // Set status to 'completed' if scores are provided, 'scheduled' if cleared
+        $status = ($result['homeScore'] !== null && $result['awayScore'] !== null) ? 'completed' : 'scheduled';
+
         $stmt = $this->db->prepare("
             UPDATE league_fixtures
             SET home_score = ?,
-                away_score = ?
+                away_score = ?,
+                status = ?
             WHERE league_id = ? AND id = ?
         ");
 
         $success = $stmt->execute([
             $result['homeScore'] ?? null,
             $result['awayScore'] ?? null,
+            $status,
             $leagueId,
             $fixtureId
         ]);

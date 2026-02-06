@@ -452,6 +452,9 @@ class Cup extends Model
             }
         }
 
+        // Set status to 'completed' if scores are provided, 'scheduled' if cleared
+        $status = ($result['homeScore'] !== null && $result['awayScore'] !== null) ? 'completed' : 'scheduled';
+
         // Update fixture
         $stmt = $this->db->prepare("
             UPDATE cup_fixtures
@@ -463,7 +466,8 @@ class Cup extends Model
                 penalties = ?,
                 home_pens = ?,
                 away_pens = ?,
-                winner = ?
+                winner = ?,
+                status = ?
             WHERE id = ? AND cup_id = ?
         ");
 
@@ -477,6 +481,7 @@ class Cup extends Model
             $result['homePens'] ?? null,
             $result['awayPens'] ?? null,
             $winner,
+            $status,
             $fixtureId,
             $cupId
         ]);
