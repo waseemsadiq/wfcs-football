@@ -499,8 +499,8 @@ class League extends Model
         // Trigger stats recalculation for both teams
         if ($success && $fixture) {
             $statsService = new \App\Services\PlayerStatsService();
-            $statsService->recalculateTeamStats($fixture['home_team_id']);
-            $statsService->recalculateTeamStats($fixture['away_team_id']);
+            $statsService->recalculateTeamStats((int) $fixture['home_team_id']);
+            $statsService->recalculateTeamStats((int) $fixture['away_team_id']);
         }
 
         return $success;

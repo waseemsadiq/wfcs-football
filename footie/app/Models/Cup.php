@@ -431,8 +431,8 @@ class Cup extends Model
         // Trigger stats recalculation for both teams
         if ($success && $fixture) {
             $statsService = new \App\Services\PlayerStatsService();
-            $statsService->recalculateTeamStats($fixture['homeTeamId']);
-            $statsService->recalculateTeamStats($fixture['awayTeamId']);
+            $statsService->recalculateTeamStats((int) $fixture['homeTeamId']);
+            $statsService->recalculateTeamStats((int) $fixture['awayTeamId']);
         }
 
         // Advance winner to next round
