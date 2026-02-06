@@ -35,70 +35,23 @@ class PlayerStatsService
                 return false;
             }
 
-            // Count goals
-            $goalsStmt = $this->db->prepare("
-                SELECT COUNT(*) as count
-                FROM match_events
-                WHERE player_id = ? AND event_type = 'goal'
-            ");
-            $goalsStmt->execute([$playerId]);
-            $goals = (int) $goalsStmt->fetch()['count'];
-
-            // Count assists
-            $assistsStmt = $this->db->prepare("
-                SELECT COUNT(*) as count
-                FROM match_events
-                WHERE player_id = ? AND event_type = 'assist'
-            ");
-            $assistsStmt->execute([$playerId]);
-            $assists = (int) $assistsStmt->fetch()['count'];
-
-            // Count yellow cards
-            $yellowStmt = $this->db->prepare("
-                SELECT COUNT(*) as count
-                FROM match_events
-                WHERE player_id = ? AND event_type = 'yellow_card'
-            ");
-            $yellowStmt->execute([$playerId]);
-            $yellowCards = (int) $yellowStmt->fetch()['count'];
-
-            // Count red cards
-            $redStmt = $this->db->prepare("
-                SELECT COUNT(*) as count
-                FROM match_events
-                WHERE player_id = ? AND event_type = 'red_card'
-            ");
-            $redStmt->execute([$playerId]);
-            $redCards = (int) $redStmt->fetch()['count'];
-
-            // Count blue cards
-            $blueStmt = $this->db->prepare("
-                SELECT COUNT(*) as count
-                FROM match_events
-                WHERE player_id = ? AND event_type = 'blue_card'
-            ");
-            $blueStmt->execute([$playerId]);
-            $blueCards = (int) $blueStmt->fetch()['count'];
-
-            // Count sin bins
-            $sinBinStmt = $this->db->prepare("
-                SELECT COUNT(*) as count
-                FROM match_events
-                WHERE player_id = ? AND event_type = 'sin_bin'
-            ");
-            $sinBinStmt->execute([$playerId]);
-            $sinBins = (int) $sinBinStmt->fetch()['count'];
-
-            // Count unique matches played (distinct fixture combinations)
-            $matchesStmt = $this->db->prepare("
-                SELECT COUNT(DISTINCT CONCAT(fixture_type, '-', fixture_id)) as count
+            // Aggregate all event counts in a single query
+            $eventsStmt = $this->db->prepare("
+                SELECT
+                    SUM(event_type = 'goal') as goals,
+                    SUM(event_type = 'assist') as assists,
+                    SUM(event_type = 'yellow_card') as yellow_cards,
+                    SUM(event_type = 'red_card') as red_cards,
+                    SUM(event_type = 'blue_card') as blue_cards,
+                    SUM(event_type = 'sin_bin') as sin_bins,
+                    COUNT(DISTINCT CONCAT(fixture_type, '-', fixture_id)) as matches_played
                 FROM match_events
                 WHERE player_id = ?
             ");
-            $matchesStmt->execute([$playerId]);
-            $matchesPlayed = (int) $matchesStmt->fetch()['count'];
+            $eventsStmt->execute([$playerId]);
+            $counts = $eventsStmt->fetch();
 
-            // Count Man of the Match awards
+            // Count Man of the Match awards (separate tables)
             $motmStmt = $this->db->prepare("
                 SELECT (
                     SELECT COUNT(*) FROM league_fixtures WHERE motm_player_id = ?
@@ -130,13 +83,13 @@ class PlayerStatsService
             return $upsertStmt->execute([
                 $playerId,
                 $player['team_id'],
-                $goals,
-                $assists,
-                $yellowCards,
-                $redCards,
-                $blueCards,
-                $sinBins,
-                $matchesPlayed,
+                (int) $counts['goals'],
+                (int) $counts['assists'],
+                (int) $counts['yellow_cards'],
+                (int) $counts['red_cards'],
+                (int) $counts['blue_cards'],
+                (int) $counts['sin_bins'],
+                (int) $counts['matches_played'],
                 $motmAwards,
             ]);
         } catch (\Exception $e) {

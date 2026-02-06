@@ -290,25 +290,6 @@ class Cup extends Model
     }
 
     /**
-     * Decode JSON field with backward compatibility.
-     */
-    private function decodeLegacyField($json): mixed
-    {
-        if (!$json) {
-            return [];
-        }
-
-        $decoded = json_decode($json, true);
-
-        // Handle legacy raw string values
-        if (is_string($decoded)) {
-            return $decoded;
-        }
-
-        return $decoded ?: [];
-    }
-
-    /**
      * Get winner team ID from fixture row.
      */
     private function getWinnerTeamId(array $fixture): ?int

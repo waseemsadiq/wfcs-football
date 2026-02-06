@@ -262,28 +262,6 @@ class League extends Model
     }
 
     /**
-     * Decode JSON field with backward compatibility.
-     */
-    private function decodeLegacyField($json): mixed
-    {
-        if (!$json) {
-            return [];
-        }
-
-        $decoded = json_decode($json, true);
-
-        // Handle legacy raw string values (wrapped in extra quotes sometimes)
-        if (is_string($decoded)) {
-            // For scorers, we might want to return it as a simple array item or just as is?
-            // The plan says "Views will check the format".
-            // So returning the string is fine if the view handles it.
-            return $decoded;
-        }
-
-        return $decoded ?: [];
-    }
-
-    /**
      * Get the count of fixtures for a league.
      */
     public function getFixturesCount(int|string $leagueId): int
