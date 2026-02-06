@@ -90,6 +90,11 @@ class FixturesController extends Controller
         $photoModel = new \App\Models\FixturePhoto();
         $photos = $photoModel->getByFixture($type, $fixtureDetail['id']);
 
+        // Load referees for dropdown
+        $staffModel = new \App\Models\TeamStaff();
+        $referees = $staffModel->getByRole('referee');
+        usort($referees, fn($a, $b) => strcmp($a['name'], $b['name']));
+
         $this->render('fixtures/detail', [
             'title' => 'Edit Fixture: ' . $fixtureDetail['homeTeamName'] . ' vs ' . $fixtureDetail['awayTeamName'],
             'fixtureType' => $type,
@@ -97,6 +102,7 @@ class FixturesController extends Controller
             'fixture' => $fixtureDetail,
             'fixtureSlug' => $fixtureSlug,
             'photos' => $photos,
+            'referees' => $referees,
         ]);
     }
 
@@ -175,6 +181,7 @@ class FixturesController extends Controller
         // Get form data
         $details = [
             'status' => $this->post('status'),
+            'refereeId' => $this->post('referee_id'),
             'matchReport' => $this->post('match_report'),
             'liveStreamUrl' => $this->post('live_stream_url'),
             'fullMatchUrl' => $this->post('full_match_url'),

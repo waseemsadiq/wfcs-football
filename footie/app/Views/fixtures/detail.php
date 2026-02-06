@@ -67,33 +67,61 @@
     <form method="POST" action="<?= $basePath ?>/admin/fixture/<?= $fixtureType ?>/<?= $competition['slug'] ?>/<?= $fixtureSlug ?>" class="space-y-6">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
 
-        <!-- Status -->
+        <!-- Status and Referee -->
         <div class="card mb-6">
             <div class="p-6">
-                <label for="status" class="block text-sm font-bold text-text-muted uppercase tracking-wider mb-3">
-                    Match Status
-                </label>
-                <select name="status" id="status"
-                        class="w-full bg-surface border border-border text-text-main rounded-sm px-4 py-3 font-semibold focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
-                    <option value="scheduled" <?= ($fixture['status'] ?? 'scheduled') === 'scheduled' ? 'selected' : '' ?>>
-                        Scheduled
-                    </option>
-                    <option value="in_progress" <?= ($fixture['status'] ?? '') === 'in_progress' ? 'selected' : '' ?>>
-                        In Progress (Live)
-                    </option>
-                    <option value="completed" <?= ($fixture['status'] ?? '') === 'completed' ? 'selected' : '' ?>>
-                        Completed
-                    </option>
-                    <option value="postponed" <?= ($fixture['status'] ?? '') === 'postponed' ? 'selected' : '' ?>>
-                        Postponed
-                    </option>
-                    <option value="cancelled" <?= ($fixture['status'] ?? '') === 'cancelled' ? 'selected' : '' ?>>
-                        Cancelled
-                    </option>
-                </select>
-                <p class="text-sm text-text-muted mt-2">
-                    Set to "In Progress" to show live stream, "Completed" to show full match/highlights
-                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Status -->
+                    <div>
+                        <label for="status" class="block text-sm font-bold text-text-muted uppercase tracking-wider mb-3">
+                            Match Status
+                        </label>
+                        <select name="status" id="status"
+                                class="w-full bg-surface border border-border text-text-main rounded-sm px-4 py-3 font-semibold focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <option value="scheduled" <?= ($fixture['status'] ?? 'scheduled') === 'scheduled' ? 'selected' : '' ?>>
+                                Scheduled
+                            </option>
+                            <option value="in_progress" <?= ($fixture['status'] ?? '') === 'in_progress' ? 'selected' : '' ?>>
+                                In Progress (Live)
+                            </option>
+                            <option value="completed" <?= ($fixture['status'] ?? '') === 'completed' ? 'selected' : '' ?>>
+                                Completed
+                            </option>
+                            <option value="postponed" <?= ($fixture['status'] ?? '') === 'postponed' ? 'selected' : '' ?>>
+                                Postponed
+                            </option>
+                            <option value="cancelled" <?= ($fixture['status'] ?? '') === 'cancelled' ? 'selected' : '' ?>>
+                                Cancelled
+                            </option>
+                        </select>
+                        <p class="text-sm text-text-muted mt-2">
+                            Set to "In Progress" to show live stream, "Completed" to show full match/highlights
+                        </p>
+                    </div>
+
+                    <!-- Referee -->
+                    <div>
+                        <label for="referee_id" class="block text-sm font-bold text-text-muted uppercase tracking-wider mb-3">
+                            Referee
+                        </label>
+                        <select name="referee_id" id="referee_id"
+                                class="w-full bg-surface border border-border text-text-main rounded-sm px-4 py-3 font-semibold focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <option value="">No referee assigned</option>
+                            <?php foreach ($referees as $referee): ?>
+                                <option value="<?= htmlspecialchars($referee['id']) ?>"
+                                    <?= ($fixture['refereeId'] ?? null) == $referee['id'] ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($referee['name']) ?>
+                                    <?php if (isset($referee['teamName'])): ?>
+                                        (<?= htmlspecialchars($referee['teamName']) ?>)
+                                    <?php endif; ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <p class="text-sm text-text-muted mt-2">
+                            Select the match referee
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
 

@@ -824,6 +824,9 @@ class Cup extends Model
         if (isset($details['status'])) {
             $updateData['status'] = $details['status'];
         }
+        if (isset($details['refereeId'])) {
+            $updateData['referee_id'] = $details['refereeId'] ?: null;
+        }
         if (isset($details['matchReport'])) {
             $updateData['match_report'] = $details['matchReport'];
         }
