@@ -51,3 +51,4 @@ footie/config/*-shared.php
 !footie/config/app-shared.example.php
 /.claude
 /CLAUDE-G.md
+/footie/uploads/.htaccess
