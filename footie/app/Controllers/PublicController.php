@@ -936,7 +936,7 @@ class PublicController extends Controller
         $leagueId = $this->get('league_id');
 
         // Get top scorers (limit 20)
-        $scorers = $playerModel->getTopScorers(20, $leagueId ? (int)$leagueId : null);
+        $scorers = $playerModel->getTopScorers(20, $leagueId ? (int) $leagueId : null);
 
         // Enrich with team data
         $teams = $this->teamModel->all();
@@ -1055,18 +1055,32 @@ class PublicController extends Controller
 
     /**
      * Find fixture by team IDs in a fixture list.
+     * Prefers completed matches if multiple exist between the same teams.
      */
     private function findFixtureByTeamIds(array $fixtures, int $homeId, int $awayId): ?array
     {
+        $matches = [];
         foreach ($fixtures as $fixture) {
             if (isset($fixture['homeTeamId'], $fixture['awayTeamId'])) {
-                if ($fixture['homeTeamId'] == $homeId &&
-                    $fixture['awayTeamId'] == $awayId) {
-                    return $fixture;
+                if ($fixture['homeTeamId'] == $homeId && $fixture['awayTeamId'] == $awayId) {
+                    $matches[] = $fixture;
                 }
             }
         }
-        return null;
+
+        if (empty($matches)) {
+            return null;
+        }
+
+        // If multiple matches, prefer the ones with results (completed)
+        foreach ($matches as $match) {
+            if (isset($match['result']) && $match['result'] !== null) {
+                return $match;
+            }
+        }
+
+        // Default to the first one found (usually earliest by date)
+        return $matches[0];
     }
 
     /**
@@ -1077,8 +1091,10 @@ class PublicController extends Controller
         foreach ($rounds as $round) {
             foreach ($round['fixtures'] as $fixture) {
                 if (isset($fixture['homeTeamId'], $fixture['awayTeamId'])) {
-                    if ($fixture['homeTeamId'] == $homeId &&
-                        $fixture['awayTeamId'] == $awayId) {
+                    if (
+                        $fixture['homeTeamId'] == $homeId &&
+                        $fixture['awayTeamId'] == $awayId
+                    ) {
                         return $fixture;
                     }
                 }

@@ -77,10 +77,14 @@
 
                 <!-- Score -->
                 <div class="text-center min-w-[140px] sm:min-w-[160px]">
-                    <?php if (isset($fixture['homeScore']) && $fixture['homeScore'] !== null): ?>
+                    <?php
+                    $homeScore = $fixture['homeScore'] ?? $fixture['result']['homeScore'] ?? null;
+                    $awayScore = $fixture['awayScore'] ?? $fixture['result']['awayScore'] ?? null;
+                    ?>
+                    <?php if ($homeScore !== null): ?>
                         <div class="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-primary leading-none mb-2">
-                            <?= $fixture['homeScore'] ?> <span class="text-text-muted">-</span>
-                            <?= $fixture['awayScore'] ?>
+                            <?= $homeScore ?> <span class="text-text-muted">-</span>
+                            <?= $awayScore ?>
                         </div>
 
                         <?php if ($fixtureType === 'cup'): ?>
@@ -88,8 +92,8 @@
                                 <?php if (!empty($fixture['extraTime'])): ?>
                                     <div class="text-sm sm:text-base text-text-muted font-semibold">
                                         After Extra Time:
-                                        <?= $fixture['homeScoreEt'] ?? $fixture['homeScore'] ?> -
-                                        <?= $fixture['awayScoreEt'] ?? $fixture['awayScore'] ?>
+                                        <?= $fixture['homeScoreEt'] ?? $homeScore ?> -
+                                        <?= $fixture['awayScoreEt'] ?? $awayScore ?>
                                     </div>
                                 <?php endif; ?>
                                 <?php if (!empty($fixture['penalties'])): ?>
@@ -103,7 +107,10 @@
                         <?php endif; ?>
                     <?php else: ?>
                         <div class="text-3xl sm:text-4xl font-bold text-text-muted">
-                            <?= ($fixture['matchTime'] ?? null) ? date('g:i A', strtotime($fixture['matchTime'])) : 'TBD' ?>
+                            <?php
+                            $mTime = $fixture['matchTime'] ?? $fixture['time'] ?? null;
+                            echo $mTime ? date('g:i A', strtotime($mTime)) : 'TBD';
+                            ?>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -130,7 +137,10 @@
             <!-- Match Meta (Date, Time, Venue, Referee) -->
             <div
                 class="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 pt-8 border-t border-border text-text-muted">
-                <?php if ($fixture['date']): ?>
+                <?php
+                $mDate = $fixture['matchDate'] ?? $fixture['date'] ?? null;
+                if ($mDate):
+                ?>
                     <div class="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
@@ -138,12 +148,15 @@
                                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                         <span class="font-medium">
-                            <?= date('l, j F Y', strtotime($fixture['date'])) ?>
+                            <?= date('l, j F Y', strtotime($mDate)) ?>
                         </span>
                     </div>
                 <?php endif; ?>
 
-                <?php if ($fixture['matchTime'] ?? null): ?>
+                <?php
+                $mTime = $fixture['matchTime'] ?? $fixture['time'] ?? null;
+                if ($mTime):
+                ?>
                     <div class="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
