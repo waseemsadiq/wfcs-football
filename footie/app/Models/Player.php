@@ -190,27 +190,40 @@ class Player extends Model
     public function getTopScorers(int $limit = 10, ?int $leagueId = null): array
     {
         if ($leagueId) {
-            // Get top scorers for specific league
+            // Get top scorers for specific league - count from match_events
             $stmt = $this->db->prepare("
-                SELECT p.*, ps.total_goals, t.name as team_name
+                SELECT
+                    p.*,
+                    t.name as team_name,
+                    COUNT(me.id) as total_goals
                 FROM players p
-                INNER JOIN player_stats ps ON p.id = ps.player_id
+                INNER JOIN match_events me ON p.id = me.player_id
+                INNER JOIN league_fixtures lf ON me.fixture_id = lf.id AND me.fixture_type = 'league'
                 LEFT JOIN teams t ON p.team_id = t.id
-                WHERE ps.total_goals > 0
-                ORDER BY ps.total_goals DESC, p.name ASC
+                WHERE me.event_type = 'goal'
+                  AND lf.league_id = :league_id
+                GROUP BY p.id
+                HAVING total_goals > 0
+                ORDER BY total_goals DESC, p.name ASC
                 LIMIT :limit
             ");
+            $stmt->bindValue(':league_id', $leagueId, \PDO::PARAM_INT);
             $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
             $stmt->execute();
         } else {
-            // Get top scorers overall
+            // Get top scorers for all competitions - count from match_events
             $stmt = $this->db->prepare("
-                SELECT p.*, ps.total_goals, t.name as team_name
+                SELECT
+                    p.*,
+                    t.name as team_name,
+                    COUNT(me.id) as total_goals
                 FROM players p
-                INNER JOIN player_stats ps ON p.id = ps.player_id
+                INNER JOIN match_events me ON p.id = me.player_id
                 LEFT JOIN teams t ON p.team_id = t.id
-                WHERE ps.total_goals > 0
-                ORDER BY ps.total_goals DESC, p.name ASC
+                WHERE me.event_type = 'goal'
+                GROUP BY p.id
+                HAVING total_goals > 0
+                ORDER BY total_goals DESC, p.name ASC
                 LIMIT :limit
             ");
             $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
