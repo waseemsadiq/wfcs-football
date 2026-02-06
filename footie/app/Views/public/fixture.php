@@ -244,8 +244,20 @@
 
                     <script>
                         function switchVideoTab(index) {
-                            // Hide all video containers
-                            document.querySelectorAll('.video-content').forEach(el => el.classList.add('hidden'));
+                            // Hide all video containers and stop hidden videos
+                            document.querySelectorAll('.video-content').forEach((el, idx) => {
+                                if (idx !== index) {
+                                    el.classList.add('hidden');
+                                    // Stop iframe playback by resetting src
+                                    const iframe = el.querySelector('iframe');
+                                    if (iframe) {
+                                        const src = iframe.src;
+                                        iframe.src = '';
+                                        iframe.src = src;
+                                    }
+                                }
+                            });
+
                             // Show selected container
                             document.getElementById('video-container-' + index).classList.remove('hidden');
 
