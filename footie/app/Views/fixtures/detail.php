@@ -52,9 +52,9 @@
                 </div>
             </div>
             <div class="text-sm text-text-muted">
-                <?= date('l, j F Y', strtotime($fixture['date'])) ?>
-                <?php if ($fixture['time']): ?>
-                    • <?= date('g:i A', strtotime($fixture['time'])) ?>
+                <?= date('l, j F Y', strtotime($fixture['matchDate'])) ?>
+                <?php if ($fixture['matchTime']): ?>
+                    • <?= date('g:i A', strtotime($fixture['matchTime'])) ?>
                 <?php endif; ?>
                 <?php if ($fixture['pitch']): ?>
                     • Pitch <?= htmlspecialchars($fixture['pitch']) ?>
