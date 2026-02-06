@@ -70,13 +70,32 @@ if ($showResult && $result !== null) {
         $detailsHtml = '<div class="text-[10px] text-text-muted font-normal mt-0.5 whitespace-nowrap">' . $detailsStr . '</div>';
     }
 
+    // Generate fixture detail link
+    $fixtureSlug = $homeSlug . '-vs-' . $awaySlug;
+    $fixtureType = isset($fixture['cupId']) ? 'cup' : 'league';
+    $competitionSlug = $fixture['competitionSlug'] ?? '';
+    $fixtureDetailUrl = $competitionSlug ? "{$basePath}/fixture/{$fixtureType}/{$competitionSlug}/{$fixtureSlug}" : '';
+
     $scoreHtml = '<div class="flex flex-col items-center justify-center">';
-    $scoreHtml .= '<div class="font-bold text-xl text-text-main bg-surface-hover px-3 py-1 rounded-sm leading-none">' . $homeScore . ' - ' . $awayScore . '</div>';
+    if ($fixtureDetailUrl) {
+        $scoreHtml .= '<a href="' . $fixtureDetailUrl . '" class="font-bold text-xl text-text-main bg-surface-hover px-3 py-1 rounded-sm leading-none hover:bg-primary hover:text-white transition-colors">' . $homeScore . ' - ' . $awayScore . '</a>';
+    } else {
+        $scoreHtml .= '<div class="font-bold text-xl text-text-main bg-surface-hover px-3 py-1 rounded-sm leading-none">' . $homeScore . ' - ' . $awayScore . '</div>';
+    }
     $scoreHtml .= $detailsHtml;
     $scoreHtml .= '</div>';
 } else {
-    // If no result or hidden, show time or 'vs'
-    $scoreHtml = '<div class="text-base text-text-muted bg-transparent font-medium">' . htmlspecialchars($time) . '</div>';
+    // If no result or hidden, show time as link to fixture detail
+    $fixtureSlug = $homeSlug . '-vs-' . $awaySlug;
+    $fixtureType = isset($fixture['cupId']) ? 'cup' : 'league';
+    $competitionSlug = $fixture['competitionSlug'] ?? '';
+    $fixtureDetailUrl = $competitionSlug ? "{$basePath}/fixture/{$fixtureType}/{$competitionSlug}/{$fixtureSlug}" : '';
+
+    if ($fixtureDetailUrl) {
+        $scoreHtml = '<a href="' . $fixtureDetailUrl . '" class="text-base text-text-muted bg-transparent font-medium hover:text-primary transition-colors">' . htmlspecialchars($time) . '</a>';
+    } else {
+        $scoreHtml = '<div class="text-base text-text-muted bg-transparent font-medium">' . htmlspecialchars($time) . '</div>';
+    }
 }
 
 $homeSlug = htmlspecialchars($homeTeam['slug'] ?? $homeId);
@@ -84,19 +103,10 @@ $awaySlug = htmlspecialchars($awayTeam['slug'] ?? $awayId);
 
 $homeLink = $homeId ? "<a href=\"{$basePath}/team/{$homeSlug}\" class=\"hover:text-primary transition-colors\">{$homeName}</a>" : $homeName;
 $awayLink = $awayId ? "<a href=\"{$basePath}/team/{$awaySlug}\" class=\"hover:text-primary transition-colors\">{$awayName}</a>" : $awayName;
-
-// Generate fixture detail link
-$fixtureSlug = $homeSlug . '-vs-' . $awaySlug;
-$fixtureType = isset($fixture['cupId']) ? 'cup' : 'league';
-$competitionSlug = $fixture['competitionSlug'] ?? '';
-$fixtureDetailUrl = $competitionSlug ? "{$basePath}/fixture/{$fixtureType}/{$competitionSlug}/{$fixtureSlug}" : '';
 ?>
 
 <li
     class="flex flex-col items-center py-4 border-b border-border last:border-b-0 gap-1 hover:bg-surface-hover/50 transition-colors px-4 -mx-4 rounded-sm">
-    <?php if ($fixtureDetailUrl): ?>
-        <a href="<?= $fixtureDetailUrl ?>" class="w-full block">
-    <?php endif; ?>
     <?php if ($showDate): ?>
         <div class="text-xs text-text-muted font-bold uppercase tracking-wider mb-1">
             <?= $dateDisplay ?>
@@ -121,9 +131,5 @@ $fixtureDetailUrl = $competitionSlug ? "{$basePath}/fixture/{$fixtureType}/{$com
         <div class="text-xs text-text-muted font-medium text-center">
             <?= $competition ?>
         </div>
-    <?php endif; ?>
-
-    <?php if ($fixtureDetailUrl): ?>
-        </a>
     <?php endif; ?>
 </li>
