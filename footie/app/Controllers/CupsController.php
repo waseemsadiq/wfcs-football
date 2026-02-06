@@ -88,9 +88,10 @@ class CupsController extends CompetitionController
             $teamPlayers[$team['id']] = $players;
         }
 
-        // Load all staff (referees, coaches, managers, contacts) for dropdown
+        // Load referees for dropdown
         $staffModel = new \App\Models\TeamStaff();
-        $allStaff = $staffModel->allSorted();
+        $referees = $staffModel->getByRole('referee');
+        usort($referees, fn($a, $b) => strcmp($a['name'], $b['name']));
 
         $this->render('cups/fixtures', [
             'title' => $cup['name'] . ' Fixtures',
@@ -98,7 +99,7 @@ class CupsController extends CompetitionController
             'cup' => $cup,
             'rounds' => $rounds,
             'teamPlayers' => $teamPlayers,
-            'allStaff' => $allStaff,
+            'referees' => $referees,
             'csrfToken' => $this->csrfToken(),
         ]);
     }

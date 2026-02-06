@@ -235,15 +235,14 @@ usort($fixtures, function ($a, $b) {
                                                         class="bg-transparent border border-border text-text-main p-1 rounded focus:border-primary focus:outline-none text-xs">
                                                 </div>
                                                 <div class="flex flex-col">
-                                                    <label class="text-xs text-text-muted uppercase mb-1">Match Official</label>
+                                                    <label class="text-xs text-text-muted uppercase mb-1">Referee</label>
                                                     <select name="referee_id"
                                                         class="bg-transparent border border-border text-text-main p-1 rounded focus:border-primary focus:outline-none text-xs">
-                                                        <option value="">Not assigned</option>
-                                                        <?php foreach ($allStaff as $staff): ?>
-                                                            <option value="<?= htmlspecialchars($staff['id']) ?>"
-                                                                <?= ($fixture['refereeId'] ?? null) == $staff['id'] ? 'selected' : '' ?>>
-                                                                <?= htmlspecialchars($staff['name']) ?>
-                                                                (<?= htmlspecialchars(\App\Models\TeamStaff::formatRole($staff['role'])) ?>)
+                                                        <option value="">No referee assigned</option>
+                                                        <?php foreach ($referees as $referee): ?>
+                                                            <option value="<?= htmlspecialchars($referee['id']) ?>"
+                                                                <?= ($fixture['refereeId'] ?? null) == $referee['id'] ? 'selected' : '' ?>>
+                                                                <?= htmlspecialchars($referee['name']) ?>
                                                             </option>
                                                         <?php endforeach; ?>
                                                     </select>
