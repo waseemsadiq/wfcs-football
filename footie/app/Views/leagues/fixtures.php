@@ -291,8 +291,15 @@ usort($fixtures, function ($a, $b) {
                                             </div>
                                         </details>
                                     </div>
-                                        <div class="pt-0.5">
+                                        <div class="pt-0.5 flex items-center gap-3">
                                             <button type="submit" class="btn btn-primary btn-sm px-8">Update</button>
+                                            <?php
+                                            $fixtureSlug = htmlspecialchars($fixture['homeTeam']['slug']) . '-vs-' . htmlspecialchars($fixture['awayTeam']['slug']);
+                                            ?>
+                                            <a href="<?= $basePath ?>/admin/fixture/league/<?= htmlspecialchars($league['slug']) ?>/<?= $fixtureSlug ?>"
+                                               class="btn btn-secondary btn-sm">
+                                                📝 Edit Details
+                                            </a>
                                         </div>
                                     </div>
                                 </form>
