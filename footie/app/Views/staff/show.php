@@ -38,12 +38,12 @@ include __DIR__ . '/../partials/admin_page_header.php';
                         <?= htmlspecialchars($staff['teamName']) ?>
                     </a>
                 <?php else: ?>
-                    <p class="text-text-muted italic">No team assigned</p>
+                    <p class="text-text-muted italic">None / Global Staff</p>
                 <?php endif; ?>
             </div>
 
             <div>
-                <h3 class="text-sm font-bold text-text-muted mb-1">Role</h3>
+                <h3 class="text-sm font-bold text-text-muted mb-1">Role(s)</h3>
                 <p class="text-lg"><?= htmlspecialchars(\App\Models\TeamStaff::formatRole($staff['role'])) ?></p>
             </div>
         </div>
@@ -52,8 +52,7 @@ include __DIR__ . '/../partials/admin_page_header.php';
             <div>
                 <h3 class="text-sm font-bold text-text-muted mb-1">Email</h3>
                 <?php if (!empty($staff['email'])): ?>
-                    <a href="mailto:<?= htmlspecialchars($staff['email']) ?>"
-                        class="text-primary hover:underline text-lg">
+                    <a href="mailto:<?= htmlspecialchars($staff['email']) ?>" class="text-primary hover:underline text-lg">
                         <?= htmlspecialchars($staff['email']) ?>
                     </a>
                 <?php else: ?>
@@ -64,8 +63,7 @@ include __DIR__ . '/../partials/admin_page_header.php';
             <div>
                 <h3 class="text-sm font-bold text-text-muted mb-1">Phone</h3>
                 <?php if (!empty($staff['phone'])): ?>
-                    <a href="tel:<?= htmlspecialchars($staff['phone']) ?>"
-                        class="text-primary hover:underline text-lg">
+                    <a href="tel:<?= htmlspecialchars($staff['phone']) ?>" class="text-primary hover:underline text-lg">
                         <?= htmlspecialchars($staff['phone']) ?>
                     </a>
                 <?php else: ?>

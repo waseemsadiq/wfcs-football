@@ -179,8 +179,15 @@ abstract class Model
         if (!empty($where)) {
             $conditions = [];
             foreach ($where as $column => $value) {
-                $conditions[] = "{$column} = ?";
-                $params[] = $value;
+                if (is_array($value) && count($value) === 2) {
+                    $operator = $value[0];
+                    $val = $value[1];
+                    $conditions[] = "`{$column}` {$operator} ?";
+                    $params[] = $val;
+                } else {
+                    $conditions[] = "`{$column}` = ?";
+                    $params[] = $value;
+                }
             }
             $sql .= " WHERE " . implode(' AND ', $conditions);
         }
@@ -294,8 +301,15 @@ abstract class Model
             $i = 0;
             foreach ($where as $column => $value) {
                 $paramName = "where_{$i}";
-                $conditions[] = "{$column} = :{$paramName}";
-                $params[$paramName] = $value;
+                if (is_array($value) && count($value) === 2) {
+                    $operator = $value[0];
+                    $val = $value[1];
+                    $conditions[] = "`{$column}` {$operator} :{$paramName}";
+                    $params[$paramName] = $val;
+                } else {
+                    $conditions[] = "`{$column}` = :{$paramName}";
+                    $params[$paramName] = $value;
+                }
                 $i++;
             }
             $sql .= " WHERE " . implode(' AND ', $conditions);

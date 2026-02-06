@@ -39,8 +39,8 @@ class StaffController extends Controller
         if ($teamId) {
             $where['team_id'] = (int) $teamId;
         }
-        if ($role && $this->staffModel->isValidRole($role)) {
-            $where['role'] = $role;
+        if ($role && (TeamStaff::getValidRoles()[$role] ?? null)) {
+            $where['role'] = ['LIKE', '%' . $role . '%'];
         }
 
         // Get total count
@@ -123,17 +123,17 @@ class StaffController extends Controller
             return;
         }
 
-        $missing = $this->validateRequired(['name', 'team_id', 'role']);
+        $missing = $this->validateRequired(['name', 'roles']);
         if (!empty($missing)) {
-            $this->flash('error', 'Please provide name, team, and role.');
+            $this->flash('error', 'Please provide name and at least one role.');
             $this->redirect('/admin/staff/create');
             return;
         }
 
         // Validate and sanitize inputs
         $name = $this->sanitizeString($this->post('name'), 100);
-        $teamId = (int) $this->post('team_id');
-        $role = $this->post('role');
+        $teamId = $this->post('team_id') !== '' ? (int) $this->post('team_id') : null;
+        $roles = $this->post('roles', []);
         $phone = $this->sanitizeString($this->post('phone', ''), 50);
         $email = $this->sanitizeString($this->post('email', ''), 100);
 
@@ -143,20 +143,26 @@ class StaffController extends Controller
             return;
         }
 
-        // Validate team exists
-        $team = $this->teamModel->find($teamId);
-        if (!$team) {
-            $this->flash('error', 'Invalid team selected.');
-            $this->redirect('/admin/staff/create');
-            return;
+        // Validate team exists if provided
+        $teamName = 'Staff';
+        if ($teamId) {
+            $team = $this->teamModel->find($teamId);
+            if (!$team) {
+                $this->flash('error', 'Invalid team selected.');
+                $this->redirect('/admin/staff/create');
+                return;
+            }
+            $teamName = $team['name'];
         }
 
-        // Validate role
-        if (!$this->staffModel->isValidRole($role)) {
+        // Validate roles
+        if (!$this->staffModel->isValidRole($roles)) {
             $this->flash('error', 'Invalid role selected.');
             $this->redirect('/admin/staff/create');
             return;
         }
+
+        $roleString = implode(',', $roles);
 
         // Validate email if provided
         if ($email !== '' && !$this->validateEmail($email)) {
@@ -168,12 +174,12 @@ class StaffController extends Controller
         $staff = $this->staffModel->create([
             'name' => $name,
             'team_id' => $teamId,
-            'role' => $role,
+            'role' => $roleString,
             'phone' => $phone ?: null,
             'email' => $email ?: null,
         ]);
 
-        $this->flash('success', $staff['name'] . ' added to ' . $team['name'] . '.');
+        $this->flash('success', $staff['name'] . ' added to ' . $teamName . '.');
         $this->redirect('/admin/staff/' . $staff['id']);
     }
 
@@ -221,17 +227,17 @@ class StaffController extends Controller
             return;
         }
 
-        $missing = $this->validateRequired(['name', 'team_id', 'role']);
+        $missing = $this->validateRequired(['name', 'roles']);
         if (!empty($missing)) {
-            $this->flash('error', 'Please provide name, team, and role.');
+            $this->flash('error', 'Please provide name and at least one role.');
             $this->redirect('/admin/staff/' . $id . '/edit');
             return;
         }
 
         // Validate and sanitize inputs
         $name = $this->sanitizeString($this->post('name'), 100);
-        $teamId = (int) $this->post('team_id');
-        $role = $this->post('role');
+        $teamId = $this->post('team_id') !== '' ? (int) $this->post('team_id') : null;
+        $roles = $this->post('roles', []);
         $phone = $this->sanitizeString($this->post('phone', ''), 50);
         $email = $this->sanitizeString($this->post('email', ''), 100);
 
@@ -241,20 +247,24 @@ class StaffController extends Controller
             return;
         }
 
-        // Validate team exists
-        $team = $this->teamModel->find($teamId);
-        if (!$team) {
-            $this->flash('error', 'Invalid team selected.');
-            $this->redirect('/admin/staff/' . $id . '/edit');
-            return;
+        // Validate team exists if provided
+        if ($teamId) {
+            $team = $this->teamModel->find($teamId);
+            if (!$team) {
+                $this->flash('error', 'Invalid team selected.');
+                $this->redirect('/admin/staff/' . $id . '/edit');
+                return;
+            }
         }
 
-        // Validate role
-        if (!$this->staffModel->isValidRole($role)) {
+        // Validate roles
+        if (!$this->staffModel->isValidRole($roles)) {
             $this->flash('error', 'Invalid role selected.');
             $this->redirect('/admin/staff/' . $id . '/edit');
             return;
         }
+
+        $roleString = implode(',', $roles);
 
         // Validate email if provided
         if ($email !== '' && !$this->validateEmail($email)) {
@@ -266,7 +276,7 @@ class StaffController extends Controller
         $this->staffModel->update($id, [
             'name' => $name,
             'team_id' => $teamId,
-            'role' => $role,
+            'role' => $roleString,
             'phone' => $phone ?: null,
             'email' => $email ?: null,
         ]);
@@ -347,8 +357,8 @@ class StaffController extends Controller
         if ($teamId) {
             $where['team_id'] = (int) $teamId;
         }
-        if ($role && $this->staffModel->isValidRole($role)) {
-            $where['role'] = $role;
+        if ($role && TeamStaff::getValidRoles()[$role] ?? null) {
+            $where['role'] = ['LIKE', '%' . $role . '%'];
         }
 
         // Get total count

@@ -5,7 +5,7 @@
     $actionText = 'Add Your First Staff Member';
     $padding = 'py-16';
     include __DIR__ . '/../partials/empty_state.php';
-    ?>
+?>
 <?php else: ?>
     <div class="overflow-x-auto">
         <table class="w-full border-collapse">
@@ -36,20 +36,19 @@
                                 <?= htmlspecialchars(\App\Models\TeamStaff::formatRole($member['role'])) ?>
                             </span>
                         </td>
-                        <td class="table-td">
+                        <td class="table-td text-main">
                             <?php if (!empty($member['team'])): ?>
                                 <a href="<?= $basePath ?>/admin/teams/<?= htmlspecialchars($member['team']['slug']) ?>"
                                     class="text-primary hover:underline">
                                     <?= htmlspecialchars($member['team']['name']) ?>
                                 </a>
                             <?php else: ?>
-                                <span class="text-text-muted italic">No team</span>
+                                <span class="text-text-muted italic">None / Global</span>
                             <?php endif; ?>
                         </td>
                         <td class="table-td">
                             <?php if (!empty($member['email'])): ?>
-                                <a href="mailto:<?= htmlspecialchars($member['email']) ?>"
-                                    class="text-primary hover:underline">
+                                <a href="mailto:<?= htmlspecialchars($member['email']) ?>" class="text-primary hover:underline">
                                     <?= htmlspecialchars($member['email']) ?>
                                 </a>
                             <?php elseif (!empty($member['phone'])): ?>
@@ -65,8 +64,7 @@
                                 action="<?= $basePath ?>/admin/staff/<?= htmlspecialchars($member['id']) ?>/delete"
                                 class="inline-block"
                                 onsubmit="return confirm('Are you sure you want to remove <?= htmlspecialchars(addslashes($member['name'])) ?>? This cannot be undone.');">
-                                <input type="hidden" name="csrf_token"
-                                    value="<?= htmlspecialchars(\Core\Auth::csrfToken()) ?>">
+                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(\Core\Auth::csrfToken()) ?>">
                                 <button type="submit"
                                     class="btn btn-sm bg-transparent border border-danger text-danger hover:bg-danger/10">Delete</button>
                             </form>
@@ -86,5 +84,5 @@
     if (isset($pagination)):
         include __DIR__ . '/../partials/pagination.php';
     endif;
-    ?>
+?>
 <?php endif; ?>

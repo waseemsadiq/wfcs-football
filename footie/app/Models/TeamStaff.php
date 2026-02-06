@@ -60,32 +60,26 @@ class TeamStaff extends Model
         return $this->transformRows($stmt->fetchAll());
     }
 
-    /**
-     * Get staff by role.
-     */
     public function getByRole(string $role): array
     {
         $stmt = $this->db->prepare(
             "SELECT ts.*, t.name as team_name
              FROM team_staff ts
-             INNER JOIN teams t ON ts.team_id = t.id
-             WHERE ts.role = ?
+             LEFT JOIN teams t ON ts.team_id = t.id
+             WHERE ts.role LIKE ?
              ORDER BY t.name ASC, ts.name ASC"
         );
-        $stmt->execute([$role]);
+        $stmt->execute(['%' . $role . '%']);
 
         return $this->transformRows($stmt->fetchAll());
     }
 
-    /**
-     * Get staff member with team information.
-     */
     public function getWithTeam(int|string $staffId): ?array
     {
         $stmt = $this->db->prepare("
             SELECT ts.*, t.name as team_name, t.slug as team_slug
             FROM team_staff ts
-            INNER JOIN teams t ON ts.team_id = t.id
+            LEFT JOIN teams t ON ts.team_id = t.id
             WHERE ts.id = ?
         ");
         $stmt->execute([$staffId]);
@@ -94,12 +88,19 @@ class TeamStaff extends Model
         return $result ? $this->transformKeys($result) : null;
     }
 
-    /**
-     * Validate role.
-     */
-    public function isValidRole(string $role): bool
+    public function isValidRole(string|array $role): bool
     {
-        $validRoles = ['coach', 'assistant_coach', 'manager', 'referee', 'contact', 'other'];
+        $validRoles = array_keys(self::getValidRoles());
+
+        if (is_array($role)) {
+            foreach ($role as $r) {
+                if (!in_array($r, $validRoles)) {
+                    return false;
+                }
+            }
+            return !empty($role);
+        }
+
         return in_array($role, $validRoles);
     }
 
@@ -118,12 +119,19 @@ class TeamStaff extends Model
         ];
     }
 
-    /**
-     * Format role for display.
-     */
-    public static function formatRole(string $role): string
+    public static function formatRole(string|array $role): string
     {
         $roles = self::getValidRoles();
+
+        if (is_string($role) && strpos($role, ',') !== false) {
+            $role = explode(',', $role);
+        }
+
+        if (is_array($role)) {
+            $labels = array_map(fn($r) => $roles[$r] ?? ucfirst(str_replace('_', ' ', $r)), $role);
+            return implode(', ', $labels);
+        }
+
         return $roles[$role] ?? ucfirst(str_replace('_', ' ', $role));
     }
 }

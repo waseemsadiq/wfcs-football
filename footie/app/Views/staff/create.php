@@ -22,33 +22,40 @@ include __DIR__ . '/../partials/admin_page_header.php';
 
         <div>
             <label for="team_id" class="block text-sm font-bold mb-2">
-                Team <span class="text-danger">*</span>
+                Team
             </label>
-            <select name="team_id" id="team_id" required
+            <select name="team_id" id="team_id"
                 class="w-full px-4 py-2 border border-border rounded bg-surface text-text-main focus:outline-none focus:ring-2 focus:ring-primary">
-                <option value="">Select team...</option>
+                <option value="">None / Global Staff</option>
                 <?php foreach ($teams as $team): ?>
-                    <option value="<?= htmlspecialchars($team['id']) ?>"
-                        <?= ($selectedTeamId ?? null) == $team['id'] ? 'selected' : '' ?>>
+                    <option value="<?= htmlspecialchars($team['id']) ?>" <?= ($selectedTeamId ?? null) == $team['id'] ? 'selected' : '' ?>>
                         <?= htmlspecialchars($team['name']) ?>
                     </option>
                 <?php endforeach; ?>
             </select>
+            <p class="text-sm text-text-muted mt-1">Optional. Leave empty for staff not assigned to a specific team.</p>
         </div>
 
         <div>
-            <label for="role" class="block text-sm font-bold mb-2">
-                Role <span class="text-danger">*</span>
-            </label>
-            <select name="role" id="role" required
-                class="w-full px-4 py-2 border border-border rounded bg-surface text-text-main focus:outline-none focus:ring-2 focus:ring-primary">
-                <option value="">Select role...</option>
+            <label class="block text-sm font-bold mb-3">Role(s) <span class="text-danger">*</span></label>
+            <div class="space-y-3">
                 <?php foreach ($roles as $value => $label): ?>
-                    <option value="<?= htmlspecialchars($value) ?>">
-                        <?= htmlspecialchars($label) ?>
-                    </option>
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <div class="relative inline-block w-11 h-6">
+                            <input type="checkbox" name="roles[]" value="<?= htmlspecialchars($value) ?>"
+                                class="sr-only peer" role="switch">
+                            <div
+                                class="w-11 h-6 bg-gray-600 rounded-full peer-checked:bg-primary transition-colors peer-focus:ring-2 peer-focus:ring-primary/50">
+                            </div>
+                            <div
+                                class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5">
+                            </div>
+                        </div>
+                        <span class="text-sm text-text"><?= htmlspecialchars($label) ?></span>
+                    </label>
                 <?php endforeach; ?>
-            </select>
+            </div>
+            <p class="mt-3 text-sm text-text-muted">Select all roles this staff member performs.</p>
         </div>
 
         <div>
