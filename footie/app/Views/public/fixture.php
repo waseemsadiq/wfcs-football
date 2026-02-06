@@ -214,8 +214,8 @@
             <?php if (!empty($videos)): ?>
                 <?php if (count($videos) > 1): ?>
                     <!-- Tabbed Interface -->
-                    <div class="mb-6">
-                        <div class="flex gap-2 p-1 bg-surface-hover rounded-lg inline-flex border border-border/50">
+                    <div class="mb-6 mt-2">
+                        <div class="gap-2 p-1 bg-surface-hover rounded-lg inline-flex border border-border/50">
                             <?php $i = 0;
                             foreach ($videos as $title => $url): ?>
                                 <button onclick="switchVideoTab(<?= $i ?>)" id="video-tab-<?= $i ?>"
