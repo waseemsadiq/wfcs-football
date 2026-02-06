@@ -41,11 +41,11 @@
             include __DIR__ . '/../partials/colour_picker.php';
             ?>
 
-            <div class="mb-8">
-                <label for="players" class="block text-sm font-medium text-text-muted mb-2">Players</label>
-                <textarea id="players" name="players" class="form-input min-h-[150px]"
-                    placeholder="James Wilson&#10;David Brown&#10;Michael Taylor"><?= htmlspecialchars($playersText ?? '') ?></textarea>
-                <p class="mt-2 text-sm text-text-muted">Enter one player name per line.</p>
+            <div class="mb-8 p-4 bg-blue-500/10 border border-blue-500/30 rounded">
+                <p class="text-sm text-blue-400 mb-3"><strong>Managing Players:</strong></p>
+                <p class="text-sm text-text-muted mb-3">Players are now managed separately for better organization.</p>
+                <a href="<?= $basePath ?>/admin/players?team_id=<?= htmlspecialchars($team['id']) ?>"
+                    class="btn btn-secondary btn-sm">Manage Squad →</a>
             </div>
 
             <div class="flex items-center gap-4 pt-6 border-t border-border">

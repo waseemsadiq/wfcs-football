@@ -55,6 +55,16 @@ $router->post('/admin/teams/{slug}/update', 'TeamsController', 'update');
 $router->post('/admin/teams/{slug}/delete', 'TeamsController', 'delete');
 $router->post('/admin/teams/delete-multiple', 'TeamsController', 'deleteMultiple');
 
+// Players
+$router->get('/admin/players', 'PlayersController', 'index');
+$router->get('/admin/players/create', 'PlayersController', 'create');
+$router->post('/admin/players/store', 'PlayersController', 'store');
+$router->get('/admin/players/{slug}', 'PlayersController', 'show');
+$router->get('/admin/players/{slug}/edit', 'PlayersController', 'edit');
+$router->post('/admin/players/{slug}/update', 'PlayersController', 'update');
+$router->post('/admin/players/{slug}/delete', 'PlayersController', 'delete');
+$router->post('/admin/players/delete-multiple', 'PlayersController', 'deleteMultiple');
+
 // Seasons
 $router->get('/admin/seasons', 'SeasonsController', 'index');
 $router->get('/admin/seasons/create', 'SeasonsController', 'create');

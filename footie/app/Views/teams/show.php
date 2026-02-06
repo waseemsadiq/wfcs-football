@@ -59,31 +59,81 @@
     <div class="card mb-8">
         <div class="flex justify-between items-center mb-6 pb-4 border-b border-border">
             <h2 class="text-xl font-bold m-0">Squad</h2>
-            <span
-                class="px-3 py-1 bg-surface-hover rounded-full text-xs font-bold text-text-muted uppercase tracking-wider">
-                <?= count($team['players'] ?? []) ?> player<?= count($team['players'] ?? []) !== 1 ? 's' : '' ?>
-            </span>
+            <div class="flex items-center gap-4">
+                <span
+                    class="px-3 py-1 bg-surface-hover rounded-full text-xs font-bold text-text-muted uppercase tracking-wider">
+                    <?php
+                    $playerModel = new \App\Models\Player();
+                    $squadPlayers = $playerModel->getByTeam($team['id']);
+                    ?>
+                    <?= count($squadPlayers) ?> player<?= count($squadPlayers) !== 1 ? 's' : '' ?>
+                </span>
+                <a href="<?= $basePath ?>/admin/players?team_id=<?= htmlspecialchars($team['id']) ?>"
+                    class="btn btn-secondary btn-sm">Manage Squad</a>
+            </div>
         </div>
 
-        <?php if (empty($team['players'])): ?>
+        <?php if (empty($squadPlayers)): ?>
             <div class="text-center py-12 text-text-muted">
                 <p class="mb-6">No players added to this team yet.</p>
-                <a href="<?= $basePath ?>/admin/teams/<?= htmlspecialchars($team['slug'] ?? $team['id']) ?>/edit"
-                    class="btn btn-primary">Add Players</a>
+                <a href="<?= $basePath ?>/admin/players/create"
+                    class="btn btn-primary">Add First Player</a>
             </div>
         <?php else: ?>
-            <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <?php foreach ($team['players'] as $index => $player): ?>
-                    <li
-                        class="flex items-center p-3 bg-surface-hover/30 rounded border border-border hover:border-primary/50 transition-colors">
-                        <span
-                            class="flex items-center justify-center w-8 h-8 bg-primary/10 text-primary rounded-full text-sm font-bold mr-3">
-                            <?= $index + 1 ?>
-                        </span>
-                        <span class="font-medium"><?= htmlspecialchars($player) ?></span>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
+            <div class="overflow-x-auto">
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr>
+                            <th class="table-th text-left">Name</th>
+                            <th class="table-th text-left">Position</th>
+                            <th class="table-th text-center">#</th>
+                            <th class="table-th text-left">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($squadPlayers as $player): ?>
+                            <tr class="hover:bg-surface-hover transition-colors">
+                                <td class="table-td">
+                                    <a href="<?= $basePath ?>/admin/players/<?= htmlspecialchars($player['slug'] ?? $player['id']) ?>"
+                                        class="font-medium hover:text-primary transition-colors">
+                                        <?= htmlspecialchars($player['name']) ?>
+                                    </a>
+                                </td>
+                                <td class="table-td">
+                                    <?php if (!empty($player['position'])): ?>
+                                        <span class="text-xs px-2 py-1 rounded bg-surface-hover">
+                                            <?= htmlspecialchars($player['position']) ?>
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="text-text-muted italic">-</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="table-td text-center">
+                                    <?php if (!empty($player['squadNumber'])): ?>
+                                        <span class="font-mono font-bold"><?= htmlspecialchars($player['squadNumber']) ?></span>
+                                    <?php else: ?>
+                                        <span class="text-text-muted">-</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="table-td">
+                                    <?php
+                                    $statusColors = [
+                                        'active' => 'bg-green-500/20 text-green-400',
+                                        'injured' => 'bg-red-500/20 text-red-400',
+                                        'suspended' => 'bg-yellow-500/20 text-yellow-400',
+                                        'unavailable' => 'bg-gray-500/20 text-gray-400',
+                                    ];
+                                    $statusColor = $statusColors[$player['status']] ?? 'bg-gray-500/20 text-gray-400';
+                                    ?>
+                                    <span class="text-xs px-2 py-1 rounded <?= $statusColor ?>">
+                                        <?= htmlspecialchars(ucfirst($player['status'])) ?>
+                                    </span>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         <?php endif; ?>
     </div>
 
