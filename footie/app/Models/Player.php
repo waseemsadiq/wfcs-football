@@ -92,6 +92,8 @@ class Player extends Model
             'totalAssists' => 0,
             'yellowCards' => 0,
             'redCards' => 0,
+            'blueCards' => 0,
+            'sinBins' => 0,
             'matchesPlayed' => 0,
         ];
     }

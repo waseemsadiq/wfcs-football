@@ -71,6 +71,24 @@ class PlayerStatsService
             $redStmt->execute([$playerId]);
             $redCards = (int) $redStmt->fetch()['count'];
 
+            // Count blue cards
+            $blueStmt = $this->db->prepare("
+                SELECT COUNT(*) as count
+                FROM match_events
+                WHERE player_id = ? AND event_type = 'blue_card'
+            ");
+            $blueStmt->execute([$playerId]);
+            $blueCards = (int) $blueStmt->fetch()['count'];
+
+            // Count sin bins
+            $sinBinStmt = $this->db->prepare("
+                SELECT COUNT(*) as count
+                FROM match_events
+                WHERE player_id = ? AND event_type = 'sin_bin'
+            ");
+            $sinBinStmt->execute([$playerId]);
+            $sinBins = (int) $sinBinStmt->fetch()['count'];
+
             // Count unique matches played (distinct fixture combinations)
             $matchesStmt = $this->db->prepare("
                 SELECT COUNT(DISTINCT CONCAT(fixture_type, '-', fixture_id)) as count
@@ -83,14 +101,16 @@ class PlayerStatsService
             // Upsert into player_stats
             $upsertStmt = $this->db->prepare("
                 INSERT INTO player_stats
-                (player_id, team_id, total_goals, total_assists, yellow_cards, red_cards, matches_played, last_updated)
-                VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+                (player_id, team_id, total_goals, total_assists, yellow_cards, red_cards, blue_cards, sin_bins, matches_played, last_updated)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
                 ON DUPLICATE KEY UPDATE
                     team_id = VALUES(team_id),
                     total_goals = VALUES(total_goals),
                     total_assists = VALUES(total_assists),
                     yellow_cards = VALUES(yellow_cards),
                     red_cards = VALUES(red_cards),
+                    blue_cards = VALUES(blue_cards),
+                    sin_bins = VALUES(sin_bins),
                     matches_played = VALUES(matches_played),
                     last_updated = NOW()
             ");
@@ -102,6 +122,8 @@ class PlayerStatsService
                 $assists,
                 $yellowCards,
                 $redCards,
+                $blueCards,
+                $sinBins,
                 $matchesPlayed,
             ]);
         } catch (\Exception $e) {
@@ -201,6 +223,8 @@ class PlayerStatsService
                 'assists' => 0,
                 'yellowCards' => 0,
                 'redCards' => 0,
+                'blueCards' => 0,
+                'sinBins' => 0,
                 'matchesPlayed' => 0,
             ];
         }
@@ -228,6 +252,8 @@ class PlayerStatsService
             'assists' => 0,
             'yellowCards' => 0,
             'redCards' => 0,
+            'blueCards' => 0,
+            'sinBins' => 0,
             'matchesPlayed' => 0,
         ];
 
@@ -245,6 +271,12 @@ class PlayerStatsService
                     break;
                 case 'red_card':
                     $stats['redCards'] = (int) $row['count'];
+                    break;
+                case 'blue_card':
+                    $stats['blueCards'] = (int) $row['count'];
+                    break;
+                case 'sin_bin':
+                    $stats['sinBins'] = (int) $row['count'];
                     break;
             }
         }

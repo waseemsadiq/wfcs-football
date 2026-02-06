@@ -80,7 +80,7 @@
     <div class="card mb-8">
         <h2 class="text-xl font-bold mb-6 pb-4 border-b border-border">Statistics</h2>
 
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-6">
             <div class="text-center">
                 <div class="text-3xl font-bold text-primary mb-2">
                     <?= htmlspecialchars($stats['totalGoals'] ?? 0) ?>
@@ -107,6 +107,20 @@
                     <?= htmlspecialchars($stats['redCards'] ?? 0) ?>
                 </div>
                 <div class="text-sm text-text-muted">Red Cards</div>
+            </div>
+
+            <div class="text-center">
+                <div class="text-3xl font-bold text-blue-400 mb-2">
+                    <?= htmlspecialchars($stats['blueCards'] ?? 0) ?>
+                </div>
+                <div class="text-sm text-text-muted">Blue Cards</div>
+            </div>
+
+            <div class="text-center">
+                <div class="text-3xl font-bold text-orange-400 mb-2">
+                    <?= htmlspecialchars($stats['sinBins'] ?? 0) ?>
+                </div>
+                <div class="text-sm text-text-muted">Sin Bins</div>
             </div>
 
             <div class="text-center">
