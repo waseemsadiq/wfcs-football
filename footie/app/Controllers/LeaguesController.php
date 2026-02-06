@@ -94,12 +94,17 @@ class LeaguesController extends CompetitionController
             $teamPlayers[$team['id']] = $players;
         }
 
+        // Load all staff (referees, coaches, managers, contacts) for dropdown
+        $staffModel = new \App\Models\TeamStaff();
+        $allStaff = $staffModel->allSorted();
+
         $this->render('leagues/fixtures', [
             'title' => $league['name'] . ' Fixtures',
             'currentPage' => 'leagues',
             'league' => $league,
             'fixtures' => $fixtures,
             'teamPlayers' => $teamPlayers,
+            'allStaff' => $allStaff,
             'csrfToken' => $this->csrfToken(),
         ]);
     }

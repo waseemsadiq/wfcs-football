@@ -137,6 +137,78 @@
         <?php endif; ?>
     </div>
 
+    <!-- Support Staff -->
+    <div class="card mb-8">
+        <div class="flex justify-between items-center mb-6 pb-4 border-b border-border">
+            <h2 class="text-xl font-bold m-0">Support Staff</h2>
+            <div class="flex items-center gap-4">
+                <span
+                    class="px-3 py-1 bg-surface-hover rounded-full text-xs font-bold text-text-muted uppercase tracking-wider">
+                    <?= count($staff) ?> staff member<?= count($staff) !== 1 ? 's' : '' ?>
+                </span>
+                <a href="<?= $basePath ?>/admin/staff/create?team_id=<?= htmlspecialchars($team['id']) ?>"
+                    class="btn btn-secondary btn-sm">Add Staff</a>
+            </div>
+        </div>
+
+        <?php if (empty($staff)): ?>
+            <div class="text-center py-12 text-text-muted">
+                <p class="mb-6">No support staff added to this team yet.</p>
+                <a href="<?= $basePath ?>/admin/staff/create?team_id=<?= htmlspecialchars($team['id']) ?>"
+                    class="btn btn-primary">Add First Staff Member</a>
+            </div>
+        <?php else: ?>
+            <div class="overflow-x-auto">
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr>
+                            <th class="table-th text-left">Name</th>
+                            <th class="table-th text-left">Role</th>
+                            <th class="table-th text-left">Contact</th>
+                            <th class="table-th text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($staff as $member): ?>
+                            <tr class="hover:bg-surface-hover transition-colors">
+                                <td class="table-td">
+                                    <a href="<?= $basePath ?>/admin/staff/<?= htmlspecialchars($member['id']) ?>"
+                                        class="font-medium hover:text-primary transition-colors">
+                                        <?= htmlspecialchars($member['name']) ?>
+                                    </a>
+                                </td>
+                                <td class="table-td">
+                                    <span class="inline-block px-2 py-1 text-xs rounded bg-primary/10 text-primary">
+                                        <?= htmlspecialchars(\App\Models\TeamStaff::formatRole($member['role'])) ?>
+                                    </span>
+                                </td>
+                                <td class="table-td">
+                                    <?php if (!empty($member['email'])): ?>
+                                        <a href="mailto:<?= htmlspecialchars($member['email']) ?>"
+                                            class="text-primary hover:underline">
+                                            <?= htmlspecialchars($member['email']) ?>
+                                        </a>
+                                    <?php elseif (!empty($member['phone'])): ?>
+                                        <a href="tel:<?= htmlspecialchars($member['phone']) ?>"
+                                            class="text-primary hover:underline">
+                                            <?= htmlspecialchars($member['phone']) ?>
+                                        </a>
+                                    <?php else: ?>
+                                        <span class="text-text-muted italic">Not set</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="table-td text-right">
+                                    <a href="<?= $basePath ?>/admin/staff/<?= htmlspecialchars($member['id']) ?>/edit"
+                                        class="btn btn-secondary btn-sm">Edit</a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif; ?>
+    </div>
+
     <!-- Competitions -->
     <div class="card mb-8">
         <h2 class="text-xl font-bold mb-6 pb-4 border-b border-border">Competitions</h2>

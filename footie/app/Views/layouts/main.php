@@ -25,6 +25,8 @@ include __DIR__ . '/../partials/head.php'; ?>
                     class="<?= ($currentPage ?? '') === 'teams' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-sm transition-colors uppercase tracking-wide">Teams</a>
                 <a href="<?= $basePath ?>/admin/players"
                     class="<?= ($currentPage ?? '') === 'players' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-sm transition-colors uppercase tracking-wide">Players</a>
+                <a href="<?= $basePath ?>/admin/staff"
+                    class="<?= ($currentPage ?? '') === 'staff' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-sm transition-colors uppercase tracking-wide">Staff</a>
                 <a href="<?= $basePath ?>/admin/seasons"
                     class="<?= ($currentPage ?? '') === 'seasons' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-sm transition-colors uppercase tracking-wide">Seasons</a>
                 <a href="<?= $basePath ?>/admin/leagues"
@@ -100,6 +102,8 @@ include __DIR__ . '/../partials/head.php'; ?>
                     class="<?= ($currentPage ?? '') === 'teams' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-base transition-colors uppercase tracking-wide">Teams</a>
                 <a href="<?= $basePath ?>/admin/players"
                     class="<?= ($currentPage ?? '') === 'players' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-base transition-colors uppercase tracking-wide">Players</a>
+                <a href="<?= $basePath ?>/admin/staff"
+                    class="<?= ($currentPage ?? '') === 'staff' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-base transition-colors uppercase tracking-wide">Staff</a>
                 <a href="<?= $basePath ?>/admin/seasons"
                     class="<?= ($currentPage ?? '') === 'seasons' ? 'text-primary hover:text-green-500' : 'text-text-muted hover:text-primary' ?> font-semibold text-base transition-colors uppercase tracking-wide">Seasons</a>
                 <a href="<?= $basePath ?>/admin/leagues"

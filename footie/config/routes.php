@@ -56,6 +56,17 @@ $router->post('/admin/teams/{slug}/update', 'TeamsController', 'update');
 $router->post('/admin/teams/{slug}/delete', 'TeamsController', 'delete');
 $router->post('/admin/teams/delete-multiple', 'TeamsController', 'deleteMultiple');
 
+// Staff
+$router->get('/admin/staff', 'StaffController', 'index');
+$router->get('/admin/staff/ajax/list', 'StaffController', 'getStaffList');
+$router->get('/admin/staff/create', 'StaffController', 'create');
+$router->post('/admin/staff/store', 'StaffController', 'store');
+$router->get('/admin/staff/{id}', 'StaffController', 'show');
+$router->get('/admin/staff/{id}/edit', 'StaffController', 'edit');
+$router->post('/admin/staff/{id}/update', 'StaffController', 'update');
+$router->post('/admin/staff/{id}/delete', 'StaffController', 'delete');
+$router->post('/admin/staff/delete-multiple', 'StaffController', 'deleteMultiple');
+
 // Players
 $router->get('/admin/players', 'PlayersController', 'index');
 $router->get('/admin/players/create', 'PlayersController', 'create');

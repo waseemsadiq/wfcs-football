@@ -88,12 +88,17 @@ class CupsController extends CompetitionController
             $teamPlayers[$team['id']] = $players;
         }
 
+        // Load all staff (referees, coaches, managers, contacts) for dropdown
+        $staffModel = new \App\Models\TeamStaff();
+        $allStaff = $staffModel->allSorted();
+
         $this->render('cups/fixtures', [
             'title' => $cup['name'] . ' Fixtures',
             'currentPage' => 'cups',
             'cup' => $cup,
             'rounds' => $rounds,
             'teamPlayers' => $teamPlayers,
+            'allStaff' => $allStaff,
             'csrfToken' => $this->csrfToken(),
         ]);
     }

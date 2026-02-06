@@ -99,7 +99,31 @@ class TeamStaff extends Model
      */
     public function isValidRole(string $role): bool
     {
-        $validRoles = ['coach', 'assistant_coach', 'manager', 'contact', 'other'];
+        $validRoles = ['coach', 'assistant_coach', 'manager', 'referee', 'contact', 'other'];
         return in_array($role, $validRoles);
+    }
+
+    /**
+     * Get valid staff roles with labels.
+     */
+    public static function getValidRoles(): array
+    {
+        return [
+            'coach' => 'Coach',
+            'assistant_coach' => 'Assistant Coach',
+            'manager' => 'Manager',
+            'referee' => 'Referee',
+            'contact' => 'Contact',
+            'other' => 'Other',
+        ];
+    }
+
+    /**
+     * Format role for display.
+     */
+    public static function formatRole(string $role): string
+    {
+        $roles = self::getValidRoles();
+        return $roles[$role] ?? ucfirst(str_replace('_', ' ', $role));
     }
 }

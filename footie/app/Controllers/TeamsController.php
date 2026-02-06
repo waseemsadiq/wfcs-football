@@ -84,12 +84,17 @@ class TeamsController extends Controller
             });
         }
 
+        // Get support staff for this team
+        $staffModel = new \App\Models\TeamStaff();
+        $staff = $staffModel->getByTeam($team['id']);
+
         $this->render('teams/show', [
             'title' => $team['name'],
             'currentPage' => 'teams',
             'team' => $team,
             'leagues' => array_values($leagues),
             'cups' => array_values($cups),
+            'staff' => $staff,
         ]);
     }
 

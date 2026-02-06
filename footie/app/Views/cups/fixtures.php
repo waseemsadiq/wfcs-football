@@ -275,8 +275,17 @@
                                                         <input type="date" name="date" value="<?= htmlspecialchars($fixture['date']) ?>" class="form-input py-1 px-2 text-xs">
                                                     </div>
                                                     <div class="flex flex-col">
-                                                        <label class="text-[10px] text-text-muted uppercase mb-1">Referee</label>
-                                                        <input type="text" name="referee" value="<?= htmlspecialchars($fixture['referee'] ?? '') ?>" class="form-input py-1 px-2 text-xs" placeholder="Ref">
+                                                        <label class="text-[10px] text-text-muted uppercase mb-1">Match Official</label>
+                                                        <select name="referee_id" class="form-input py-1 px-2 text-xs">
+                                                            <option value="">Not assigned</option>
+                                                            <?php foreach ($allStaff as $staff): ?>
+                                                                <option value="<?= htmlspecialchars($staff['id']) ?>"
+                                                                    <?= ($fixture['refereeId'] ?? null) == $staff['id'] ? 'selected' : '' ?>>
+                                                                    <?= htmlspecialchars($staff['name']) ?>
+                                                                    (<?= htmlspecialchars(\App\Models\TeamStaff::formatRole($staff['role'])) ?>)
+                                                                </option>
+                                                            <?php endforeach; ?>
+                                                        </select>
                                                     </div>
 
                                                     <!-- Row 2: Time | Pitch -->

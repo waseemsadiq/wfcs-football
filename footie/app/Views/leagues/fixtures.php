@@ -235,11 +235,18 @@ usort($fixtures, function ($a, $b) {
                                                         class="bg-transparent border border-border text-text-main p-1 rounded focus:border-primary focus:outline-none text-xs">
                                                 </div>
                                                 <div class="flex flex-col">
-                                                    <label class="text-xs text-text-muted uppercase mb-1">Referee</label>
-                                                    <input type="text" name="referee"
-                                                        value="<?= htmlspecialchars($fixture['referee'] ?? '') ?>"
-                                                        class="bg-transparent border border-border text-text-main p-1 rounded focus:border-primary focus:outline-none text-xs"
-                                                        placeholder="Ref">
+                                                    <label class="text-xs text-text-muted uppercase mb-1">Match Official</label>
+                                                    <select name="referee_id"
+                                                        class="bg-transparent border border-border text-text-main p-1 rounded focus:border-primary focus:outline-none text-xs">
+                                                        <option value="">Not assigned</option>
+                                                        <?php foreach ($allStaff as $staff): ?>
+                                                            <option value="<?= htmlspecialchars($staff['id']) ?>"
+                                                                <?= ($fixture['refereeId'] ?? null) == $staff['id'] ? 'selected' : '' ?>>
+                                                                <?= htmlspecialchars($staff['name']) ?>
+                                                                (<?= htmlspecialchars(\App\Models\TeamStaff::formatRole($staff['role'])) ?>)
+                                                            </option>
+                                                        <?php endforeach; ?>
+                                                    </select>
                                                 </div>
 
                                                 <!-- Row 2: Time | Pitch -->
