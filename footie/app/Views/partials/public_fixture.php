@@ -84,10 +84,19 @@ $awaySlug = htmlspecialchars($awayTeam['slug'] ?? $awayId);
 
 $homeLink = $homeId ? "<a href=\"{$basePath}/team/{$homeSlug}\" class=\"hover:text-primary transition-colors\">{$homeName}</a>" : $homeName;
 $awayLink = $awayId ? "<a href=\"{$basePath}/team/{$awaySlug}\" class=\"hover:text-primary transition-colors\">{$awayName}</a>" : $awayName;
+
+// Generate fixture detail link
+$fixtureSlug = $homeSlug . '-vs-' . $awaySlug;
+$fixtureType = isset($fixture['cupId']) ? 'cup' : 'league';
+$competitionSlug = $fixture['competitionSlug'] ?? '';
+$fixtureDetailUrl = $competitionSlug ? "{$basePath}/fixture/{$fixtureType}/{$competitionSlug}/{$fixtureSlug}" : '';
 ?>
 
 <li
     class="flex flex-col items-center py-4 border-b border-border last:border-b-0 gap-1 hover:bg-surface-hover/50 transition-colors px-4 -mx-4 rounded-sm">
+    <?php if ($fixtureDetailUrl): ?>
+        <a href="<?= $fixtureDetailUrl ?>" class="w-full block">
+    <?php endif; ?>
     <?php if ($showDate): ?>
         <div class="text-xs text-text-muted font-bold uppercase tracking-wider mb-1">
             <?= $dateDisplay ?>
@@ -112,5 +121,9 @@ $awayLink = $awayId ? "<a href=\"{$basePath}/team/{$awaySlug}\" class=\"hover:te
         <div class="text-xs text-text-muted font-medium text-center">
             <?= $competition ?>
         </div>
+    <?php endif; ?>
+
+    <?php if ($fixtureDetailUrl): ?>
+        </a>
     <?php endif; ?>
 </li>
