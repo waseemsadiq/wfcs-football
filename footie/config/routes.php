@@ -124,5 +124,7 @@ $router->post('/admin/cups/{slug}/regenerate-fixtures', 'CupsController', 'regen
 // Fixture Details (admin)
 $router->get('/admin/fixture/{type}/{competitionSlug}/{fixtureSlug}', 'FixturesController', 'fixtureDetail');
 $router->post('/admin/fixture/{type}/{competitionSlug}/{fixtureSlug}', 'FixturesController', 'updateFixtureDetail');
+$router->post('/admin/fixture/{type}/{competitionSlug}/{fixtureSlug}/photos', 'FixturesController', 'uploadPhotos');
+$router->post('/admin/fixture/{type}/{competitionSlug}/{fixtureSlug}/photos/{photoId}/delete', 'FixturesController', 'deletePhoto');
 
 return $router;

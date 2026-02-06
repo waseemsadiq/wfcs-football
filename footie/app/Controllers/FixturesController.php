@@ -86,12 +86,17 @@ class FixturesController extends Controller
             return;
         }
 
+        // Load photos for this fixture
+        $photoModel = new \App\Models\FixturePhoto();
+        $photos = $photoModel->getByFixture($type, $fixtureDetail['id']);
+
         $this->render('fixtures/detail', [
             'title' => 'Edit Fixture: ' . $fixtureDetail['homeTeamName'] . ' vs ' . $fixtureDetail['awayTeamName'],
             'fixtureType' => $type,
             'competition' => $competition,
             'fixture' => $fixtureDetail,
             'fixtureSlug' => $fixtureSlug,
+            'photos' => $photos,
         ]);
     }
 
@@ -219,5 +224,162 @@ class FixturesController extends Controller
             }
         }
         return null;
+    }
+
+    /**
+     * Upload photos for a fixture.
+     */
+    public function uploadPhotos(string $type, string $competitionSlug, string $fixtureSlug): void
+    {
+        // Validate fixture type
+        if (!in_array($type, ['league', 'cup'])) {
+            $this->flash('error', 'Invalid fixture type');
+            $this->redirect('/admin');
+            return;
+        }
+
+        // Parse fixture slug
+        if (!preg_match('/^(.+)-vs-(.+)$/', $fixtureSlug, $matches)) {
+            $this->flash('error', 'Invalid fixture');
+            $this->redirect('/admin');
+            return;
+        }
+
+        $homeTeamSlug = $matches[1];
+        $awayTeamSlug = $matches[2];
+
+        // Load teams
+        $teamModel = new \App\Models\Team();
+        $homeTeam = $teamModel->findWhere('slug', $homeTeamSlug);
+        $awayTeam = $teamModel->findWhere('slug', $awayTeamSlug);
+
+        if (!$homeTeam || !$awayTeam) {
+            $this->flash('error', 'Teams not found');
+            $this->redirect('/admin');
+            return;
+        }
+
+        // Load competition and find fixture
+        if ($type === 'league') {
+            $leagueModel = new \App\Models\League();
+            $competition = $leagueModel->findWhere('slug', $competitionSlug);
+
+            if (!$competition) {
+                $this->flash('error', 'Competition not found');
+                $this->redirect('/admin/leagues');
+                return;
+            }
+
+            $fixture = $this->findFixtureByTeamIds(
+                $competition['fixtures'],
+                $homeTeam['id'],
+                $awayTeam['id']
+            );
+        } else {
+            $cupModel = new \App\Models\Cup();
+            $competition = $cupModel->findWhere('slug', $competitionSlug);
+
+            if (!$competition) {
+                $this->flash('error', 'Competition not found');
+                $this->redirect('/admin/cups');
+                return;
+            }
+
+            $fixture = $this->findFixtureInRounds(
+                $competition['rounds'],
+                $homeTeam['id'],
+                $awayTeam['id']
+            );
+        }
+
+        if (!$fixture) {
+            $this->flash('error', 'Fixture not found');
+            $this->redirect('/admin');
+            return;
+        }
+
+        // Handle file uploads
+        if (!isset($_FILES['photos']) || !is_array($_FILES['photos']['name'])) {
+            $this->flash('error', 'No files uploaded');
+            $this->redirect("/admin/fixture/{$type}/{$competitionSlug}/{$fixtureSlug}");
+            return;
+        }
+
+        $photoModel = new \App\Models\FixturePhoto();
+        $uploadCount = 0;
+        $errorCount = 0;
+
+        // Get current max sort order
+        $sortOrder = $photoModel->getMaxSortOrder($type, $fixture['id']);
+
+        // Process each uploaded file
+        $fileCount = count($_FILES['photos']['name']);
+        for ($i = 0; $i < $fileCount; $i++) {
+            if ($_FILES['photos']['error'][$i] !== UPLOAD_ERR_OK) {
+                continue;
+            }
+
+            $file = [
+                'name' => $_FILES['photos']['name'][$i],
+                'type' => $_FILES['photos']['type'][$i],
+                'tmp_name' => $_FILES['photos']['tmp_name'][$i],
+                'error' => $_FILES['photos']['error'][$i],
+                'size' => $_FILES['photos']['size'][$i],
+            ];
+
+            $caption = $_POST['captions'][$i] ?? '';
+
+            // Upload file
+            $result = \Core\Upload::uploadFile($file, 'fixtures');
+
+            if ($result['success']) {
+                // Create database record
+                $sortOrder++;
+                $photoModel->create([
+                    'fixtureId' => $fixture['id'],
+                    'fixtureType' => $type,
+                    'filePath' => $result['filename'],
+                    'caption' => $caption,
+                    'sortOrder' => $sortOrder,
+                ]);
+                $uploadCount++;
+            } else {
+                $errorCount++;
+            }
+        }
+
+        if ($uploadCount > 0) {
+            $this->flash('success', "{$uploadCount} photo(s) uploaded successfully");
+        }
+        if ($errorCount > 0) {
+            $this->flash('error', "{$errorCount} photo(s) failed to upload");
+        }
+
+        $this->redirect("/admin/fixture/{$type}/{$competitionSlug}/{$fixtureSlug}");
+    }
+
+    /**
+     * Delete a fixture photo.
+     */
+    public function deletePhoto(string $type, string $competitionSlug, string $fixtureSlug, int $photoId): void
+    {
+        $photoModel = new \App\Models\FixturePhoto();
+
+        // Delete from database and get file path
+        $filePath = $photoModel->deletePhoto($photoId);
+
+        if ($filePath) {
+            // Delete physical file
+            $fullPath = BASE_PATH . '/uploads/fixtures/' . $filePath;
+            if (file_exists($fullPath)) {
+                unlink($fullPath);
+            }
+
+            $this->flash('success', 'Photo deleted successfully');
+        } else {
+            $this->flash('error', 'Photo not found');
+        }
+
+        $this->redirect("/admin/fixture/{$type}/{$competitionSlug}/{$fixtureSlug}");
     }
 }

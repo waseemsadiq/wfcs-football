@@ -161,16 +161,71 @@
             </div>
         </div>
 
-        <!-- Photo Gallery (Future Enhancement) -->
+        <!-- Photo Gallery -->
         <div class="card mb-6">
             <div class="p-6">
                 <h3 class="text-lg font-bold text-text-main mb-4">Match Photos</h3>
-                <div class="bg-surface-hover/30 border-2 border-dashed border-border rounded-lg p-8 text-center">
-                    <p class="text-text-muted mb-2">Photo upload coming soon</p>
-                    <p class="text-sm text-text-muted">
-                        Will support drag-and-drop image uploads for match galleries
-                    </p>
-                </div>
+
+                <!-- Existing Photos -->
+                <?php if (!empty($photos)): ?>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                        <?php foreach ($photos as $photo): ?>
+                            <div class="relative group">
+                                <img src="<?= $basePath ?>/uploads/fixtures/<?= htmlspecialchars($photo['filePath']) ?>"
+                                     alt="<?= htmlspecialchars($photo['caption'] ?? 'Match photo') ?>"
+                                     class="w-full aspect-video object-cover rounded-lg border border-border">
+                                <?php if ($photo['caption']): ?>
+                                    <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-3 rounded-b-lg">
+                                        <p class="text-sm text-white font-medium"><?= htmlspecialchars($photo['caption']) ?></p>
+                                    </div>
+                                <?php endif; ?>
+                                <!-- Delete Button -->
+                                <form method="POST"
+                                      action="<?= $basePath ?>/admin/fixture/<?= $fixtureType ?>/<?= $competition['slug'] ?>/<?= $fixtureSlug ?>/photos/<?= $photo['id'] ?>/delete"
+                                      class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                                      onsubmit="return confirm('Delete this photo?');">
+                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                                    <button type="submit"
+                                            class="bg-red-500 hover:bg-red-600 text-white rounded-full p-2 shadow-lg transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+
+                <!-- Upload Form -->
+                <form method="POST"
+                      action="<?= $basePath ?>/admin/fixture/<?= $fixtureType ?>/<?= $competition['slug'] ?>/<?= $fixtureSlug ?>/photos"
+                      enctype="multipart/form-data"
+                      class="border-2 border-dashed border-border rounded-lg p-6">
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-bold text-text-muted uppercase tracking-wider mb-3">
+                            Upload Photos
+                        </label>
+                        <input type="file"
+                               name="photos[]"
+                               multiple
+                               accept="image/jpeg,image/png,image/webp"
+                               class="w-full text-text-main file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary-hover file:cursor-pointer">
+                        <p class="text-sm text-text-muted mt-2">
+                            Select one or more photos (JPG, PNG, or WebP, max 5MB each)
+                        </p>
+                    </div>
+
+                    <div id="caption-inputs" class="space-y-2 mb-4 hidden">
+                        <!-- Caption inputs will be added here dynamically -->
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        Upload Photos
+                    </button>
+                </form>
             </div>
         </div>
 
@@ -186,3 +241,40 @@
         </div>
     </form>
 </div>
+
+<script>
+    // Handle photo file selection and generate caption inputs
+    document.querySelector('input[name="photos[]"]').addEventListener('change', function(e) {
+        const captionInputs = document.getElementById('caption-inputs');
+        const files = e.target.files;
+
+        // Clear existing caption inputs
+        captionInputs.innerHTML = '';
+
+        if (files.length > 0) {
+            captionInputs.classList.remove('hidden');
+
+            // Create caption input for each file
+            Array.from(files).forEach((file, index) => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center gap-2';
+
+                const fileNameSpan = document.createElement('span');
+                fileNameSpan.className = 'text-sm text-text-muted font-medium w-40 truncate';
+                fileNameSpan.textContent = file.name;
+
+                const captionInput = document.createElement('input');
+                captionInput.type = 'text';
+                captionInput.name = 'captions[]';
+                captionInput.placeholder = 'Caption (optional)';
+                captionInput.className = 'flex-1 bg-surface border border-border text-text-main rounded-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary';
+
+                div.appendChild(fileNameSpan);
+                div.appendChild(captionInput);
+                captionInputs.appendChild(div);
+            });
+        } else {
+            captionInputs.classList.add('hidden');
+        }
+    });
+</script>

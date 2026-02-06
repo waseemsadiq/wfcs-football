@@ -7,7 +7,7 @@ namespace App\Models;
 use Core\Model;
 
 /**
- * FixturePhoto model for managing match photo galleries.
+ * FixturePhoto model for managing fixture photo galleries.
  */
 class FixturePhoto extends Model
 {
@@ -35,11 +35,10 @@ class FixturePhoto extends Model
     }
 
     /**
-     * Create a new photo record.
+     * Create a new fixture photo record.
      */
     public function create(array $record): array
     {
-        // Set timestamp
         if (!isset($record['created_at'])) {
             $record['created_at'] = date('Y-m-d H:i:s');
         }
@@ -48,33 +47,34 @@ class FixturePhoto extends Model
     }
 
     /**
-     * Delete photo and its file.
+     * Delete a photo and return its file path for cleanup.
      */
-    public function deletePhoto(int $id): bool
+    public function deletePhoto(int $id): ?string
     {
         $photo = $this->find($id);
         if (!$photo) {
-            return false;
+            return null;
         }
 
-        // Delete file from filesystem
-        $filePath = __DIR__ . '/../../uploads/fixtures/' . $photo['filePath'];
-        if (file_exists($filePath)) {
-            unlink($filePath);
-        }
+        $filePath = $photo['filePath'];
+        $this->delete($id);
 
-        return $this->delete($id);
+        return $filePath;
     }
 
     /**
-     * Update sort order for multiple photos.
+     * Get the maximum sort order for a fixture.
      */
-    public function updateSortOrder(array $photoIds): bool
+    public function getMaxSortOrder(string $fixtureType, int $fixtureId): int
     {
-        foreach ($photoIds as $order => $photoId) {
-            $this->update($photoId, ['sort_order' => $order]);
-        }
+        $stmt = $this->db->prepare(
+            "SELECT MAX(sort_order) as max_order
+             FROM fixture_photos
+             WHERE fixture_type = ? AND fixture_id = ?"
+        );
+        $stmt->execute([$fixtureType, $fixtureId]);
+        $result = $stmt->fetch();
 
-        return true;
+        return (int) ($result['max_order'] ?? 0);
     }
 }
