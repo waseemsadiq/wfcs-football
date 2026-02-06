@@ -465,6 +465,15 @@ class League extends Model
 
     public function updateFixtureResult(int|string $leagueId, int|string $fixtureId, array $result): bool
     {
+        // Get fixture to retrieve team IDs for stats recalculation
+        $fixtureStmt = $this->db->prepare("
+            SELECT home_team_id, away_team_id
+            FROM league_fixtures
+            WHERE league_id = ? AND id = ?
+        ");
+        $fixtureStmt->execute([$leagueId, $fixtureId]);
+        $fixture = $fixtureStmt->fetch();
+
         $stmt = $this->db->prepare("
             UPDATE league_fixtures
             SET home_score = ?,
@@ -476,7 +485,7 @@ class League extends Model
             WHERE league_id = ? AND id = ?
         ");
 
-        return $stmt->execute([
+        $success = $stmt->execute([
             $result['homeScore'] ?? null,
             $result['awayScore'] ?? null,
             json_encode($result['homeScorers'] ?? ''),
@@ -486,6 +495,15 @@ class League extends Model
             $leagueId,
             $fixtureId
         ]);
+
+        // Trigger stats recalculation for both teams
+        if ($success && $fixture) {
+            $statsService = new \App\Services\PlayerStatsService();
+            $statsService->recalculateTeamStats($fixture['home_team_id']);
+            $statsService->recalculateTeamStats($fixture['away_team_id']);
+        }
+
+        return $success;
     }
 
     /**

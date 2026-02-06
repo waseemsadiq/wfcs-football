@@ -376,13 +376,14 @@ class Cup extends Model
      */
     public function updateFixtureResult(int|string $cupId, int|string $fixtureId, array $result): bool
     {
+        // Get fixture to determine home/away and for stats recalculation
+        $fixture = $this->getFixtureById($fixtureId);
+
         // Determine winner
         $winnerId = $result['winnerId'] ?? null;
         if (!$winnerId) {
             $winner = $this->determineWinner($result);
         } else {
-            // Get fixture to determine home/away
-            $fixture = $this->getFixtureById($fixtureId);
             if ($fixture) {
                 $winner = $winnerId == $fixture['homeTeamId'] ? 'home' : 'away';
             } else {
@@ -426,6 +427,13 @@ class Cup extends Model
             $fixtureId,
             $cupId
         ]);
+
+        // Trigger stats recalculation for both teams
+        if ($success && $fixture) {
+            $statsService = new \App\Services\PlayerStatsService();
+            $statsService->recalculateTeamStats($fixture['homeTeamId']);
+            $statsService->recalculateTeamStats($fixture['awayTeamId']);
+        }
 
         // Advance winner to next round
         if ($success && $winner) {
