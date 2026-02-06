@@ -162,6 +162,13 @@ include __DIR__ . '/../partials/admin_page_header.php';
             </table>
         </div>
     <?php endif; ?>
+
+    <?php
+    // Include pagination
+    if (isset($pagination) && $pagination['totalPages'] > 1):
+        include __DIR__ . '/../partials/pagination.php';
+    endif;
+    ?>
     </div>
 </div>
 
@@ -174,6 +181,7 @@ include __DIR__ . '/../partials/admin_page_header.php';
     const BASE_PATH = '<?= $basePath ?>';
     let currentPool = <?= $pool ? 'true' : 'false' ?>;
     let currentTeamId = '<?= $selectedTeamId ?? '' ?>';
+    let currentPage = 1;
 
     // Filter functionality
     const teamFilter = document.getElementById('teamFilter');
@@ -184,12 +192,14 @@ include __DIR__ . '/../partials/admin_page_header.php';
     teamFilter?.addEventListener('change', function() {
         currentTeamId = this.value;
         currentPool = false;
+        currentPage = 1;
         loadPlayers();
     });
 
     poolFilterBtn?.addEventListener('click', function() {
         currentPool = !currentPool;
         currentTeamId = '';
+        currentPage = 1;
         teamFilter.value = '';
 
         // Update button style
@@ -202,16 +212,25 @@ include __DIR__ . '/../partials/admin_page_header.php';
         loadPlayers();
     });
 
-    function loadPlayers() {
+    function loadPlayers(page = 1) {
+        currentPage = page;
         playersLoader.classList.remove('hidden');
         playersContainer.style.opacity = '0.5';
 
         let url = `${BASE_PATH}/admin/players/ajax/list?`;
+        const params = [];
+
         if (currentPool) {
-            url += 'pool=1';
+            params.push('pool=1');
         } else if (currentTeamId) {
-            url += `team_id=${currentTeamId}`;
+            params.push(`team_id=${currentTeamId}`);
         }
+
+        if (page > 1) {
+            params.push(`page=${page}`);
+        }
+
+        url += params.join('&');
 
         fetch(url)
             .then(response => response.text())
@@ -219,8 +238,9 @@ include __DIR__ . '/../partials/admin_page_header.php';
                 // Safe to use innerHTML here - content is from our own trusted server endpoint
                 playersContainer.innerHTML = html;
 
-                // Reinitialize bulk delete after loading new content
+                // Reinitialize bulk delete and pagination after loading new content
                 initBulkDelete();
+                initPagination();
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -230,6 +250,35 @@ include __DIR__ . '/../partials/admin_page_header.php';
                 playersLoader.classList.add('hidden');
                 playersContainer.style.opacity = '1';
             });
+    }
+
+    // Pagination functionality
+    function initPagination() {
+        // Handle pagination button clicks
+        document.querySelectorAll('[data-pagination-prev]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (!this.disabled && currentPage > 1) {
+                    loadPlayers(currentPage - 1);
+                }
+            });
+        });
+
+        document.querySelectorAll('[data-pagination-next]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (!this.disabled) {
+                    loadPlayers(currentPage + 1);
+                }
+            });
+        });
+
+        document.querySelectorAll('[data-page]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const page = parseInt(this.dataset.page);
+                if (page !== currentPage) {
+                    loadPlayers(page);
+                }
+            });
+        });
     }
 
     // Bulk delete functionality
@@ -265,6 +314,7 @@ include __DIR__ . '/../partials/admin_page_header.php';
 
     // Initialize on page load
     initBulkDelete();
+    initPagination();
 
     // Handle bulk delete
     deleteSelectedBtn?.addEventListener('click', function() {

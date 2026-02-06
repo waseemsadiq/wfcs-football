@@ -32,14 +32,25 @@ class PlayersController extends Controller
     {
         $teamId = $this->get('team_id');
         $pool = $this->get('pool', '0') === '1';
+        $page = max(1, (int) $this->get('page', 1));
+        $perPage = 20;
 
+        // Build where conditions
+        $where = [];
         if ($pool) {
-            $players = $this->playerModel->getPoolPlayers();
+            $where['is_pool_player'] = 1;
         } elseif ($teamId) {
-            $players = $this->playerModel->getByTeam($teamId);
-        } else {
-            $players = $this->playerModel->all();
+            $where['team_id'] = (int) $teamId;
         }
+
+        // Get total count
+        $totalCount = $this->playerModel->count($where);
+
+        // Calculate pagination
+        $pagination = $this->paginate($totalCount, $page, $perPage);
+
+        // Get paginated players
+        $players = $this->playerModel->paginate($perPage, $pagination['offset'], $where, 'name', 'ASC');
 
         $teams = $this->teamModel->allSorted();
 
@@ -50,6 +61,7 @@ class PlayersController extends Controller
             'teams' => $teams,
             'selectedTeamId' => $teamId,
             'pool' => $pool,
+            'pagination' => $pagination,
         ]);
     }
 
@@ -392,14 +404,25 @@ class PlayersController extends Controller
     {
         $teamId = $this->get('team_id');
         $pool = $this->get('pool', '0') === '1';
+        $page = max(1, (int) $this->get('page', 1));
+        $perPage = 20;
 
+        // Build where conditions
+        $where = [];
         if ($pool) {
-            $players = $this->playerModel->getPoolPlayers();
+            $where['is_pool_player'] = 1;
         } elseif ($teamId) {
-            $players = $this->playerModel->getByTeam($teamId);
-        } else {
-            $players = $this->playerModel->all();
+            $where['team_id'] = (int) $teamId;
         }
+
+        // Get total count
+        $totalCount = $this->playerModel->count($where);
+
+        // Calculate pagination
+        $pagination = $this->paginate($totalCount, $page, $perPage);
+
+        // Get paginated players
+        $players = $this->playerModel->paginate($perPage, $pagination['offset'], $where, 'name', 'ASC');
 
         $teams = $this->teamModel->allSorted();
         $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
@@ -409,6 +432,7 @@ class PlayersController extends Controller
             'teams' => $teams,
             'basePath' => $basePath,
             'pool' => $pool,
+            'pagination' => $pagination,
         ]);
     }
 }

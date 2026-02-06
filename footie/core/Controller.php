@@ -412,4 +412,39 @@ class Controller
         }
         return $enriched;
     }
+
+    /**
+     * Calculate pagination data for a result set.
+     *
+     * @param int $totalCount Total number of records
+     * @param int $currentPage Current page number (1-indexed)
+     * @param int $perPage Records per page (default 20)
+     * @return array Pagination data with keys: currentPage, totalPages, perPage, offset, hasNext, hasPrev, startRecord, endRecord
+     */
+    protected function paginate(int $totalCount, int $currentPage = 1, int $perPage = 20): array
+    {
+        // Ensure valid values
+        $perPage = max(1, $perPage);
+        $totalPages = max(1, (int) ceil($totalCount / $perPage));
+        $currentPage = max(1, min($currentPage, $totalPages));
+
+        // Calculate offset for SQL queries
+        $offset = ($currentPage - 1) * $perPage;
+
+        // Calculate record range for display
+        $startRecord = $totalCount > 0 ? $offset + 1 : 0;
+        $endRecord = min($offset + $perPage, $totalCount);
+
+        return [
+            'currentPage' => $currentPage,
+            'totalPages' => $totalPages,
+            'perPage' => $perPage,
+            'totalCount' => $totalCount,
+            'offset' => $offset,
+            'hasNext' => $currentPage < $totalPages,
+            'hasPrev' => $currentPage > 1,
+            'startRecord' => $startRecord,
+            'endRecord' => $endRecord,
+        ];
+    }
 }

@@ -168,14 +168,31 @@ abstract class Model
     }
 
     /**
-     * Count all records.
+     * Count records with optional WHERE conditions.
      */
-    public function count(): int
+    public function count(array $where = []): int
     {
         $table = $this->getTableName();
-        $stmt = $this->db->query("SELECT COUNT(*) FROM `{$table}`");
+        $sql = "SELECT COUNT(*) FROM `{$table}`";
 
-        return (int) $stmt->fetchColumn();
+        $params = [];
+        if (!empty($where)) {
+            $conditions = [];
+            foreach ($where as $column => $value) {
+                $conditions[] = "{$column} = ?";
+                $params[] = $value;
+            }
+            $sql .= " WHERE " . implode(' AND ', $conditions);
+        }
+
+        if (empty($params)) {
+            $stmt = $this->db->query($sql);
+            return (int) $stmt->fetchColumn();
+        } else {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            return (int) $stmt->fetchColumn();
+        }
     }
 
     /**
@@ -255,4 +272,49 @@ abstract class Model
             $counter++;
         }
     }
+
+    /**
+     * Get paginated results with optional filtering.
+     *
+     * @param int $limit Number of records per page
+     * @param int $offset Starting offset
+     * @param array $where Optional where conditions ['column' => 'value']
+     * @param string $orderBy Optional order by column
+     * @param string $orderDir Order direction (ASC or DESC)
+     * @return array Array of records
+     */
+    public function paginate(int $limit = 20, int $offset = 0, array $where = [], string $orderBy = 'id', string $orderDir = 'DESC'): array
+    {
+        $table = $this->getTableName();
+        $sql = "SELECT * FROM {$table}";
+
+        $params = [];
+        if (!empty($where)) {
+            $conditions = [];
+            foreach ($where as $column => $value) {
+                $conditions[] = "{$column} = ?";
+                $params[] = $value;
+            }
+            $sql .= " WHERE " . implode(' AND ', $conditions);
+        }
+
+        $sql .= " ORDER BY {$orderBy} {$orderDir}";
+        $sql .= " LIMIT :limit OFFSET :offset";
+
+        $stmt = $this->db->prepare($sql);
+
+        // Bind WHERE parameters
+        foreach ($params as $i => $value) {
+            $stmt->bindValue($i + 1, $value);
+        }
+
+        // Bind LIMIT and OFFSET as integers
+        $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
+
+        $stmt->execute();
+
+        return $this->transformRows($stmt->fetchAll());
+    }
+
 }

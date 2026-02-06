@@ -112,4 +112,11 @@
             </tbody>
         </table>
     </div>
+
+    <?php
+    // Include pagination if provided
+    if (isset($pagination)):
+        include __DIR__ . '/../partials/pagination.php';
+    endif;
+    ?>
 <?php endif; ?>

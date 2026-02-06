@@ -16,6 +16,12 @@ include __DIR__ . '/../partials/admin_page_header.php';
         </div>
     </div>
 
+    <div id="teams-loader" class="hidden flex justify-center py-8" role="status" aria-live="polite">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <span class="sr-only">Loading teams...</span>
+    </div>
+
+    <div id="teams-container">
     <?php if (empty($teams)): ?>
         <?php
         $message = 'No teams added yet. Get started by adding your first team.';
@@ -84,76 +90,137 @@ include __DIR__ . '/../partials/admin_page_header.php';
         </div>
     <?php endif; ?>
 
+    <?php
+    // Include pagination
+    if (isset($pagination) && $pagination['totalPages'] > 1):
+        include __DIR__ . '/../partials/pagination.php';
+    endif;
+    ?>
+    </div>
+
+
     <form id="bulkDeleteForm" method="POST" action="<?= $basePath ?>/admin/teams/delete-multiple" class="hidden">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(\Core\Auth::csrfToken()) ?>">
     </form>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const selectAll = document.getElementById('selectAll');
-            const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
-            const checkboxes = document.querySelectorAll('.team-checkbox');
+        const BASE_PATH = '<?= $basePath ?>';
+        let currentPage = 1;
 
-            function updateToolbar() {
-                const checkedCount = document.querySelectorAll('.team-checkbox:checked').length;
-                if (checkedCount > 0) {
-                    deleteSelectedBtn.removeAttribute('disabled');
-                    deleteSelectedBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                } else {
-                    deleteSelectedBtn.setAttribute('disabled', 'disabled');
-                    deleteSelectedBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                }
+        const teamsContainer = document.getElementById('teams-container');
+        const teamsLoader = document.getElementById('teams-loader');
+
+        function loadTeams(page = 1) {
+            currentPage = page;
+            teamsLoader.classList.remove('hidden');
+            teamsContainer.style.opacity = '0.5';
+
+            let url = `${BASE_PATH}/admin/teams/ajax/list?`;
+            if (page > 1) {
+                url += `page=${page}`;
             }
 
-            if (selectAll) {
-                selectAll.addEventListener('change', function (e) {
-                    checkboxes.forEach(checkbox => {
-                        checkbox.checked = e.target.checked;
-                    });
-                    updateToolbar();
+            fetch(url)
+                .then(response => response.text())
+                .then(html => {
+                    // Safe to use innerHTML here - content is from our own trusted server endpoint
+                    teamsContainer.innerHTML = html;
+
+                    // Reinitialize bulk delete and pagination after loading new content
+                    initBulkDelete();
+                    initPagination();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    teamsContainer.innerHTML = '<div class="text-error text-center py-8">Failed to load teams.</div>';
+                })
+                .finally(() => {
+                    teamsLoader.classList.add('hidden');
+                    teamsContainer.style.opacity = '1';
                 });
-            }
+        }
 
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function () {
-                    const allCheckboxes = document.querySelectorAll('.team-checkbox');
-                    const checkedCount = document.querySelectorAll('.team-checkbox:checked').length;
-
-                    if (selectAll) {
-                        selectAll.checked = checkedCount === allCheckboxes.length;
-                        selectAll.indeterminate = checkedCount > 0 && checkedCount < allCheckboxes.length;
+        // Pagination functionality
+        function initPagination() {
+            // Handle pagination button clicks
+            document.querySelectorAll('[data-pagination-prev]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (!this.disabled && currentPage > 1) {
+                        loadTeams(currentPage - 1);
                     }
-                    updateToolbar();
                 });
             });
 
-            if (deleteSelectedBtn) {
-                deleteSelectedBtn.addEventListener('click', function () {
-                    const checkedCount = document.querySelectorAll('.team-checkbox:checked').length;
-                    if (confirm('Are you sure you want to delete ' + checkedCount + ' team' + (checkedCount !== 1 ? 's' : '') + '? This cannot be undone.')) {
-                        const form = document.getElementById('bulkDeleteForm');
-                        const csrfToken = form.querySelector('input[name="csrf_token"]').value;
-
-                        // Clear form but keep csrf
-                        form.innerHTML = '';
-                        const csrfInput = document.createElement('input');
-                        csrfInput.type = 'hidden';
-                        csrfInput.name = 'csrf_token';
-                        csrfInput.value = csrfToken;
-                        form.appendChild(csrfInput);
-
-                        // Add selected IDs
-                        document.querySelectorAll('.team-checkbox:checked').forEach(checkbox => {
-                            const input = document.createElement('input');
-                            input.type = 'hidden';
-                            input.name = 'team_ids[]';
-                            input.value = checkbox.value;
-                            form.appendChild(input);
-                        });
-
-                        form.submit();
+            document.querySelectorAll('[data-pagination-next]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (!this.disabled) {
+                        loadTeams(currentPage + 1);
                     }
                 });
+            });
+
+            document.querySelectorAll('[data-page]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const page = parseInt(this.dataset.page);
+                    if (page !== currentPage) {
+                        loadTeams(page);
+                    }
+                });
+            });
+        }
+
+        // Bulk delete functionality
+        let selectAll, teamCheckboxes, deleteSelectedBtn;
+        const bulkDeleteForm = document.getElementById('bulkDeleteForm');
+
+        function initBulkDelete() {
+            selectAll = document.getElementById('selectAll');
+            teamCheckboxes = document.querySelectorAll('.team-checkbox');
+            deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+
+            // Select all functionality
+            selectAll?.addEventListener('change', function() {
+                teamCheckboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+                updateDeleteButton();
+            });
+
+            // Update delete button state
+            teamCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateDeleteButton);
+            });
+        }
+
+        function updateDeleteButton() {
+            const checkedCount = document.querySelectorAll('.team-checkbox:checked').length;
+            deleteSelectedBtn.disabled = checkedCount === 0;
+            deleteSelectedBtn.textContent = checkedCount > 0 ?
+                `Delete Selected (${checkedCount})` :
+                'Delete Selected';
+        }
+
+        // Initialize on page load
+        initBulkDelete();
+        initPagination();
+
+        // Handle bulk delete
+        deleteSelectedBtn?.addEventListener('click', function() {
+            const checkedBoxes = document.querySelectorAll('.team-checkbox:checked');
+            const count = checkedBoxes.length;
+
+            if (count === 0) return;
+
+            if (confirm(`Are you sure you want to delete ${count} team${count !== 1 ? 's' : ''}? This cannot be undone.`)) {
+                // Add checked IDs to form
+                checkedBoxes.forEach(checkbox => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'team_ids[]';
+                    input.value = checkbox.value;
+                    bulkDeleteForm.appendChild(input);
+                });
+                bulkDeleteForm.submit();
             }
         });
     </script>

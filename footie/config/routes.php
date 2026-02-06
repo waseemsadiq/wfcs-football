@@ -47,6 +47,7 @@ $router->get('/admin/dashboard/upcoming-fixtures', 'DashboardController', 'getUp
 
 // Teams
 $router->get('/admin/teams', 'TeamsController', 'index');
+$router->get('/admin/teams/ajax/list', 'TeamsController', 'getTeamsList');
 $router->get('/admin/teams/create', 'TeamsController', 'create');
 $router->post('/admin/teams/store', 'TeamsController', 'store');
 $router->get('/admin/teams/{slug}', 'TeamsController', 'show');

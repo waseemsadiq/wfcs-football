@@ -26,12 +26,23 @@ class TeamsController extends Controller
      */
     public function index(): void
     {
-        $teams = $this->teamModel->allSorted();
+        $page = max(1, (int) $this->get('page', 1));
+        $perPage = 20;
+
+        // Get total count
+        $totalCount = $this->teamModel->count();
+
+        // Calculate pagination
+        $pagination = $this->paginate($totalCount, $page, $perPage);
+
+        // Get paginated teams
+        $teams = $this->teamModel->paginate($perPage, $pagination['offset'], [], 'name', 'ASC');
 
         $this->render('teams/index', [
             'title' => 'Teams',
             'currentPage' => 'teams',
             'teams' => $teams,
+            'pagination' => $pagination,
         ]);
     }
 
@@ -299,5 +310,31 @@ class TeamsController extends Controller
         $message = $deletedCount . ' team' . ($deletedCount !== 1 ? 's' : '') . ' deleted successfully.';
         $this->flash('success', $message);
         $this->redirect('/admin/teams');
+    }
+
+    /**
+     * AJAX endpoint to get filtered team list.
+     */
+    public function getTeamsList(): void
+    {
+        $page = max(1, (int) $this->get('page', 1));
+        $perPage = 20;
+
+        // Get total count
+        $totalCount = $this->teamModel->count();
+
+        // Calculate pagination
+        $pagination = $this->paginate($totalCount, $page, $perPage);
+
+        // Get paginated teams
+        $teams = $this->teamModel->paginate($perPage, $pagination['offset'], [], 'name', 'ASC');
+
+        $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\\\');
+
+        $this->renderPartial('teams/teams_table', [
+            'teams' => $teams,
+            'basePath' => $basePath,
+            'pagination' => $pagination,
+        ]);
     }
 }
