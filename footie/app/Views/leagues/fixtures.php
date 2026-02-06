@@ -326,7 +326,7 @@ usort($fixtures, function ($a, $b) {
                 }
 
                 try {
-                    const response = await fetch(`/admin/leagues/ajax/scorer-row?teamId=${teamId}&side=${side}&index=${index}`);
+                    const response = await fetch(`<?= $basePath ?>/admin/leagues/ajax/scorer-row?teamId=${teamId}&side=${side}&index=${index}`);
                     const html = await response.text();
 
                     const tempDiv = document.createElement('div');
@@ -352,7 +352,7 @@ usort($fixtures, function ($a, $b) {
                 }
 
                 try {
-                    const response = await fetch(`/admin/leagues/ajax/card-row?teamId=${teamId}&side=${side}&index=${index}`);
+                    const response = await fetch(`<?= $basePath ?>/admin/leagues/ajax/card-row?teamId=${teamId}&side=${side}&index=${index}`);
                     const html = await response.text();
 
                     const tempDiv = document.createElement('div');

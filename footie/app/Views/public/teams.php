@@ -39,7 +39,8 @@
         <div id="loading-state" class="hidden">
             <div class="card">
                 <div class="text-center py-12" role="status" aria-live="polite">
-                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4" aria-hidden="true"></div>
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"
+                        aria-hidden="true"></div>
                     <p class="text-text-muted">Loading team data...</p>
                 </div>
             </div>
@@ -223,6 +224,18 @@
                 dateDisplay = d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
             }
 
+            const fixtureType = fixture.cupId ? 'cup' : 'league';
+            const competitionSlug = fixture.competitionSlug || '';
+            const fixtureSlug = `${homeSlug}-vs-${awaySlug}`;
+            const fixtureDetailUrl = competitionSlug ? `<?= $basePath ?>/fixture/${fixtureType}/${competitionSlug}/${fixtureSlug}` : '';
+
+            let dateHtml = `<div class="text-xs text-text-muted font-bold uppercase tracking-wider mb-1">${dateDisplay}</div>`;
+            if (fixtureDetailUrl) {
+                dateHtml = `<div class="text-xs text-text-muted font-bold uppercase tracking-wider mb-1">
+                    <a href="${fixtureDetailUrl}" class="hover:text-primary transition-colors">${dateDisplay}</a>
+                </div>`;
+            }
+
             let compDisplay = escapeHtml(fixture.competitionName || '');
             if (fixture.roundName) {
                 compDisplay += ' - ' + escapeHtml(fixture.roundName);
@@ -252,16 +265,31 @@
                     extraInfoHtml = `<div class="text-[10px] text-text-muted font-normal mt-1 text-center">(${parts.join(', ')})</div>`;
                 }
 
-                scoreHtml = `
-                    <div class="flex flex-col items-center">
-                        <div class="font-bold text-xl text-primary bg-surface-hover px-3 py-1 rounded-sm">
-                            ${homeScore} - ${awayScore}
+                if (fixtureDetailUrl) {
+                    scoreHtml = `
+                        <div class="flex flex-col items-center">
+                            <a href="${fixtureDetailUrl}" class="font-bold text-xl text-text-main bg-surface-hover px-3 py-1 rounded-sm leading-none hover:bg-primary hover:text-white transition-colors">
+                                ${homeScore} - ${awayScore}
+                            </a>
+                            ${extraInfoHtml}
                         </div>
-                        ${extraInfoHtml}
-                    </div>
-                `;
+                    `;
+                } else {
+                    scoreHtml = `
+                        <div class="flex flex-col items-center">
+                            <div class="font-bold text-xl text-text-main bg-surface-hover px-3 py-1 rounded-sm leading-none">
+                                ${homeScore} - ${awayScore}
+                            </div>
+                            ${extraInfoHtml}
+                        </div>
+                    `;
+                }
             } else {
-                scoreHtml = `<div class="text-base text-text-muted bg-transparent font-medium">${escapeHtml(time)}</div>`;
+                if (fixtureDetailUrl) {
+                    scoreHtml = `<a href="${fixtureDetailUrl}" class="text-base text-text-muted bg-transparent font-medium hover:text-primary transition-colors">${escapeHtml(time)}</a>`;
+                } else {
+                    scoreHtml = `<div class="text-base text-text-muted bg-transparent font-medium">${escapeHtml(time)}</div>`;
+                }
             }
 
             const homeLink = homeId ? `<a href="<?= $basePath ?>/team/${homeSlug}" class="hover:text-primary transition-colors">${homeName}</a>` : homeName;
@@ -269,7 +297,7 @@
 
             return `
                 <li class="flex flex-col items-center py-4 border-b border-border last:border-b-0 gap-1 hover:bg-surface-hover/50 transition-colors px-4 -mx-4 rounded-sm">
-                    <div class="text-xs text-text-muted font-bold uppercase tracking-wider mb-1">${dateDisplay}</div>
+                    ${dateHtml}
                     <div class="flex items-center justify-center gap-4 md:gap-8 w-full">
                         <div class="flex-1 flex items-center justify-end gap-3 font-semibold text-right">
                             ${homeLink}

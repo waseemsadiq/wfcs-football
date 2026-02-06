@@ -411,7 +411,7 @@ include __DIR__ . '/../partials/regenerate_modal.php';
         }
 
         try {
-            const response = await fetch(`/admin/cups/ajax/scorer-row?teamId=${teamId}&side=${side}&index=${index}`);
+            const response = await fetch(`<?= $basePath ?>/admin/cups/ajax/scorer-row?teamId=${teamId}&side=${side}&index=${index}`);
             const html = await response.text();
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = html;
@@ -435,7 +435,7 @@ include __DIR__ . '/../partials/regenerate_modal.php';
         }
 
         try {
-            const response = await fetch(`/admin/cups/ajax/card-row?teamId=${teamId}&side=${side}&index=${index}`);
+            const response = await fetch(`<?= $basePath ?>/admin/cups/ajax/card-row?teamId=${teamId}&side=${side}&index=${index}`);
             const html = await response.text();
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = html;

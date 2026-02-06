@@ -11,9 +11,9 @@
 
 $colourValue = $colourValue ?? '#1a5f2a';
 
-// Load team colours from JSON (static reference data for colour picker)
-$teamColoursJson = file_get_contents(BASE_PATH . '/css/team-colours.json');
-$teamColours = json_decode($teamColoursJson, true);
+// Load club colours from JSON (static reference data for colour picker)
+$clubColoursJson = file_get_contents(BASE_PATH . '/css/club-colours.json');
+$clubColours = json_decode($clubColoursJson, true);
 ?>
 
 <div class="mb-6">
@@ -42,19 +42,19 @@ $teamColours = json_decode($teamColoursJson, true);
     <!-- Quick Pick Panel -->
     <div id="quick-pick-panel"
         class="max-h-0 overflow-hidden transition-[max-height,padding] duration-300 ease-out [&.open]:max-h-[500px] [&.open]:pt-4">
-        <?php foreach ($teamColours['leagues'] as $league): ?>
+        <?php foreach ($clubColours['leagues'] as $league): ?>
             <div class="mb-8">
                 <div class="text-[11px] font-semibold uppercase tracking-[0.05em] text-text-muted mb-2.5">
                     <?= htmlspecialchars($league['name']) ?>
                 </div>
                 <div class="flex flex-wrap gap-2">
-                    <?php foreach ($league['teams'] as $team): ?>
+                    <?php foreach ($league['teams'] as $club): ?>
                         <button type="button"
-                            class="team-chip inline-flex items-center gap-1.5 px-1.5 py-1.5 pr-2.5 text-xs font-medium text-text-muted bg-surface-hover border border-border rounded-[20px] cursor-pointer transition-all duration-150 whitespace-nowrap hover:text-text-main hover:border-primary hover:bg-primary/10 [&.selected]:text-text-main [&.selected]:border-primary [&.selected]:bg-primary/15 [&.selected]:ring-2 [&.selected]:ring-primary/30"
-                            data-color="<?= htmlspecialchars($team['colour']) ?>">
+                            class="club-chip inline-flex items-center gap-1.5 px-1.5 py-1.5 pr-2.5 text-xs font-medium text-text-muted bg-surface-hover border border-border rounded-[20px] cursor-pointer transition-all duration-150 whitespace-nowrap hover:text-text-main hover:border-primary hover:bg-primary/10 [&.selected]:text-text-main [&.selected]:border-primary [&.selected]:bg-primary/15 [&.selected]:ring-2 [&.selected]:ring-primary/30"
+                            data-color="<?= htmlspecialchars($club['colour']) ?>">
                             <span class="w-4 h-4 rounded-full shrink-0 shadow-inner"
-                                style="background-color: <?= htmlspecialchars($team['colour']) ?>"></span>
-                            <?= htmlspecialchars($team['name']) ?>
+                                style="background-color: <?= htmlspecialchars($club['colour']) ?>"></span>
+                            <?= htmlspecialchars($club['name']) ?>
                         </button>
                     <?php endforeach; ?>
                 </div>
@@ -79,7 +79,7 @@ $teamColours = json_decode($teamColoursJson, true);
         // Colour picker sync
         const colourInput = document.getElementById('colour');
         const colourValue = document.getElementById('colour-value');
-        const chips = document.querySelectorAll('.team-chip');
+        const chips = document.querySelectorAll('.club-chip');
 
         colourInput.addEventListener('input', (e) => {
             colourValue.textContent = e.target.value;

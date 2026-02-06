@@ -151,12 +151,12 @@ class CupsController extends CompetitionController
 
         // Handle scheduling details (pitch, referee, isLive)
         $pitch = $this->sanitizeString($this->post('pitch', ''), 50);
-        $referee = $this->sanitizeString($this->post('referee', ''), 100);
+        $refereeId = $this->post('referee_id') !== '' ? (int) $this->post('referee_id') : null;
         $isLive = $this->post('isLive') ? 1 : 0;
 
         $cupModel->updateFixtureDetails($cup['id'], $fixtureId, [
             'pitch' => $pitch,
-            'referee' => $referee,
+            'refereeId' => $refereeId,
             'isLive' => $isLive,
         ]);
 
@@ -391,7 +391,7 @@ class CupsController extends CompetitionController
 
                 if ($homeId && isset($teamMap[$homeId])) {
                     $fixture['homeTeamName'] = $teamMap[$homeId]['name'];
-                    $fixture['homeTeamSlug'] = $teamMap[$homeId]['slug'] ?? (string)$homeId;
+                    $fixture['homeTeamSlug'] = $teamMap[$homeId]['slug'] ?? (string) $homeId;
                     $fixture['homeTeamColour'] = $teamMap[$homeId]['colour'] ?? '#1a5f2a';
                 } else {
                     $fixture['homeTeamName'] = 'TBD';
@@ -401,7 +401,7 @@ class CupsController extends CompetitionController
 
                 if ($awayId && isset($teamMap[$awayId])) {
                     $fixture['awayTeamName'] = $teamMap[$awayId]['name'];
-                    $fixture['awayTeamSlug'] = $teamMap[$awayId]['slug'] ?? (string)$awayId;
+                    $fixture['awayTeamSlug'] = $teamMap[$awayId]['slug'] ?? (string) $awayId;
                     $fixture['awayTeamColour'] = $teamMap[$awayId]['colour'] ?? '#1a5f2a';
                 } else {
                     $fixture['awayTeamName'] = 'TBD';

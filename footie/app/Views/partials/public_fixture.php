@@ -110,7 +110,11 @@ $awayLink = $awayId ? "<a href=\"{$basePath}/team/{$awaySlug}\" class=\"hover:te
     class="flex flex-col items-center py-4 border-b border-border last:border-b-0 gap-1 hover:bg-surface-hover/50 transition-colors px-4 -mx-4 rounded-sm">
     <?php if ($showDate): ?>
         <div class="text-xs text-text-muted font-bold uppercase tracking-wider mb-1">
-            <?= $dateDisplay ?>
+            <?php if (!empty($fixtureDetailUrl)): ?>
+                <a href="<?= $fixtureDetailUrl ?>" class="hover:text-primary transition-colors"><?= $dateDisplay ?></a>
+            <?php else: ?>
+                <?= $dateDisplay ?>
+            <?php endif; ?>
         </div>
     <?php endif; ?>
 

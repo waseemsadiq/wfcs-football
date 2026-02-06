@@ -221,4 +221,18 @@ class Team extends Model
     {
         return count($team['players'] ?? []);
     }
+
+    /**
+     * Override paginate to include players for each team.
+     */
+    public function paginate(int $limit = 20, int $offset = 0, array $where = [], string $orderBy = 'id', string $orderDir = 'DESC'): array
+    {
+        $teams = parent::paginate($limit, $offset, $where, $orderBy, $orderDir);
+
+        foreach ($teams as &$team) {
+            $team['players'] = $this->getPlayers($team['id']);
+        }
+
+        return $teams;
+    }
 }

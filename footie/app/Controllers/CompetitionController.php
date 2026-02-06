@@ -486,36 +486,28 @@ abstract class CompetitionController extends Controller
         int $teamId,
         \App\Models\Player $playerModel
     ): void {
-        // Yellow cards
-        foreach ($cards['yellow'] ?? [] as $card) {
-            $playerId = $this->findPlayerIdByName($card['player'], $teamId, $playerModel);
-            $minute = !empty($card['minute']) ? (int) $card['minute'] : null;
+        $typeMapping = [
+            'yellow' => 'yellow_card',
+            'red' => 'red_card',
+            'blue' => 'blue_card',
+            'sinBins' => 'sin_bin'
+        ];
 
-            $events[] = [
-                'fixture_type' => $fixtureType,
-                'fixture_id' => $fixtureId,
-                'team_id' => $teamId,
-                'player_id' => $playerId,
-                'event_type' => 'yellow_card',
-                'minute' => $minute,
-                'notes' => null,
-            ];
-        }
+        foreach ($typeMapping as $formType => $eventType) {
+            foreach ($cards[$formType] ?? [] as $card) {
+                $playerId = $this->findPlayerIdByName($card['player'], $teamId, $playerModel);
+                $minute = !empty($card['minute']) ? (int) $card['minute'] : null;
 
-        // Red cards
-        foreach ($cards['red'] ?? [] as $card) {
-            $playerId = $this->findPlayerIdByName($card['player'], $teamId, $playerModel);
-            $minute = !empty($card['minute']) ? (int) $card['minute'] : null;
-
-            $events[] = [
-                'fixture_type' => $fixtureType,
-                'fixture_id' => $fixtureId,
-                'team_id' => $teamId,
-                'player_id' => $playerId,
-                'event_type' => 'red_card',
-                'minute' => $minute,
-                'notes' => null,
-            ];
+                $events[] = [
+                    'fixture_type' => $fixtureType,
+                    'fixture_id' => $fixtureId,
+                    'team_id' => $teamId,
+                    'player_id' => $playerId,
+                    'event_type' => $eventType,
+                    'minute' => $minute,
+                    'notes' => null,
+                ];
+            }
         }
     }
 

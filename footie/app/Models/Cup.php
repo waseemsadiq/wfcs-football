@@ -234,7 +234,7 @@ class Cup extends Model
 
         foreach ($events as $event) {
             $playerName = $event['player_name'] ?? 'Unknown';
-            $minute = $event['minute'] ? (string)$event['minute'] : '';
+            $minute = $event['minute'] ? (string) $event['minute'] : '';
             $isHome = $event['team_id'] == $homeTeamId;
 
             if ($event['event_type'] === 'goal') {
@@ -260,6 +260,20 @@ class Cup extends Model
                     $homeCards['red'][] = $cardData;
                 } else {
                     $awayCards['red'][] = $cardData;
+                }
+            } elseif ($event['event_type'] === 'blue_card') {
+                $cardData = ['player' => $playerName, 'minute' => $minute];
+                if ($isHome) {
+                    $homeCards['blue'][] = $cardData;
+                } else {
+                    $awayCards['blue'][] = $cardData;
+                }
+            } elseif ($event['event_type'] === 'sin_bin') {
+                $cardData = ['player' => $playerName, 'minute' => $minute];
+                if ($isHome) {
+                    $homeCards['sinBins'][] = $cardData;
+                } else {
+                    $awayCards['sinBins'][] = $cardData;
                 }
             }
         }
@@ -644,14 +658,14 @@ class Cup extends Model
         $stmt = $this->db->prepare("
             UPDATE cup_fixtures
             SET pitch = ?,
-                referee = ?,
+                referee_id = ?,
                 is_live = ?
             WHERE cup_id = ? AND id = ?
         ");
 
         return $stmt->execute([
             $details['pitch'] ?? null,
-            $details['referee'] ?? null,
+            $details['refereeId'] ?? null,
             (int) ($details['isLive'] ?? 0),
             $cupId,
             $fixtureId

@@ -206,8 +206,10 @@ class FixturesController extends Controller
     {
         foreach ($fixtures as $fixture) {
             if (isset($fixture['homeTeamId'], $fixture['awayTeamId'])) {
-                if ($fixture['homeTeamId'] == $homeId &&
-                    $fixture['awayTeamId'] == $awayId) {
+                if (
+                    $fixture['homeTeamId'] == $homeId &&
+                    $fixture['awayTeamId'] == $awayId
+                ) {
                     return $fixture;
                 }
             }
@@ -223,8 +225,10 @@ class FixturesController extends Controller
         foreach ($rounds as $round) {
             foreach ($round['fixtures'] as $fixture) {
                 if (isset($fixture['homeTeamId'], $fixture['awayTeamId'])) {
-                    if ($fixture['homeTeamId'] == $homeId &&
-                        $fixture['awayTeamId'] == $awayId) {
+                    if (
+                        $fixture['homeTeamId'] == $homeId &&
+                        $fixture['awayTeamId'] == $awayId
+                    ) {
                         return $fixture;
                     }
                 }
@@ -343,11 +347,11 @@ class FixturesController extends Controller
                 // Create database record
                 $sortOrder++;
                 $photoModel->create([
-                    'fixtureId' => $fixture['id'],
-                    'fixtureType' => $type,
-                    'filePath' => $result['filename'],
+                    'fixture_id' => $fixture['id'],
+                    'fixture_type' => $type,
+                    'file_path' => $result['filename'],
                     'caption' => $caption,
-                    'sortOrder' => $sortOrder,
+                    'sort_order' => $sortOrder,
                 ]);
                 $uploadCount++;
             } else {
