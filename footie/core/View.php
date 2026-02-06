@@ -105,7 +105,7 @@ class View
         // YouTube
         if (preg_match('#(?:youtube\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?\/ ]{11})#i', $url, $matches)) {
             $videoId = $matches[1];
-            return "https://www.youtube.com/embed/{$videoId}";
+            return "https://www.youtube.com/embed/{$videoId}?enablejsapi=1";
         }
 
         // Vimeo: vimeo.com/ID

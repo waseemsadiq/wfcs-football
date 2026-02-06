@@ -244,20 +244,24 @@
 
                     <script>
                         function switchVideoTab(index) {
-                            // Hide all video containers and stop hidden videos
+                            // Hide all video containers and pause hidden videos
                             document.querySelectorAll('.video-content').forEach((el, idx) => {
                                 if (idx !== index) {
                                     el.classList.add('hidden');
-                                    // Stop iframe playback by resetting src
+                                    
+                                    // Try to pause YouTube video via postMessage
                                     const iframe = el.querySelector('iframe');
-                                    if (iframe) {
+                                    if (iframe && iframe.src.includes('youtube.com')) {
+                                        iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                                    } else if (iframe) {
+                                        // Fallback for non-YouTube: still need to reset src to stop audio
                                         const src = iframe.src;
                                         iframe.src = '';
                                         iframe.src = src;
                                     }
                                 }
                             });
-
+                            
                             // Show selected container
                             document.getElementById('video-container-' + index).classList.remove('hidden');
 
