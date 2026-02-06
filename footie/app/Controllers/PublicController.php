@@ -83,7 +83,7 @@ class PublicController extends Controller
         $teamsById = $this->indexById($teams);
 
         $standings = $this->leagueModel->calculateStandings($league['id'], $teams);
-        $fixtures = $this->enrichFixtures($league['fixtures'] ?? [], $teamsById, $league['name'], 'league');
+        $fixtures = $this->enrichFixtures($league['fixtures'] ?? [], $teamsById, $league['name'], 'league', null, $league['slug'] ?? '', $league['id'] ?? null);
 
         $activeSeason = $this->seasonModel->getActive();
 
@@ -120,7 +120,9 @@ class PublicController extends Controller
                 $teamsById,
                 $cup['name'],
                 'cup',
-                $round['name']
+                $round['name'],
+                $cup['slug'] ?? '',
+                $cup['id'] ?? null
             );
             $rounds[] = [
                 'name' => $round['name'],
@@ -259,7 +261,9 @@ class PublicController extends Controller
                 $teamsById,
                 $cup['name'],
                 'cup',
-                $round['name']
+                $round['name'],
+                $cup['slug'] ?? '',
+                $cup['id'] ?? null
             );
             $rounds[] = [
                 'name' => $round['name'],
@@ -370,7 +374,7 @@ class PublicController extends Controller
         $standings = $this->leagueModel->calculateStandings($league['id'], $teams);
 
         // Get fixtures
-        $fixtures = $this->enrichFixtures($league['fixtures'] ?? [], $teamsById, $league['name'], 'league');
+        $fixtures = $this->enrichFixtures($league['fixtures'] ?? [], $teamsById, $league['name'], 'league', null, $league['slug'] ?? '', $league['id'] ?? null);
 
         // Render standings using shared partial
         $standingsHtml = $this->renderStandingsHtml($standings);
@@ -521,7 +525,10 @@ class PublicController extends Controller
                 $league['fixtures'] ?? [],
                 $teamsById,
                 $league['name'],
-                'league'
+                'league',
+                null,
+                $league['slug'] ?? '',
+                $league['id'] ?? null
             );
             $allFixtures = array_merge($allFixtures, $fixtures);
         }
@@ -533,7 +540,9 @@ class PublicController extends Controller
                     $teamsById,
                     $cup['name'],
                     'cup',
-                    $round['name']
+                    $round['name'],
+                    $cup['slug'] ?? '',
+                    $cup['id'] ?? null
                 );
                 $allFixtures = array_merge($allFixtures, $fixtures);
             }
@@ -550,7 +559,9 @@ class PublicController extends Controller
         array $teamsById,
         string $competitionName,
         string $competitionType,
-        ?string $roundName = null
+        ?string $roundName = null,
+        string $competitionSlug = '',
+        ?int $competitionId = null
     ): array {
         $enriched = [];
 
@@ -563,7 +574,10 @@ class PublicController extends Controller
                 'awayTeam' => $awayTeam,
                 'competitionName' => $competitionName,
                 'competitionType' => $competitionType,
+                'competitionSlug' => $competitionSlug,
                 'roundName' => $roundName,
+                'leagueId' => $competitionType === 'league' ? $competitionId : null,
+                'cupId' => $competitionType === 'cup' ? $competitionId : null,
             ]);
         }
 
