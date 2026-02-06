@@ -291,9 +291,12 @@ abstract class Model
         $params = [];
         if (!empty($where)) {
             $conditions = [];
+            $i = 0;
             foreach ($where as $column => $value) {
-                $conditions[] = "{$column} = ?";
-                $params[] = $value;
+                $paramName = "where_{$i}";
+                $conditions[] = "{$column} = :{$paramName}";
+                $params[$paramName] = $value;
+                $i++;
             }
             $sql .= " WHERE " . implode(' AND ', $conditions);
         }
@@ -304,8 +307,8 @@ abstract class Model
         $stmt = $this->db->prepare($sql);
 
         // Bind WHERE parameters
-        foreach ($params as $i => $value) {
-            $stmt->bindValue($i + 1, $value);
+        foreach ($params as $name => $value) {
+            $stmt->bindValue(":{$name}", $value);
         }
 
         // Bind LIMIT and OFFSET as integers
