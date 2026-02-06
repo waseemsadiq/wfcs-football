@@ -119,7 +119,7 @@
     });
     $today = date('Y-m-d');
     ?>
-    <div class="card p-0">
+    <div class="card mb-8 p-0">
         <div class="flex items-center justify-between p-6 border-b border-border bg-surface/50">
             <h2 class="text-xl font-bold m-0">Upcoming Fixtures</h2>
             <a href="<?= $basePath ?>/admin/leagues/<?= htmlspecialchars($league['slug'] ?? $league['id']) ?>/fixtures"

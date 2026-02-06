@@ -32,6 +32,16 @@ class FixturesController extends Controller
         $homeTeamSlug = $matches[1];
         $awayTeamSlug = $matches[2];
 
+        // Load teams to convert slugs to IDs
+        $teamModel = new \App\Models\Team();
+        $homeTeam = $teamModel->findWhere('slug', $homeTeamSlug);
+        $awayTeam = $teamModel->findWhere('slug', $awayTeamSlug);
+
+        if (!$homeTeam || !$awayTeam) {
+            $this->redirect('/admin');
+            return;
+        }
+
         // Load competition and find fixture
         if ($type === 'league') {
             $leagueModel = new \App\Models\League();
@@ -42,10 +52,10 @@ class FixturesController extends Controller
                 return;
             }
 
-            $fixture = $this->findFixtureByTeamSlugs(
+            $fixture = $this->findFixtureByTeamIds(
                 $competition['fixtures'],
-                $homeTeamSlug,
-                $awayTeamSlug
+                $homeTeam['id'],
+                $awayTeam['id']
             );
 
             if ($fixture) {
@@ -62,8 +72,8 @@ class FixturesController extends Controller
 
             $fixture = $this->findFixtureInRounds(
                 $competition['rounds'],
-                $homeTeamSlug,
-                $awayTeamSlug
+                $homeTeam['id'],
+                $awayTeam['id']
             );
 
             if ($fixture) {
@@ -107,6 +117,17 @@ class FixturesController extends Controller
         $homeTeamSlug = $matches[1];
         $awayTeamSlug = $matches[2];
 
+        // Load teams to convert slugs to IDs
+        $teamModel = new \App\Models\Team();
+        $homeTeam = $teamModel->findWhere('slug', $homeTeamSlug);
+        $awayTeam = $teamModel->findWhere('slug', $awayTeamSlug);
+
+        if (!$homeTeam || !$awayTeam) {
+            $this->flash('error', 'Teams not found');
+            $this->redirect('/admin');
+            return;
+        }
+
         // Load competition and find fixture
         if ($type === 'league') {
             $leagueModel = new \App\Models\League();
@@ -118,10 +139,10 @@ class FixturesController extends Controller
                 return;
             }
 
-            $fixture = $this->findFixtureByTeamSlugs(
+            $fixture = $this->findFixtureByTeamIds(
                 $competition['fixtures'],
-                $homeTeamSlug,
-                $awayTeamSlug
+                $homeTeam['id'],
+                $awayTeam['id']
             );
         } else {
             $cupModel = new \App\Models\Cup();
@@ -135,8 +156,8 @@ class FixturesController extends Controller
 
             $fixture = $this->findFixtureInRounds(
                 $competition['rounds'],
-                $homeTeamSlug,
-                $awayTeamSlug
+                $homeTeam['id'],
+                $awayTeam['id']
             );
         }
 
@@ -167,14 +188,14 @@ class FixturesController extends Controller
     }
 
     /**
-     * Find fixture by team slugs in a fixture list.
+     * Find fixture by team IDs in a fixture list.
      */
-    private function findFixtureByTeamSlugs(array $fixtures, string $homeSlug, string $awaySlug): ?array
+    private function findFixtureByTeamIds(array $fixtures, int $homeId, int $awayId): ?array
     {
         foreach ($fixtures as $fixture) {
-            if (isset($fixture['homeTeam']['slug'], $fixture['awayTeam']['slug'])) {
-                if ($fixture['homeTeam']['slug'] === $homeSlug &&
-                    $fixture['awayTeam']['slug'] === $awaySlug) {
+            if (isset($fixture['homeTeamId'], $fixture['awayTeamId'])) {
+                if ($fixture['homeTeamId'] == $homeId &&
+                    $fixture['awayTeamId'] == $awayId) {
                     return $fixture;
                 }
             }
@@ -183,15 +204,15 @@ class FixturesController extends Controller
     }
 
     /**
-     * Find fixture by team slugs in cup rounds.
+     * Find fixture by team IDs in cup rounds.
      */
-    private function findFixtureInRounds(array $rounds, string $homeSlug, string $awaySlug): ?array
+    private function findFixtureInRounds(array $rounds, int $homeId, int $awayId): ?array
     {
         foreach ($rounds as $round) {
             foreach ($round['fixtures'] as $fixture) {
-                if (isset($fixture['homeTeam']['slug'], $fixture['awayTeam']['slug'])) {
-                    if ($fixture['homeTeam']['slug'] === $homeSlug &&
-                        $fixture['awayTeam']['slug'] === $awaySlug) {
+                if (isset($fixture['homeTeamId'], $fixture['awayTeamId'])) {
+                    if ($fixture['homeTeamId'] == $homeId &&
+                        $fixture['awayTeamId'] == $awayId) {
                         return $fixture;
                     }
                 }

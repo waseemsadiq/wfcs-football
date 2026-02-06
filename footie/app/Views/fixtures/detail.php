@@ -68,7 +68,7 @@
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
 
         <!-- Status -->
-        <div class="card">
+        <div class="card mb-6">
             <div class="p-6">
                 <label for="status" class="block text-sm font-bold text-text-muted uppercase tracking-wider mb-3">
                     Match Status
@@ -98,7 +98,7 @@
         </div>
 
         <!-- Match Report -->
-        <div class="card">
+        <div class="card mb-6">
             <div class="p-6">
                 <label for="match_report" class="block text-sm font-bold text-text-muted uppercase tracking-wider mb-3">
                     Match Report
@@ -113,7 +113,7 @@
         </div>
 
         <!-- Video URLs -->
-        <div class="card">
+        <div class="card mb-6">
             <div class="p-6">
                 <h3 class="text-lg font-bold text-text-main mb-4">Video Embeds</h3>
 
@@ -162,7 +162,7 @@
         </div>
 
         <!-- Photo Gallery (Future Enhancement) -->
-        <div class="card">
+        <div class="card mb-6">
             <div class="p-6">
                 <h3 class="text-lg font-bold text-text-main mb-4">Match Photos</h3>
                 <div class="bg-surface-hover/30 border-2 border-dashed border-border rounded-lg p-8 text-center">

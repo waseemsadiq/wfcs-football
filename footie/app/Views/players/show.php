@@ -134,7 +134,7 @@
 
     <!-- Recent Match Events -->
     <?php if (!empty($events)): ?>
-        <div class="card">
+        <div class="card mb-8">
             <h2 class="text-xl font-bold mb-6 pb-4 border-b border-border">Recent Match Events</h2>
 
             <div class="overflow-x-auto">

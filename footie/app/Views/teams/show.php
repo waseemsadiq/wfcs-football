@@ -228,7 +228,7 @@
     </div>
 
     <!-- Danger Zone -->
-    <div class="card border-danger/30">
+    <div class="card mb-8 border-danger/30">
         <h2 class="text-xl font-bold text-danger mb-4">Danger Zone</h2>
         <p class="text-text-muted mb-6">Removing this team will not affect past results or standings, but the team will
             no longer appear in lists or be available for new fixtures.</p>
