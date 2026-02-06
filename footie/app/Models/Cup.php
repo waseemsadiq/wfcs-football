@@ -771,11 +771,13 @@ class Cup extends Model
                 ht.colour as home_team_colour,
                 at.name as away_team_name,
                 at.slug as away_team_slug,
-                at.colour as away_team_colour
+                at.colour as away_team_colour,
+                ts.name as referee
             FROM cup_fixtures cf
             INNER JOIN cup_rounds cr ON cf.round_id = cr.id
             LEFT JOIN teams ht ON cf.home_team_id = ht.id
             LEFT JOIN teams at ON cf.away_team_id = at.id
+            LEFT JOIN team_staff ts ON cf.referee_id = ts.id
             WHERE cf.id = ?
         ");
         $stmt->execute([$fixtureId]);

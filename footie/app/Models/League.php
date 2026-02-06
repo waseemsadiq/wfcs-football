@@ -651,10 +651,12 @@ class League extends Model
                 ht.colour as home_team_colour,
                 at.name as away_team_name,
                 at.slug as away_team_slug,
-                at.colour as away_team_colour
+                at.colour as away_team_colour,
+                ts.name as referee
             FROM league_fixtures lf
             INNER JOIN teams ht ON lf.home_team_id = ht.id
             INNER JOIN teams at ON lf.away_team_id = at.id
+            LEFT JOIN team_staff ts ON lf.referee_id = ts.id
             WHERE lf.id = ?
         ");
         $stmt->execute([$fixtureId]);
